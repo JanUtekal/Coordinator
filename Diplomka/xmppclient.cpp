@@ -30,10 +30,10 @@
 #include <QXmlStreamWriter>
 
 #define PATH ""
-#define USERNAME "H.a.n.s@jabber.cz"
-//#define USERNAME "asasasd@jabber.cz"
-#define PASSWORD "7145774"
-//#define PASSWORD "asasasd"
+#define USERNAME ""
+
+#define PASSWORD ""
+
 
 
 xmppClient::xmppClient(QObject *parent)
