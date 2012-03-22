@@ -1,0 +1,94 @@
+út 28. 2 14:10:13 2012 DEBUG Looking up server for domain jabber.cz
+út 28. 2 14:10:14 2012 INFO Connecting to lb1-hap.jabbim.cz:5222
+út 28. 2 14:10:14 2012 INFO Socket connected to 88.86.102.50 5222
+út 28. 2 14:10:14 2012 SENT <?xml version='1.0'?><stream:stream to='jabber.cz' xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams' version='1.0'>
+út 28. 2 14:10:14 2012 RECEIVED <?xml version='1.0'?><stream:stream xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams' id='3565014414' from='jabber.cz' version='1.0' xml:lang='en'>
+út 28. 2 14:10:14 2012 RECEIVED <stream:features><starttls xmlns='urn:ietf:params:xml:ns:xmpp-tls'/><compression xmlns='http://jabber.org/features/compress'><method>zlib</method></compression><mechanisms xmlns='urn:ietf:params:xml:ns:xmpp-sasl'><mechanism>PLAIN</mechanism><mechanism>DIGEST-MD5</mechanism><mechanism>SCRAM-SHA-1</mechanism></mechanisms><c xmlns='http://jabber.org/protocol/caps' hash='sha-1' node='http://www.process-one.net/en/ejabberd/' ver='yY9tLrun8DThxSbETeVklRoV6ek='/><register xmlns='http://jabber.org/features/iq-register'/></stream:features>
+út 28. 2 14:10:14 2012 SENT <starttls xmlns='urn:ietf:params:xml:ns:xmpp-tls'/>
+út 28. 2 14:10:14 2012 RECEIVED <proceed xmlns='urn:ietf:params:xml:ns:xmpp-tls'/>
+út 28. 2 14:10:14 2012 DEBUG Starting encryption
+út 28. 2 14:10:15 2012 WARNING SSL errors
+út 28. 2 14:10:15 2012 WARNING The host name did not match any of the valid hosts for this certificate
+út 28. 2 14:10:15 2012 WARNING No error
+út 28. 2 14:10:15 2012 DEBUG Socket encrypted
+út 28. 2 14:10:15 2012 SENT <?xml version='1.0'?><stream:stream to='jabber.cz' xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams' version='1.0'>
+út 28. 2 14:10:15 2012 RECEIVED <?xml version='1.0'?><stream:stream xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams' id='309858015' from='jabber.cz' version='1.0' xml:lang='en'>
+út 28. 2 14:10:15 2012 RECEIVED <stream:features><compression xmlns='http://jabber.org/features/compress'><method>zlib</method></compression><mechanisms xmlns='urn:ietf:params:xml:ns:xmpp-sasl'><mechanism>PLAIN</mechanism><mechanism>DIGEST-MD5</mechanism><mechanism>SCRAM-SHA-1</mechanism></mechanisms><c xmlns='http://jabber.org/protocol/caps' hash='sha-1' node='http://www.process-one.net/en/ejabberd/' ver='yY9tLrun8DThxSbETeVklRoV6ek='/><register xmlns='http://jabber.org/features/iq-register'/></stream:features>
+út 28. 2 14:10:15 2012 SENT <auth xmlns='urn:ietf:params:xml:ns:xmpp-sasl' mechanism='DIGEST-MD5'/>
+út 28. 2 14:10:15 2012 RECEIVED <challenge xmlns='urn:ietf:params:xml:ns:xmpp-sasl'>bm9uY2U9IjM1NTM3MDAzMzAiLHFvcD0iYXV0aCIsY2hhcnNldD11dGYtOCxhbGdvcml0aG09bWQ1LXNlc3M=</challenge>
+út 28. 2 14:10:15 2012 SENT <response xmlns='urn:ietf:params:xml:ns:xmpp-sasl'>Y2hhcnNldD11dGYtOCxjbm9uY2U9IkZmcEt2NjMrVWk1d2F2RnQvVEtITVJIUzdhRFZ0ZEEybU81SlN3M1ZrUHc9IixkaWdlc3QtdXJpPSJ4bXBwL2phYmJlci5jeiIsbmM9MDAwMDAwMDEsbm9uY2U9MzU1MzcwMDMzMCxxb3A9YXV0aCxyZXNwb25zZT01ODZkMDQ5MWJjNzlhODNiZTZlMzhmYzkxOTdmMzIwNix1c2VybmFtZT1hc2FzYXNk</response>
+út 28. 2 14:10:15 2012 RECEIVED <challenge xmlns='urn:ietf:params:xml:ns:xmpp-sasl'>cnNwYXV0aD1iOGM4YjdhYjk0MzgxMThlNDg1NDNkMmI5YzYwODM3ZA==</challenge>
+út 28. 2 14:10:15 2012 SENT <response xmlns='urn:ietf:params:xml:ns:xmpp-sasl'/>
+út 28. 2 14:10:15 2012 RECEIVED <success xmlns='urn:ietf:params:xml:ns:xmpp-sasl'/>
+út 28. 2 14:10:15 2012 DEBUG Authenticated
+út 28. 2 14:10:15 2012 SENT <?xml version='1.0'?><stream:stream to='jabber.cz' xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams' version='1.0'>
+út 28. 2 14:10:15 2012 RECEIVED <?xml version='1.0'?><stream:stream xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams' id='49249709' from='jabber.cz' version='1.0' xml:lang='en'>
+út 28. 2 14:10:15 2012 RECEIVED <stream:features><bind xmlns='urn:ietf:params:xml:ns:xmpp-bind'/><session xmlns='urn:ietf:params:xml:ns:xmpp-session'/><ver xmlns='urn:xmpp:features:rosterver'><optional/></ver><c xmlns='http://jabber.org/protocol/caps' hash='sha-1' node='http://www.process-one.net/en/ejabberd/' ver='yY9tLrun8DThxSbETeVklRoV6ek='/><register xmlns='http://jabber.org/features/iq-register'/></stream:features>
+út 28. 2 14:10:15 2012 SENT <iq id="qxmpp3" type="set"><bind xmlns="urn:ietf:params:xml:ns:xmpp-bind"><resource>QXmpp</resource></bind></iq>
+út 28. 2 14:10:15 2012 RECEIVED <iq id='qxmpp3' type='result'><bind xmlns='urn:ietf:params:xml:ns:xmpp-bind'><jid>asasasd@jabber.cz/QXmpp</jid></bind></iq>
+út 28. 2 14:10:15 2012 SENT <iq id="qxmpp5" to="jabber.cz" type="set"><session xmlns="urn:ietf:params:xml:ns:xmpp-session"/></iq>
+út 28. 2 14:10:15 2012 RECEIVED <iq type='result' from='jabber.cz' id='qxmpp5'><session xmlns='urn:ietf:params:xml:ns:xmpp-session'/></iq>
+út 28. 2 14:10:15 2012 SENT <iq id="qxmpp7" from="asasasd@jabber.cz/QXmpp" type="get"><query xmlns="jabber:iq:roster"/></iq>
+út 28. 2 14:10:15 2012 SENT <presence><c xmlns="http://jabber.org/protocol/caps" hash="sha-1" node="http://code.google.com/p/qxmpp" ver="xy4Oj4xG7+BGVmhAK1F90idSId8="/></presence>
+út 28. 2 14:10:15 2012 RECEIVED <presence from='asasasd@jabber.cz/QXmpp' to='asasasd@jabber.cz/QXmpp'><c xmlns='http://jabber.org/protocol/caps' hash='sha-1' node='http://code.google.com/p/qxmpp' ver='xy4Oj4xG7+BGVmhAK1F90idSId8='/></presence>
+út 28. 2 14:10:15 2012 RECEIVED <iq from='asasasd@jabber.cz' to='asasasd@jabber.cz/QXmpp' id='qxmpp7' type='result'><query xmlns='jabber:iq:roster'><item subscription='both' name='Jan' jid='h.a.n.s@jabber.cz'/></query></iq>
+út 28. 2 14:10:15 2012 RECEIVED <message from='asasasd@jabber.cz' to='asasasd@jabber.cz/QXmpp'><event xmlns='http://jabber.org/protocol/pubsub#event'><items node='http://jabber.org/protocol/activity'><item id='0'><activity xmlns='http://jabber.org/protocol/activity'/></item></items></event><delay xmlns='urn:xmpp:delay' from='asasasd@jabber.cz/Gajim' stamp='2012-02-27T20:30:14Z'></delay></message>
+út 28. 2 14:10:15 2012 RECEIVED <message from='asasasd@jabber.cz' to='asasasd@jabber.cz/QXmpp'><event xmlns='http://jabber.org/protocol/pubsub#event'><items node='http://jabber.org/protocol/mood'><item id='0'><mood xmlns='http://jabber.org/protocol/mood'/></item></items></event><delay xmlns='urn:xmpp:delay' from='asasasd@jabber.cz/Gajim' stamp='2012-02-27T20:30:14Z'></delay></message>
+út 28. 2 14:10:15 2012 RECEIVED <message from='asasasd@jabber.cz' to='asasasd@jabber.cz/QXmpp'><event xmlns='http://jabber.org/protocol/pubsub#event'><items node='http://jabber.org/protocol/activity'><item id='0'><activity xmlns='http://jabber.org/protocol/activity'/></item></items></event><delay xmlns='urn:xmpp:delay' from='asasasd@jabber.cz/Gajim' stamp='2012-02-27T20:30:14Z'></delay></message>
+út 28. 2 14:10:15 2012 RECEIVED <message from='asasasd@jabber.cz' to='asasasd@jabber.cz/QXmpp'><event xmlns='http://jabber.org/protocol/pubsub#event'><items node='http://jabber.org/protocol/mood'><item id='0'><mood xmlns='http://jabber.org/protocol/mood'/></item></items></event><delay xmlns='urn:xmpp:delay' from='asasasd@jabber.cz/Gajim' stamp='2012-02-27T20:30:14Z'></delay></message>
+út 28. 2 14:11:15 2012 SENT <iq id="qxmpp9" to="jabber.cz" type="get"><ping xmlns="urn:xmpp:ping"/></iq>
+út 28. 2 14:11:15 2012 RECEIVED <iq from='jabber.cz' to='asasasd@jabber.cz/QXmpp' id='qxmpp9' type='result'/>
+út 28. 2 14:11:31 2012 SENT <message to="h.a.n.s@jabber.cz/QXmpp" type="chat"><body>POINT(49.2096 16.5966)</body></message>
+út 28. 2 14:11:45 2012 SENT <message to="h.a.n.s@jabber.cz/QXmpp" type="chat"><body>POINT(49.2096 16.5966)</body></message>
+út 28. 2 14:11:45 2012 SENT <message to="h.a.n.s@jabber.cz/QXmpp" type="chat"><body>POINT(49.2096 16.5751)</body></message>
+út 28. 2 14:12:15 2012 SENT <iq id="qxmpp11" to="jabber.cz" type="get"><ping xmlns="urn:xmpp:ping"/></iq>
+út 28. 2 14:12:15 2012 RECEIVED <iq from='jabber.cz' to='asasasd@jabber.cz/QXmpp' id='qxmpp11' type='result'/>
+út 28. 2 14:13:15 2012 SENT <iq id="qxmpp13" to="jabber.cz" type="get"><ping xmlns="urn:xmpp:ping"/></iq>
+út 28. 2 14:13:15 2012 RECEIVED <iq from='jabber.cz' to='asasasd@jabber.cz/QXmpp' id='qxmpp13' type='result'/>
+út 28. 2 14:13:39 2012 RECEIVED <presence from='H.a.n.s@jabber.cz/QXmpp' to='asasasd@jabber.cz/QXmpp'><c xmlns='http://jabber.org/protocol/caps' hash='sha-1' node='http://code.google.com/p/qxmpp' ver='xy4Oj4xG7+BGVmhAK1F90idSId8='/></presence>
+út 28. 2 14:13:39 2012 RECEIVED <message from='h.a.n.s@jabber.cz' to='asasasd@jabber.cz/QXmpp'><event xmlns='http://jabber.org/protocol/pubsub#event'><items node='http://jabber.org/protocol/activity'><item id='0'><activity xmlns='http://jabber.org/protocol/activity'/></item></items></event><delay xmlns='urn:xmpp:delay' from='h.a.n.s@jabber.cz/Gajim' stamp='2012-02-27T20:05:19Z'></delay></message>
+út 28. 2 14:13:39 2012 RECEIVED <message from='h.a.n.s@jabber.cz' to='asasasd@jabber.cz/QXmpp'><event xmlns='http://jabber.org/protocol/pubsub#event'><items node='http://jabber.org/protocol/geoloc'><item id='5325B2C32F8AC'><geoloc xmlns='http://jabber.org/protocol/geoloc' xml:lang='en'><lat>52.5057</lat><lon>13.3232</lon><alt>nan</alt><accuracy>1880.590000</accuracy></geoloc></item></items></event><delay xmlns='urn:xmpp:delay' from='h.a.n.s@jabber.cz/QXmpp' stamp='2012-02-27T20:10:43Z'></delay></message>
+út 28. 2 14:13:39 2012 RECEIVED <message from='h.a.n.s@jabber.cz' to='asasasd@jabber.cz/QXmpp'><event xmlns='http://jabber.org/protocol/pubsub#event'><items node='http://jabber.org/protocol/mood'><item id='0'><mood xmlns='http://jabber.org/protocol/mood'/></item></items></event><delay xmlns='urn:xmpp:delay' from='h.a.n.s@jabber.cz/Gajim' stamp='2012-02-27T20:05:19Z'></delay></message>
+út 28. 2 14:14:15 2012 SENT <iq id="qxmpp15" to="jabber.cz" type="get"><ping xmlns="urn:xmpp:ping"/></iq>
+út 28. 2 14:14:15 2012 RECEIVED <iq from='jabber.cz' to='asasasd@jabber.cz/QXmpp' id='qxmpp15' type='result'/>
+út 28. 2 14:14:55 2012 SENT <message to="h.a.n.s@jabber.cz/QXmpp" type="chat"><body>POINT(52.5057 13.3232)</body></message>
+út 28. 2 14:14:55 2012 SENT <message to="h.a.n.s@jabber.cz/QXmpp" type="chat"><body>POINT(49.1861 16.6034)</body></message>
+út 28. 2 14:15:02 2012 SENT <message to="h.a.n.s@jabber.cz/QXmpp" type="chat"><body>POINT(52.5057 13.3232)</body></message>
+út 28. 2 14:15:02 2012 SENT <message to="h.a.n.s@jabber.cz/QXmpp" type="chat"><body>POINT(49.1861 16.6034)</body></message>
+út 28. 2 14:15:02 2012 SENT <message to="h.a.n.s@jabber.cz/QXmpp" type="chat"><body>POINT(49.1828 16.5833)</body></message>
+út 28. 2 14:15:15 2012 SENT <iq id="qxmpp17" to="jabber.cz" type="get"><ping xmlns="urn:xmpp:ping"/></iq>
+út 28. 2 14:15:15 2012 RECEIVED <iq from='jabber.cz' to='asasasd@jabber.cz/QXmpp' id='qxmpp17' type='result'/>
+út 28. 2 14:15:36 2012 RECEIVED <message from='h.a.n.s@jabber.cz' to='asasasd@jabber.cz/QXmpp' type='headline'><event xmlns='http://jabber.org/protocol/pubsub#event'><items node='http://jabber.org/protocol/geoloc'><item id='5326A2FBDE06B'><geoloc xmlns='http://jabber.org/protocol/geoloc' xml:lang='en'><lat>49.2266</lat><lon>16.5948</lon><alt>nan</alt><accuracy>1880.590000</accuracy></geoloc></item></items></event><headers xmlns='http://jabber.org/protocol/shim'><header name='Collection'>http://jabber.org/protocol/geoloc</header><header name='SubID'>5325B0DD6F0D0</header><header name='SubID'>5322DAFE2495C</header><header name='SubID'>5322CD3C34563</header><header name='SubID'>5322948019B5C</header><header name='SubID'>5322CCEAD3F7F</header><header name='SubID'>5322D73A4B1F1</header><header name='SubID'>5322DAFF7D193</header></headers></message>
+út 28. 2 14:16:15 2012 SENT <iq id="qxmpp19" to="jabber.cz" type="get"><ping xmlns="urn:xmpp:ping"/></iq>
+út 28. 2 14:16:15 2012 RECEIVED <iq from='jabber.cz' to='asasasd@jabber.cz/QXmpp' id='qxmpp19' type='result'/>
+út 28. 2 14:17:15 2012 SENT <iq id="qxmpp21" to="jabber.cz" type="get"><ping xmlns="urn:xmpp:ping"/></iq>
+út 28. 2 14:17:15 2012 RECEIVED <iq from='jabber.cz' to='asasasd@jabber.cz/QXmpp' id='qxmpp21' type='result'/>
+út 28. 2 14:18:15 2012 SENT <iq id="qxmpp23" to="jabber.cz" type="get"><ping xmlns="urn:xmpp:ping"/></iq>
+út 28. 2 14:18:15 2012 RECEIVED <iq from='jabber.cz' to='asasasd@jabber.cz/QXmpp' id='qxmpp23' type='result'/>
+út 28. 2 14:19:15 2012 SENT <iq id="qxmpp25" to="jabber.cz" type="get"><ping xmlns="urn:xmpp:ping"/></iq>
+út 28. 2 14:19:15 2012 RECEIVED <iq from='jabber.cz' to='asasasd@jabber.cz/QXmpp' id='qxmpp25' type='result'/>
+út 28. 2 14:20:15 2012 SENT <iq id="qxmpp27" to="jabber.cz" type="get"><ping xmlns="urn:xmpp:ping"/></iq>
+út 28. 2 14:20:15 2012 RECEIVED <iq from='jabber.cz' to='asasasd@jabber.cz/QXmpp' id='qxmpp27' type='result'/>
+út 28. 2 14:21:15 2012 SENT <iq id="qxmpp29" to="jabber.cz" type="get"><ping xmlns="urn:xmpp:ping"/></iq>
+út 28. 2 14:21:15 2012 RECEIVED <iq from='jabber.cz' to='asasasd@jabber.cz/QXmpp' id='qxmpp29' type='result'/>
+út 28. 2 14:22:15 2012 SENT <iq id="qxmpp31" to="jabber.cz" type="get"><ping xmlns="urn:xmpp:ping"/></iq>
+út 28. 2 14:22:15 2012 RECEIVED <iq from='jabber.cz' to='asasasd@jabber.cz/QXmpp' id='qxmpp31' type='result'/>
+út 28. 2 14:23:15 2012 SENT <iq id="qxmpp33" to="jabber.cz" type="get"><ping xmlns="urn:xmpp:ping"/></iq>
+út 28. 2 14:23:15 2012 RECEIVED <iq from='jabber.cz' to='asasasd@jabber.cz/QXmpp' id='qxmpp33' type='result'/>
+út 28. 2 14:24:15 2012 SENT <iq id="qxmpp35" to="jabber.cz" type="get"><ping xmlns="urn:xmpp:ping"/></iq>
+út 28. 2 14:24:15 2012 RECEIVED <iq from='jabber.cz' to='asasasd@jabber.cz/QXmpp' id='qxmpp35' type='result'/>
+út 28. 2 14:25:15 2012 SENT <iq id="qxmpp37" to="jabber.cz" type="get"><ping xmlns="urn:xmpp:ping"/></iq>
+út 28. 2 14:25:15 2012 RECEIVED <iq from='jabber.cz' to='asasasd@jabber.cz/QXmpp' id='qxmpp37' type='result'/>
+út 28. 2 14:26:15 2012 SENT <iq id="qxmpp39" to="jabber.cz" type="get"><ping xmlns="urn:xmpp:ping"/></iq>
+út 28. 2 14:26:15 2012 RECEIVED <iq from='jabber.cz' to='asasasd@jabber.cz/QXmpp' id='qxmpp39' type='result'/>
+út 28. 2 14:27:15 2012 SENT <iq id="qxmpp41" to="jabber.cz" type="get"><ping xmlns="urn:xmpp:ping"/></iq>
+út 28. 2 14:27:15 2012 RECEIVED <iq from='jabber.cz' to='asasasd@jabber.cz/QXmpp' id='qxmpp41' type='result'/>
+út 28. 2 14:28:15 2012 SENT <iq id="qxmpp43" to="jabber.cz" type="get"><ping xmlns="urn:xmpp:ping"/></iq>
+út 28. 2 14:28:15 2012 RECEIVED <iq from='jabber.cz' to='asasasd@jabber.cz/QXmpp' id='qxmpp43' type='result'/>
+út 28. 2 14:29:15 2012 SENT <iq id="qxmpp45" to="jabber.cz" type="get"><ping xmlns="urn:xmpp:ping"/></iq>
+út 28. 2 14:29:15 2012 RECEIVED <iq from='jabber.cz' to='asasasd@jabber.cz/QXmpp' id='qxmpp45' type='result'/>
+út 28. 2 14:30:15 2012 SENT <iq id="qxmpp47" to="jabber.cz" type="get"><ping xmlns="urn:xmpp:ping"/></iq>
+út 28. 2 14:30:15 2012 RECEIVED <iq from='jabber.cz' to='asasasd@jabber.cz/QXmpp' id='qxmpp47' type='result'/>
+út 28. 2 14:31:05 2012 RECEIVED <presence from='H.a.n.s@jabber.cz/QXmpp' to='asasasd@jabber.cz/QXmpp' type='unavailable'/>
+út 28. 2 14:31:15 2012 SENT <iq id="qxmpp49" to="jabber.cz" type="get"><ping xmlns="urn:xmpp:ping"/></iq>
+út 28. 2 14:31:15 2012 RECEIVED <iq from='jabber.cz' to='asasasd@jabber.cz/QXmpp' id='qxmpp49' type='result'/>

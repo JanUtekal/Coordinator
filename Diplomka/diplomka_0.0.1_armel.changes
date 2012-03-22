@@ -1,0 +1,23 @@
+Format: 1.8
+Date: Sat, 19 Nov 2011 16:58:53 +0000
+Source: diplomka
+Binary: diplomka
+Architecture: armel
+Version: 0.0.1
+Distribution: unstable
+Urgency: low
+Maintainer: unknown <>
+Changed-By: unknown <>
+Description: 
+ diplomka   - <insert up to 60 chars description>
+Changes: 
+ diplomka (0.0.1) unstable; urgency=low
+ .
+   * Initial Release.
+Checksums-Sha1: 
+ 621e41a17281a9283a577ea5fd63acb92b78d6b9 232358 diplomka_0.0.1_armel.deb
+Checksums-Sha256: 
+ be37ac5d75f70f8ad76130eee1c9b5056f5a90dd8017117836a1dcd4b71aa13e 232358 diplomka_0.0.1_armel.deb
+Files: 
+ 384f0c46549cc2dad112faa7e97a24d5 232358 user/other optional diplomka_0.0.1_armel.deb
+Maemo-Display-Name: Diplomka

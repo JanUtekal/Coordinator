@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lmx xmlns="http://www.nokia.com/schemas/location/landmarks/1/0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.nokia.com/schemas/location/landmarks/1/0/ lmx.xsd">
+    <landmarkCollection>
+        <landmark>
+            <name>lm</name>
+            <coordinates>
+                <latitude>-27.0027</latitude>
+                <longitude>153.004</longitude>
+            </coordinates>
+            <addressInfo>
+                <phoneNumber>1</phoneNumber>
+            </addressInfo>
+        </landmark>
+        <landmark>
+            <name>lm22</name>
+            <coordinates>
+                <latitude>0</latitude>
+                <longitude>0</longitude>
+            </coordinates>
+            <addressInfo>
+                <phoneNumber>0</phoneNumber>
+            </addressInfo>
+        </landmark>
+    </landmarkCollection>
+</lmx>
