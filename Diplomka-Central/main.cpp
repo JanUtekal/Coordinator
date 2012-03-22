@@ -16,11 +16,9 @@
 #include "QXmppLogger.h"
 #include "extension.h"
 
+#define USERNAME ""
 
-//#define USERNAME "H.a.n.s@jabber.cz"
-#define USERNAME "asasasd@jabber.cz"
-//#define PASSWORD "7145774"
-#define PASSWORD "asasasd"
+#define PASSWORD ""
 #define PATH ""
 
 bool createConnection(Controller *cont)
