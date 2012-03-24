@@ -1,0 +1,16 @@
+INPUT(
+./debug\main.o
+./debug\controller.o
+./debug\dbconnection.o
+./debug\xmppclient.o
+./debug\contact.o
+./debug\extension.o
+./debug\acl.o
+./debug\terrainuser.o
+./debug\qmlapplicationviewer.o
+./debug\moc_qmlapplicationviewer.o
+./debug\moc_controller.o
+./debug\moc_dbconnection.o
+./debug\moc_xmppclient.o
+./debug\moc_extension.o
+);

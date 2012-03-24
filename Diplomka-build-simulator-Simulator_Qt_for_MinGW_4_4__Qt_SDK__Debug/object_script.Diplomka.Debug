@@ -1,0 +1,14 @@
+INPUT(
+./debug\main.o
+./debug\xmppclient.o
+./debug\contact.o
+./debug\interface.o
+./debug\locationwatcher.o
+./debug\extension.o
+./debug\qmlapplicationviewer.o
+./debug\moc_qmlapplicationviewer.o
+./debug\moc_xmppclient.o
+./debug\moc_interface.o
+./debug\moc_locationwatcher.o
+./debug\moc_extension.o
+);
