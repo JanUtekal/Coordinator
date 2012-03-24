@@ -16,7 +16,7 @@ void Controller::getRootObject(QObject *obj){
 
 }
 
-void Controller::addPoint(double lat, double lon){
+void Controller::addPoint(double lat, double lon, int selectedAcl){
     deselectCurrentObject();
 
     int dbId=dbConnection->insertPoint(lat,lon);
@@ -31,10 +31,22 @@ void Controller::addPoint(double lat, double lon){
         //..
         landMan->saveLandmark(&lm);
 
-        foreach(QLandmark l, landMan->landmarks()){
+
+      //  QString aclId=((Acl)aclList.at(selectedAcl)).getId();
+        if(selectedAcl!=-1){
+
+            QList<TerrainUser> userList= prepareCustomTerrainUserFromAclList(selectedAcl);
+
+            emit sendMapObject(lm,userList);
+        } else {
+            qDebug()<<"neoznacen zadny Acl, neposilam";
+        }
+
+
+   /*     foreach(QLandmark l, landMan->landmarks()){
             qDebug()<<l.name()<<l.coordinate().latitude()<<l.coordinate().longitude();
 
-        }
+        }*/
 
 
     } else {
@@ -228,7 +240,8 @@ void Controller::sendMapObjects(){
 }
 
 void Controller::testButtonOperation(){
-    sendMapObjects();
+   // sendMapObjects();
+        emit test();
 }
 
 void Controller::createNewTerrainUser(QString id, QString name, QString surname, QString jid, QString password){
@@ -306,13 +319,13 @@ void Controller::setTerrainUserAcl(int i, int j){
     QString idUser=((TerrainUser)terrainUserList.at(i)).getId();
 
     QString idAcl=((Acl)aclList.at(j)).getId();
-    dbConnection->updateUserTerrainAcl(idUser,idAcl);
+    dbConnection->updateTerrainUserAcl(idUser,idAcl);
 }
 
 void Controller::unsetTerrainUserAcl(int i){
     QString idUser=((TerrainUser)terrainUserFromAclList.at(i)).getId();
 
-    dbConnection->updateUserTerrainAcl(idUser,"NULL");
+    dbConnection->updateTerrainUserAcl(idUser,"NULL");
 }
 
 void Controller::removeAcl(int i){
@@ -326,4 +339,12 @@ void Controller::removeTerrainUser(int i){
     QString id=((TerrainUser)terrainUserList.at(i)).getId();
 
     dbConnection->deleteTerrainUser(id);
+}
+
+QList<TerrainUser> Controller::prepareCustomTerrainUserFromAclList(int i){
+
+
+    QString id =((Acl)aclList.at(i)).getId();
+    return dbConnection->getTerrainUsersFromAcl(id);
+
 }

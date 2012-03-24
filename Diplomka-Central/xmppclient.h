@@ -33,6 +33,7 @@
 #include <QLandmark>
 #include <QXmppDiscoveryManager.h>
 #include <QXmppPubSubIq.h>
+#include "terrainuser.h"
 QTM_USE_NAMESPACE
 
 class XmppClient : public QXmppClient
@@ -52,7 +53,7 @@ private:
 
     void eraseFile();
 
-    void sendMess();
+
 
 signals:
     void refresh(QList<QLandmark> *landmarkList);
@@ -60,15 +61,21 @@ signals:
     void setUserOffline(QString jid);
 
 public slots:
+
     void clientConnected();
     void messageRecv(const QXmppMessage& message);
     void presenceChanged(const QString& bareJid, const QString& resource);
     void presenceReceived(const QXmppPresence &presence);
     void iqReceived(const QXmppIq& iq);
+
     void sendObjectsToUsers(QList<QLandmark> *landmarks);
+    void sendObjectToUsers(QLandmark landmark, QList<TerrainUser> userList);
+
     void getNewCoords(QString jid, QString lat, QString lon, QString acc);
     void subscribeLocation();
   //  void userStateChanged(QXmppClient::State state);
+
+    void sendMess();
 };
 
 #endif // XMPPCLIENT_H

@@ -139,7 +139,7 @@ Rectangle {
             onClicked: {
                 if(pointButtonClicked){
 
-                    cont.addPoint(map.toCoordinate(Qt.point(mouse.x,mouse.y)).latitude, map.toCoordinate(Qt.point(mouse.x,mouse.y)).longitude);
+                    cont.addPoint(map.toCoordinate(Qt.point(mouse.x,mouse.y)).latitude, map.toCoordinate(Qt.point(mouse.x,mouse.y)).longitude, userManagement.selectedMapAcl);
                     pointButtonClicked=false;
                 } else {
 
@@ -213,14 +213,15 @@ Rectangle {
 
     }
 
-    AclListElement{
+    AclListMap{
         width: 150
-        height: 400
-        color: userManagement.color
+        height: 350
+     //   color: userManagement.color
 
         x: parent.width-170
         y: parent.height-450
         z: 1
+
 
         Component.onCompleted: {
             cont.prepareAclList();

@@ -30,9 +30,9 @@
 #include <QXmlStreamWriter>
 
 #define PATH ""
-#define USERNAME ""
+#define USERNAME "terrainuser1@jabber.cz"
 
-#define PASSWORD ""
+#define PASSWORD "asasasd"
 
 
 

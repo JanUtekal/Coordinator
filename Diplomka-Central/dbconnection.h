@@ -26,13 +26,13 @@ public:
     void getObjectsFromDB();
     QString getLastObjectIdFor(QString jid);
     QList<QLandmark> getMapObjectsNotSentFor(QString jid);
-    void updateUserTerrainLastObject(QString jid, QString id);
+    void updateTerrainUserLastObject(QString jid, QString id);
     void insertTerrainUser(QString id, QString name, QString surname, QString jid, QString password);
     void insertAcl(QString name, QString currentCentralUser);
     QList<Acl> getAllAcls();
     QList<TerrainUser> getAllTerrainUsers();
     QList<TerrainUser> getTerrainUsersFromAcl(QString id);
-    void updateUserTerrainAcl(QString idUser, QString idAcl);
+    void updateTerrainUserAcl(QString idUser, QString idAcl);
     void deleteAcl(QString id);
     void deleteTerrainUser(QString id);
 

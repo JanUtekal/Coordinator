@@ -10,7 +10,7 @@ Rectangle {
 
     function create(n){
         mod.clear();
-        for(var i=-1;i<n+1;i++){
+        for(var i=0;i<n;i++){
             mod.append({
 
                            "num":i,
@@ -21,6 +21,8 @@ Rectangle {
         }
     }
 
+    border.color: "black"
+    border.width: 1
 
     ListModel {
         id:mod
@@ -33,13 +35,12 @@ Rectangle {
 
         width: parent.width
         height: parent.height
-        y:-1
-        //    anchors.fill:parent
+
         //    x:5
         // highlightRangeMode:ListView.StrictlyEnforceRange
         //x:0
 
-
+        clip:true
         model: mod
         //  spacing: 2
 
@@ -56,7 +57,7 @@ Rectangle {
 
             Text{
                 id: label
-                text: ""
+                text: cont.getTerrainUserNameAt(num) + " " + cont.getTerrainUserSurnameAt(num)
                 x:20
 
                 anchors.verticalCenter: parent.verticalCenter
@@ -121,13 +122,13 @@ Rectangle {
 
             Component.onCompleted: {
                // console.log(num,y)
-                if(num==-1 || num>=cont.getTerrainUserNum()){
+          /*      if(num==-1 || num>=cont.getTerrainUserNum()){
                     height=1;
                     visible=false;
 
                 } else {
                     label.text=cont.getTerrainUserNameAt(num) + " " + cont.getTerrainUserSurnameAt(num);
-                }
+                }*/
             }
 
 

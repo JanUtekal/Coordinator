@@ -29,7 +29,7 @@ public:
     QLandmarkManager *landMan;
     QLandmark actualLandmark;
     QLandmark pom;
-    Q_INVOKABLE void addPoint(double lat, double lon);
+    Q_INVOKABLE void addPoint(double lat, double lon, int selectedAcl);
     Q_INVOKABLE void selectObject(double lat, double lon);
     Q_INVOKABLE void deselectObject();
 
@@ -77,15 +77,17 @@ private:
     void deselectCurrentObject();
     void fixMapBug();
     void sendMapObjects();
-
+    QList<TerrainUser> prepareCustomTerrainUserFromAclList(int i);
 
 
 
 signals:
     void sendObjects(QList<QLandmark> *landmarks);
+    void sendMapObject(QLandmark landmark, QList<TerrainUser> userList);
     void aclListReady();
     void terrainUserListReady();
     void terrainUserFromAclListReady();
+    void test();
     
 public slots:
     void getAllObjects(QList<QLandmark> *dbLandmarks);

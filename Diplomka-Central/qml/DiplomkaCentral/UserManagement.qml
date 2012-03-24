@@ -6,6 +6,7 @@ Rectangle {
     property int selectedUser:-1
     property int selectedAclUser:-1
     property int selectedAcl:-1
+    property int selectedMapAcl:-1
 
     width: 800
     height: 500
@@ -69,21 +70,21 @@ Rectangle {
         width: parent.width-20
         height: parent.height-20
         x:50
-        y:5
+        y:20
 
         spacing: 40
 
         Row{
             spacing: 20
 
-            TerrainUserListElement{
+            TerrainUserList{
                 width: parent.parent.width/4
-                height: 5*parent.parent.height/6
-                color: userManagement.color
+                height: 5*parent.parent.height/7
+                //color: userManagement.color
             }
 
             Column{
-                y: 3*(terrainUserFromAclListElement.y + terrainUserFromAclListElement.height)/7
+                y: 3*(terrainUserFromAclList.y + terrainUserFromAclList.height)/7
 
                 spacing: 30
 
@@ -131,19 +132,19 @@ Rectangle {
 
         }
 
-        TerrainUserFromAclListElement{
-            id: terrainUserFromAclListElement
+        TerrainUserFromAclList{
+            id: terrainUserFromAclList
             width: parent.width/5
-            height: 4*parent.height/6
+            height: 4*parent.height/7
             y:parent.height/10
-            color: userManagement.color
+         //   color: userManagement.color
         }
 
-        AclListElement{
+        AclList{
             width: parent.width/4
-            height: 5*parent.height/6
-            color: userManagement.color
+            height: 5*parent.height/7
         }
+
 
 
     }

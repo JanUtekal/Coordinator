@@ -31,9 +31,9 @@
 
 #define PATH ""
 
-#define USERNAME ""
+#define USERNAME "centraluser1@jabber.cz"
 
-#define PASSWORD ""
+#define PASSWORD "asasasd"
 
 
 XmppClient::XmppClient(QObject *parent)
@@ -146,6 +146,20 @@ void XmppClient::sendObjectsToUsers(QList<QLandmark> *landmarks){
 
     }
   //  sendMess();
+
+}
+
+void XmppClient::sendObjectToUsers(QLandmark landmark, QList<TerrainUser> userList){
+
+
+    foreach(TerrainUser user, userList){
+
+        QString message=QString("POINT(%1 %2)").arg(landmark.coordinate().latitude()).arg(landmark.coordinate().longitude());
+
+        QXmppClient::sendMessage(user.getJid(),message);
+
+
+    }
 
 }
 
@@ -345,11 +359,11 @@ QXmppIq iq2;
 */
 
     QXmppPubSubIq iq;
-    iq.setTo("H.a.n.s@jabber.cz");
-    iq.setFrom("asasasd@jabber.cz/QXmpp");
+    iq.setTo("terrainuser1@jabber.cz/");
+    iq.setFrom("centraluser1@jabber.cz/QXmpp");
     iq.setType(QXmppIq::Set);
     iq.setQueryType(QXmppPubSubIq::SubscribeQuery);
-    iq.setQueryJid("asasasd@jabber.cz/QXmpp");
+    iq.setQueryJid("terrainuser1@jabber.cz/QXmpp");
     iq.setQueryNode("http://jabber.org/protocol/geoloc");
  //   iq.setItems(items);
     this->sendPacket (iq);
@@ -387,7 +401,7 @@ void XmppClient::subscribeLocation(){
         iq.setFrom(userName);
         iq.setType(QXmppIq::Set);
         iq.setQueryType(QXmppPubSubIq::SubscribeQuery);
-        iq.setQueryJid("asasasd@jabber.cz/QXmpp");
+        iq.setQueryJid("terrainuser@jabber.cz/QXmpp");
         iq.setQueryNode("http://jabber.org/protocol/geoloc");
      //   iq.setItems(items);
         this->sendPacket (iq);

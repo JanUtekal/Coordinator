@@ -16,9 +16,9 @@
 #include "QXmppLogger.h"
 #include "extension.h"
 
-#define USERNAME ""
+#define USERNAME "centraluser1@jabber.cz"
 
-#define PASSWORD ""
+#define PASSWORD "asasasd"
 #define PATH ""
 
 bool createConnection(Controller *cont)
@@ -54,8 +54,12 @@ int main(int argc, char *argv[])
 {
     QScopedPointer<QApplication> app(createApplication(argc, argv));
 
-
     Controller cont;
+
+    if (!createConnection(&cont)){
+        return 1;
+    }
+
     QmlApplicationViewer viewer;
 
     eraseFile();
@@ -66,6 +70,7 @@ int main(int argc, char *argv[])
     viewer.rootContext()->setContextProperty("cont", &cont);
     viewer.setOrientation(QmlApplicationViewer::ScreenOrientationAuto);
     viewer.setMainQmlFile(QLatin1String("qml/DiplomkaCentral/main.qml"));
+
 
     XmppClient client;
     Extension ex;
@@ -82,9 +87,7 @@ int main(int argc, char *argv[])
 
     viewer.showExpanded();
 
-    if (!createConnection(&cont)){
-        return 1;
-    }
+
 
     QObject::connect(&client,SIGNAL(refresh(QList<QLandmark>*)),&cont,SLOT(getConnectedUsers(QList<QLandmark>*)));
     QObject::connect(&client,SIGNAL(updateUser(QString,QGeoCoordinate)),&cont,SLOT(updateUserPosition(QString,QGeoCoordinate)));
@@ -93,6 +96,8 @@ int main(int argc, char *argv[])
 
 
     QObject::connect(&cont,SIGNAL(sendObjects(QList<QLandmark>*)),&client,SLOT(sendObjectsToUsers(QList<QLandmark>*)));
+    QObject::connect(&cont,SIGNAL(test()),&client,SLOT(subscribeLocation()));
+    QObject::connect(&cont,SIGNAL(sendMapObject(QLandmark,QList<TerrainUser>)),&client,SLOT(sendObjectToUsers(QLandmark, QList<TerrainUser>)));
 
 
 

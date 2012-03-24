@@ -73,7 +73,6 @@ void DbConnection::getObjectsFromDB(){
     query.prepare(q);
 
 
-
     qDebug()<< query.exec()<<query.executedQuery();
 
     while (query.next()) {
@@ -113,7 +112,7 @@ QString DbConnection::getLastObjectIdFor(QString jid){
 
     QSqlQuery query(db);
 
-    QString q=QString("SELECT lastobject FROM userterrain WHERE jid=\'%1\'").arg(jid);
+    QString q=QString("SELECT lastobject FROM terrainuser WHERE jid=\'%1\'").arg(jid);
 
     query.prepare(q);
 
@@ -187,17 +186,17 @@ QList<QLandmark> DbConnection::getMapObjectsNotSentFor(QString jid){
     }
 
     if(hadNext){
-        updateUserTerrainLastObject(jid,lastId);//nastavuje se nova hodnota pro posledni odeslany objekt
+        updateTerrainUserLastObject(jid,lastId);//nastavuje se nova hodnota pro posledni odeslany objekt
     }
 
     return dbLandmarks;
 
 }
 
-void DbConnection::updateUserTerrainLastObject(QString jid, QString id){
+void DbConnection::updateTerrainUserLastObject(QString jid, QString id){
     QSqlQuery query(db);
 
-    QString q=QString("UPDATE userterrain SET lastobject=%1 WHERE jid=\'%2'").arg(id).arg(jid);
+    QString q=QString("UPDATE terrainuser SET lastobject=%1 WHERE jid=\'%2'").arg(id).arg(jid);
 
     query.prepare(q);
 
@@ -210,7 +209,7 @@ void DbConnection::insertTerrainUser(QString id, QString name, QString surname, 
 
     QSqlQuery query(db);
 
-    QString q=QString("INSERT INTO userterrain (id, name, surname, jid, password, lastobject) VALUES (%1, \'%2\', \'%3\', \'%4\', \'%5\', 0)").arg(id).arg(name).arg(surname).arg(jid).arg(password);
+    QString q=QString("INSERT INTO terrainuser (id, name, surname, jid, password, lastobject) VALUES (%1, \'%2\', \'%3\', \'%4\', \'%5\', 0)").arg(id).arg(name).arg(surname).arg(jid).arg(password);
 
     query.prepare(q);
 
@@ -223,7 +222,7 @@ void DbConnection::insertTerrainUser(QString id, QString name, QString surname, 
 void DbConnection::insertAcl(QString name, QString currentCentralUser){
     QSqlQuery query(db);
 
-    QString q=QString("INSERT INTO acl (name, usercentral) VALUES (\'%1\', %2)").arg(name).arg(currentCentralUser);
+    QString q=QString("INSERT INTO acl (name, centraluser) VALUES (\'%1\', %2)").arg(name).arg(currentCentralUser);
 
     query.prepare(q);
 
@@ -269,7 +268,7 @@ QList<TerrainUser> DbConnection::getAllTerrainUsers(){
 
     QSqlQuery query(db);
 
-    QString q=QString("SELECT id,name,surname,jid FROM userterrain");
+    QString q=QString("SELECT id,name,surname,jid FROM terrainuser");
 
     query.prepare(q);
 
@@ -300,7 +299,7 @@ QList<TerrainUser> DbConnection::getTerrainUsersFromAcl(QString id){
 
     QSqlQuery query(db);
 
-    QString q=QString("SELECT id, name, surname, jid FROM userterrain WHERE acl=%1").arg(id);
+    QString q=QString("SELECT id, name, surname, jid FROM terrainuser WHERE acl=%1").arg(id);
 
     query.prepare(q);
 
@@ -324,11 +323,11 @@ QList<TerrainUser> DbConnection::getTerrainUsersFromAcl(QString id){
 
 }
 
-void DbConnection::updateUserTerrainAcl(QString idUser, QString idAcl){
+void DbConnection::updateTerrainUserAcl(QString idUser, QString idAcl){
 
     QSqlQuery query(db);
 
-    QString q=QString("UPDATE userterrain SET acl=%1 WHERE id=%2").arg(idAcl).arg(idUser);
+    QString q=QString("UPDATE terrainuser SET acl=%1 WHERE id=%2").arg(idAcl).arg(idUser);
 
     query.prepare(q);
 
@@ -344,7 +343,7 @@ void DbConnection::deleteAcl(QString id){
 
     foreach(TerrainUser user, terrainUserList){
 
-        this->updateUserTerrainAcl(user.getId(),"NULL");
+        this->updateTerrainUserAcl(user.getId(),"NULL");
     }
 
     QSqlQuery query(db);
@@ -362,7 +361,7 @@ void DbConnection::deleteTerrainUser(QString id){
 
     QSqlQuery query(db);
 
-    QString q=QString("DELETE FROM userterrain WHERE id=%1").arg(id);
+    QString q=QString("DELETE FROM terrainuser WHERE id=%1").arg(id);
 
     query.prepare(q);
 
