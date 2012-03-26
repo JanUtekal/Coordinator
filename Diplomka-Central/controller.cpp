@@ -6,8 +6,6 @@ Controller::Controller(QObject *parent) :
     landMan= new QLandmarkManager(this);
     landMan->removeLandmarks(landMan->landmarks());
 
-
-
 }
 
 void Controller::getRootObject(QObject *obj){
@@ -28,11 +26,12 @@ void Controller::addPoint(double lat, double lon, int selectedAcl){
         QGeoCoordinate coord(lat,lon);
         lm.setCoordinate(coord);
         lm.setName(QString::number(dbId));
+        lm.setPhoneNumber("0");
         //..
         landMan->saveLandmark(&lm);
 
 
-      //  QString aclId=((Acl)aclList.at(selectedAcl)).getId();
+        //  QString aclId=((Acl)aclList.at(selectedAcl)).getId();
         if(selectedAcl!=-1){
 
             QList<TerrainUser> userList= prepareCustomTerrainUserFromAclList(selectedAcl);
@@ -43,7 +42,7 @@ void Controller::addPoint(double lat, double lon, int selectedAcl){
         }
 
 
-   /*     foreach(QLandmark l, landMan->landmarks()){
+        /*     foreach(QLandmark l, landMan->landmarks()){
             qDebug()<<l.name()<<l.coordinate().latitude()<<l.coordinate().longitude();
 
         }*/
@@ -54,7 +53,7 @@ void Controller::addPoint(double lat, double lon, int selectedAcl){
 
     }
 
-  //  emit sendObjects(&landMan->landmarks());
+    //  emit sendObjects(&landMan->landmarks());
 
 
 
@@ -63,9 +62,67 @@ void Controller::addPoint(double lat, double lon, int selectedAcl){
 
 }
 
-void Controller::selectObject(double lat, double lon){
 
-    QLandmarkIntersectionFilter filter;
+void Controller::addLinePoint(double lat, double lon){
+    lineVector.append(QPointF(lat,lon));
+
+}
+
+void Controller::lineReady(int selectedAcl){
+    qDebug()<<"line ready";
+
+    /*   foreach(QPointF point, lineVector){
+        qDebug()<<point.x()<<point.y();
+    }*/
+    if(lineVector.size()>1){
+
+        int dbId=dbConnection->insertLine(lineVector);
+
+        if(dbId!=-1){
+
+            QLandmark lm;
+            lm.setName("lm");
+            QGeoCoordinate coord(QPointF(lineVector.at(0)).x(),QPointF(lineVector.at(0)).y());
+            lm.setCoordinate(coord);
+            lm.setName(QString::number(dbId));
+        //not necessary for this moment
+            QString coords;
+
+            foreach(QPointF p, lineVector){
+               coords+=QString::number(p.x());
+               coords+=" ";
+               coords+=QString::number(p.y());
+               coords+=",";
+            }
+            coords.chop(1);
+            lm.setDescription(coords);
+           // qDebug()<<lm.description();
+            lm.setPhoneNumber("10");
+            //..
+            landMan->saveLandmark(&lm);
+
+            if(selectedAcl!=-1){
+
+                QList<TerrainUser> userList= prepareCustomTerrainUserFromAclList(selectedAcl);
+
+                emit sendMapObject(lm,userList);
+            } else {
+                qDebug()<<"neoznacen zadny Acl, neposilam";
+            }
+
+        }
+
+
+        //lineVector.clear();
+
+    }
+
+
+}
+
+void Controller::selectObject(QString name){
+
+   /* QLandmarkIntersectionFilter filter;
     QLandmarkProximityFilter proximityFilter;
     QGeoCoordinate center;
     center.setLatitude(lat);
@@ -78,7 +135,10 @@ void Controller::selectObject(double lat, double lon){
 
     QList<QLandmark> lms=landMan->landmarks(filter);
     qDebug()<<"found on this coords"<<lms.length();
-
+*/
+    QLandmarkNameFilter filter;
+    filter.setName(name);
+    QList<QLandmark> lms=landMan->landmarks(filter);
     if(lms.length()>0){
         actualLandmark=lms.at(0);
 
@@ -103,7 +163,7 @@ void Controller::deleteCurrentObject(){
 
 
     if(actualLandmark.name()!=""){
-        int result=dbConnection->deletePoint(actualLandmark.name());
+        int result=dbConnection->deleteObject(actualLandmark.name());
 
         if(result!=-1){
             landMan->removeLandmark(actualLandmark);
@@ -154,7 +214,8 @@ void Controller::fixMapBug(){//ted se nepouziva
 void Controller::createDb(QSqlDatabase db){
     dbConnection= new DbConnection(this);
 
-    connect(dbConnection,SIGNAL(sendAllObjects(QList<QLandmark>*)),this,SLOT(getAllObjects(QList<QLandmark>*)));
+    connect(dbConnection,SIGNAL(sendAllPoints(QList<QLandmark>*)),this,SLOT(getAllPoints(QList<QLandmark>*)));
+    connect(dbConnection,SIGNAL(sendAllLines(QList<QLandmark>*)),this,SLOT(getAllLines(QList<QLandmark>*)));
 
     dbConnection->setDb(db);
 
@@ -162,9 +223,41 @@ void Controller::createDb(QSqlDatabase db){
 }
 
 
-void Controller::getAllObjects(QList<QLandmark> *dbLandmarks){
+void Controller::getAllPoints(QList<QLandmark> *dbLandmarks){
 
-    qDebug()<<"saving landmarks" << landMan->saveLandmarks(dbLandmarks);
+    landMan->saveLandmarks(dbLandmarks);
+}
+
+void Controller::getAllLines(QList<QLandmark> *dbLandmarks){
+
+  //  qDebug()<<"got LINES";
+    dbLineLandmarks=dbLandmarks;
+    addLineFromDB();
+
+
+
+}
+
+void Controller::addLineFromDB(){
+    if(dbLineLandmarks->length()>0){
+        QLandmark lm=dbLineLandmarks->takeFirst();
+        QString coords=lm.description();
+
+        QStringList coordList=coords.split(",");
+
+
+        foreach(QString coord, coordList){
+            QStringList c=coord.split(" ");
+            QPointF point(c.at(1).toDouble(), c.at(0).toDouble());
+            lineVector.append(point);
+
+        }
+        lm.setCoordinate(QGeoCoordinate(lineVector.at(0).x(), lineVector.at(1).y()));
+        landMan->saveLandmark(&lm);
+
+
+    }
+
 }
 
 void Controller::getConnectedUsers(QList<QLandmark> *userLandmarks){
@@ -185,10 +278,10 @@ void Controller::updateUserPosition(QString jid, QGeoCoordinate coordinate){
     } else {
 
         fixMapBug();
-       // QLandmarkId id=lms.first().landmarkId();
+        // QLandmarkId id=lms.first().landmarkId();
         qDebug()<< landMan->removeLandmark( lms.at(0));
         QLandmark *updatedLm = new QLandmark();
-      // updatedLm->setLandmarkId(id);
+        // updatedLm->setLandmarkId(id);
         updatedLm->setName(jid);
         updatedLm->setPhoneNumber("1");
         updatedLm->setCoordinate(coordinate);
@@ -210,10 +303,10 @@ void Controller::setUserOffline(QString jid){
     } else {
 
         fixMapBug();
-      //  QLandmarkId id=lms.first().landmarkId();
+        //  QLandmarkId id=lms.first().landmarkId();
         qDebug()<< landMan->removeLandmark( lms.at(0));
         QLandmark *updatedLm = new QLandmark();
-      // updatedLm->setLandmarkId(id);
+        // updatedLm->setLandmarkId(id);
         updatedLm->setName(jid);
         updatedLm->setPhoneNumber("2");
         updatedLm->setCoordinate(lms.at(0).coordinate());
@@ -240,8 +333,8 @@ void Controller::sendMapObjects(){
 }
 
 void Controller::testButtonOperation(){
-   // sendMapObjects();
-        emit test();
+    // sendMapObjects();
+    emit test();
 }
 
 void Controller::createNewTerrainUser(QString id, QString name, QString surname, QString jid, QString password){
@@ -251,7 +344,7 @@ void Controller::createNewTerrainUser(QString id, QString name, QString surname,
 }
 
 void Controller::createNewAcl(QString name){
-   // qDebug()<<name;
+    // qDebug()<<name;
     QString currentCentralUser="1";
 
     dbConnection->insertAcl(name, currentCentralUser);
@@ -346,5 +439,60 @@ QList<TerrainUser> Controller::prepareCustomTerrainUserFromAclList(int i){
 
     QString id =((Acl)aclList.at(i)).getId();
     return dbConnection->getTerrainUsersFromAcl(id);
+
+}
+/*
+QList<QGeoCoordinate *> Controller::getLineGeometry(QString textGeometry){
+
+        QStringList points=textGeometry.split("/");
+        QList<QGeoCoordinate* > coordinates;
+
+        foreach(QString point, points){
+            qDebug()<<point;
+            QStringList coords=point.split(",");
+
+            QGeoCoordinate* coordinate = new QGeoCoordinate();
+
+
+            coordinate->setLatitude(coords.at(0).toDouble());
+
+            coordinate->setLongitude(coords.at(1).toDouble());
+
+            coordinates.append(coordinate);
+qDebug()<<"2";
+        }
+
+
+
+
+        return coordinates;
+}
+*/
+
+int Controller::getLineCoordinatesNum(){
+    qDebug()<<"SIZE"<<lineVector.size();
+    return lineVector.size();
+}
+
+double Controller::getLineCoordinateLatAt(int i){
+
+    return lineVector.at(i).x();
+
+
+
+}
+
+double Controller::getLineCoordinateLonAt(int i){
+
+    double y=lineVector.at(i).y();
+
+
+    if(i==lineVector.size()-1){
+
+        lineVector.clear();
+        addLineFromDB();
+    }
+
+    return y;
 
 }

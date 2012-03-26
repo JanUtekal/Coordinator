@@ -22,7 +22,11 @@ public:
     void setDb(QSqlDatabase db);
 
     int insertPoint(double lat, double lon);
-    int deletePoint(QString id);
+    int deleteObject(QString id);
+
+    int insertLine(QVector<QPointF> lineVector);
+
+
     void getObjectsFromDB();
     QString getLastObjectIdFor(QString jid);
     QList<QLandmark> getMapObjectsNotSentFor(QString jid);
@@ -40,7 +44,8 @@ private:
     QSqlDatabase db;
 
 signals:
-    void sendAllObjects(QList<QLandmark> *dbLandmarks);
+    void sendAllPoints(QList<QLandmark> *dbLandmarks);
+    void sendAllLines(QList<QLandmark> *dbLandmarks2);
     
 public slots:
     

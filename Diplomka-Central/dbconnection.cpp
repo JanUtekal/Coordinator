@@ -42,11 +42,11 @@ int DbConnection::insertPoint(double lat, double lon){
     return insertedId;
 }
 
-int DbConnection::deletePoint(QString id){
+int DbConnection::deleteObject(QString id){
 
     QSqlQuery query(db);
 
-    QString q=QString("DELETE FROM point WHERE id=%1").arg(id);
+    QString q=QString("DELETE FROM mapobject WHERE id=%1").arg(id);
 
     query.prepare(q);
 
@@ -62,12 +62,53 @@ int DbConnection::deletePoint(QString id){
 
 }
 
+int DbConnection::insertLine(QVector<QPointF> lineVector){
+    int insertedId=-1;
+
+    QSqlQuery query(db);
+
+    QString q=QString("INSERT INTO line (coordinates) VALUES (ST_GeographyFromText('SRID=4326;LINESTRING(");
+
+    int i=0;
+    foreach(QPointF point, lineVector){
+        i++;
+        q+=QString::number(point.y());
+        q+=" ";
+        q+=QString::number(point.x());
+
+        if(i<lineVector.size()){
+            q+=",";
+        }
+    }
+
+    q+=")')) RETURNING id";
+    query.prepare(q);
+
+
+
+    qDebug()<< query.exec()<<query.executedQuery();
+
+    while (query.next()) {
+        //  int id = query.value(0).toInt();
+        //  QString name= query.value(1).toString();
+
+        qDebug()<<query.value(0).toInt();
+
+        insertedId=query.value(0).toInt();
+    }
+
+    return insertedId;
+}
+
+
+
 void DbConnection::getObjectsFromDB(){
 
     QList<QLandmark> *dbLandmarks = new QList<QLandmark>();
 
     QSqlQuery query(db);
 
+    //point query
     QString q=QString("SELECT id,ST_AsText(coordinates::geometry) from point");
 
     query.prepare(q);
@@ -93,7 +134,7 @@ void DbConnection::getObjectsFromDB(){
             QGeoCoordinate coordinate(lat,lon);
 
 
-            qDebug()<<lat<< lon<<coordinate.latitude();
+            //qDebug()<<lat<< lon<<coordinate.latitude();
 
             lm.setCoordinate(coordinate);
         }
@@ -101,8 +142,56 @@ void DbConnection::getObjectsFromDB(){
         dbLandmarks->append(lm);
 
     }
+
+    emit sendAllPoints(dbLandmarks);
+
+
+
+    //line query
+    QList<QLandmark> *dbLandmarks2 = new QList<QLandmark>();
+    q=QString("SELECT id,ST_AsText(coordinates::geometry) from line");
+
+    query.prepare(q);
+
+
+    qDebug()<< query.exec()<<query.executedQuery();
+
+    while (query.next()) {
+        QString id = query.value(0).toString();
+        QString location= query.value(1).toString();
+
+        //qDebug()<<id<<location;
+
+        QLandmark lm;
+        lm.setName(id);
+
+        if(location.contains("LINESTRING")){
+
+            QString coords=location.remove(0,11);//=location.split("LINESTRING(").
+            coords.chop(1);
+
+    //  qDebug()<<coords;
+            lm.setDescription(coords);
+            lm.setPhoneNumber("10");
+            //QGeoCoordinate coordinate(lat,lon);
+
+
+
+
+          //  lm.setCoordinate(coordinate);
+        }
+
+        dbLandmarks2->append(lm);
+
+    }
+
+
     qDebug()<<"sending";
-    emit sendAllObjects(dbLandmarks);
+
+    sendAllLines(dbLandmarks2);
+
+
+
 
 
 
@@ -174,7 +263,7 @@ QList<QLandmark> DbConnection::getMapObjectsNotSentFor(QString jid){
             QGeoCoordinate coordinate(lat,lon);
 
 
-            qDebug()<<lat<< lon<<coordinate.latitude();
+           // qDebug()<<lat<< lon<<coordinate.latitude();
 
             lm.setCoordinate(coordinate);
         }

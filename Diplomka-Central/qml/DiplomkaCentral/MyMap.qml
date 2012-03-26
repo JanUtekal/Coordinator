@@ -12,6 +12,8 @@ Rectangle {
     property alias mapType: map.mapType
 
     property bool pointButtonClicked: false
+    property bool lineButtonClicked: false
+
     property bool objectEverSelected:false //slouzi ke kontrole jestli byl nekdy nejaky mapovy objekt vybran
 
 
@@ -26,7 +28,12 @@ Rectangle {
     //   property list<Item> ar
     function deselect(){
         if(objectEverSelected){
-            cont.getSelectedMapObject().color="green";
+            if(cont.getSelectedMapObject().type<10){
+                cont.getSelectedMapObject().color="green";
+            } else {
+                cont.getSelectedMapObject().border.color="red";
+            }
+
             cont.deselectObject();
         }
     }
@@ -65,15 +72,20 @@ Rectangle {
 
 
 
+
                 MapCircle {
+
                     property double lat:landmark.coordinate.latitude
                     property double lon:landmark.coordinate.longitude
-                    property int type: landmark.phoneNumber=="1" ? 1 : landmark.phoneNumber=="2" ? 2 : 0
+                    property string name:landmark.name
+                    property int type: -1
 
-                    id: color1
-                    color: type== 0 ? "green" : type== 2 ? "grey" : "blue"
+                    id: point
+                    //   color: type== 0 ? "green" : type== 2 ? "grey" : "blue"
                     radius: 300
                     center: landmark.coordinate
+
+                    //    visible: type<10 ? true : false
 
                     MapMouseArea{
                         //anchors.fill: parent
@@ -86,9 +98,9 @@ Rectangle {
 
                                 deselect();
 
-                                color1.color="yellow";
+                                point.color="yellow";
                                 cont.setSelectedMapObject(parent);
-                                cont.selectObject(lat,lon);
+                                cont.selectObject(name);
                                 objectEverSelected=true;
 
                             }
@@ -98,7 +110,119 @@ Rectangle {
 
                     }
 
+                    Component.onCompleted: {
+                        type= parseInt(landmark.phoneNumber);
+                        console.log("TYPE", type,landmark.phoneNumber)
+                        if(type<10){
+
+                            if(type==0){
+
+                                color="green";
+                            }
+
+                            if(type==1){
+
+                                color="blue";
+                            }
+
+                            if(type==2){
+
+                                color="grey";
+                            }
+                        } else {
+                            if(type==10){
+
+                                visible=false;
+                                border.width=0
+                                //  color="red"
+                            }
+                        }
+
+
+                    }
+
                 }
+
+
+            }
+        }
+
+
+        MapObjectView {
+
+            id: allLandmarks2
+            model: landmarkModel
+            delegate: Component {
+
+
+
+
+
+
+
+
+                MapPolyline {
+                    // property double lat:landmark.coordinate.latitude
+                    // property double lon:landmark.coordinate.longitude
+                    property string name: landmark.name
+                    property int type: -1
+
+                    id: line
+                    border {color: "red"; width: 4}
+                    visible:false
+
+
+
+                    MapMouseArea{
+                        //anchors.fill: parent
+                        //acceptedButtons: Qt.LeftButton
+                        onClicked: {
+                            if(!lineButtonClicked){
+                                if(type==10){
+
+                                    //console.log("bla");
+
+                                    deselect();
+
+                                    line.border.color="yellow";
+                                    cont.setSelectedMapObject(parent);
+                                    cont.selectObject(name);
+                                    objectEverSelected=true;
+
+                                }
+                            }
+
+
+                        }
+
+                    }
+
+
+
+                    Component.onCompleted: {
+
+
+                        type= parseInt(landmark.phoneNumber);
+
+
+                        if(type==10){
+                            var num=cont.getLineCoordinatesNum();
+                            for(var i=0; i<num;i++){
+                                var coord = Qt.createQmlObject('import Qt 4.7; import QtMobility.location 1.2; Coordinate{}', map, "coord"+i);
+
+                                coord.latitude=cont.getLineCoordinateLatAt(i);
+                                coord.longitude=cont.getLineCoordinateLonAt(i);
+                                line.addCoordinate(coord);
+                                visible=true;
+                            }
+
+                        }
+                    }
+
+
+                }
+
+
 
             }
         }
@@ -141,11 +265,18 @@ Rectangle {
 
                     cont.addPoint(map.toCoordinate(Qt.point(mouse.x,mouse.y)).latitude, map.toCoordinate(Qt.point(mouse.x,mouse.y)).longitude, userManagement.selectedMapAcl);
                     pointButtonClicked=false;
-                } else {
+                }
+
+                if(lineButtonClicked) {
 
 
-                    //    if (mouse.button == Qt.RightButton){
-                    //cont.selectObject(map.toCoordinate(Qt.point(mouse.x,mouse.y)).latitude, map.toCoordinate(Qt.point(mouse.x,mouse.y)).longitude);
+                    if (mouse.button == Qt.LeftButton){
+                        cont.addLinePoint(map.toCoordinate(Qt.point(mouse.x,mouse.y)).latitude, map.toCoordinate(Qt.point(mouse.x,mouse.y)).longitude);
+                    }
+                    else{
+                        cont.lineReady(userManagement.selectedMapAcl);
+                        lineButtonClicked=false;
+                    }
                 }
                 deselect();
 
@@ -160,36 +291,57 @@ Rectangle {
         }
 
     }
-    Button{
-        id: pointButton
-        width: 120
-        height: 50
+    Column{
         x: 20
         y: 20
-        z: 2
-        label: "Přidat bod"
+        spacing: 20
+        Button{
+            id: pointButton
+            width: 120
+            height: 50
 
-        onButtonClick: {
-            pointButtonClicked=true;
+            z: 2
+            label: "Přidat bod"
 
-        }
+            onButtonClick: {
+                pointButtonClicked=true;
+                lineButtonClicked=false;
 
-    }
-
-    Button{
-        id: testButton
-        width: 120
-        height: 50
-        x: 20
-        y: 90
-        z: 2
-        label: "test"
-
-        onButtonClick: {
-            cont.testButtonOperation();
+            }
 
         }
 
+        Button{
+            id: lineButton
+            width: 120
+            height: 50
+
+            z: 2
+            label: "Přidat trasu"
+
+            onButtonClick: {
+                lineButtonClicked=true;
+                pointButtonClicked=false;
+                //cont.testButtonOperation();
+
+            }
+
+        }
+
+        Button{
+            id: testButton
+            width: 120
+            height: 50
+
+            z: 2
+            label: "test"
+
+            onButtonClick: {
+                cont.testButtonOperation();
+
+            }
+
+        }
     }
 
 
@@ -216,7 +368,7 @@ Rectangle {
     AclListMap{
         width: 150
         height: 350
-     //   color: userManagement.color
+        //   color: userManagement.color
 
         x: parent.width-170
         y: parent.height-450

@@ -115,6 +115,10 @@ Rectangle {
             newTerrainUser.visible=false;
             cont.createNewTerrainUser(textField0.input, textField1.input, textField2.input, textField3.input, textField4.input);
             userManegement.color="lightgrey"
+            userManagement.selectedUser=-1;
+            cont.prepareTerrainUserList();
+
+
         }
 
     }

@@ -15,6 +15,7 @@
 #include <QLandmarkNameFilter>
 #include "acl.h"
 #include "terrainuser.h"
+#include <QDeclarativeListProperty>
 
 QTM_USE_NAMESPACE
 
@@ -30,7 +31,11 @@ public:
     QLandmark actualLandmark;
     QLandmark pom;
     Q_INVOKABLE void addPoint(double lat, double lon, int selectedAcl);
-    Q_INVOKABLE void selectObject(double lat, double lon);
+    Q_INVOKABLE void addLinePoint(double lat, double lon);
+    Q_INVOKABLE void lineReady(int selectedAcl);
+
+
+    Q_INVOKABLE void selectObject(QString name);
     Q_INVOKABLE void deselectObject();
 
     Q_INVOKABLE void deleteCurrentObject();
@@ -65,9 +70,18 @@ public:
     Q_INVOKABLE void setTerrainUserAcl(int i, int j);
     Q_INVOKABLE void unsetTerrainUserAcl(int i);
 
+
+
+  //  Q_INVOKABLE QList<QGeoCoordinate *> getLineGeometry(QString textGeometry);
+
+    Q_INVOKABLE int getLineCoordinatesNum();
+    Q_INVOKABLE double getLineCoordinateLatAt(int i);
+    Q_INVOKABLE double getLineCoordinateLonAt(int i);
+
 private:
     QObject *object;
     QVariant selectedMapObject;
+   // int recentlyAddedLine;//while adding lines from db it is necessary to do it one after another
 
     DbConnection *dbConnection;
     QList<Acl> aclList;
@@ -79,7 +93,8 @@ private:
     void sendMapObjects();
     QList<TerrainUser> prepareCustomTerrainUserFromAclList(int i);
 
-
+    QVector<QPointF> lineVector;
+    QList<QLandmark> *dbLineLandmarks;
 
 signals:
     void sendObjects(QList<QLandmark> *landmarks);
@@ -90,11 +105,14 @@ signals:
     void test();
     
 public slots:
-    void getAllObjects(QList<QLandmark> *dbLandmarks);
+    void getAllPoints(QList<QLandmark> *dbLandmarks);
+    void getAllLines(QList<QLandmark> *dbLandmarks);
     void getConnectedUsers(QList<QLandmark> *userLandmarks);
 
     void updateUserPosition(QString jid, QGeoCoordinate coordinate);
     void setUserOffline(QString jid);
+
+    void addLineFromDB();
     
 };
 

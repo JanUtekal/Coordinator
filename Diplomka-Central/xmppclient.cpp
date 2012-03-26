@@ -153,9 +153,14 @@ void XmppClient::sendObjectToUsers(QLandmark landmark, QList<TerrainUser> userLi
 
 
     foreach(TerrainUser user, userList){
-
-        QString message=QString("POINT(%1 %2)").arg(landmark.coordinate().latitude()).arg(landmark.coordinate().longitude());
-
+        QString message;
+        if(landmark.phoneNumber().toInt()<10){
+            message=QString("POINT(%1 %2)").arg(landmark.coordinate().latitude()).arg(landmark.coordinate().longitude());
+        } else {
+            message="LINESTRING(";
+            message+=landmark.description();
+            message+=")";
+        }
         QXmppClient::sendMessage(user.getJid(),message);
 
 
