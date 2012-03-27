@@ -34,12 +34,17 @@ public:
     Q_INVOKABLE int getMapPointNum();//pocet objektu ve vListu
     Q_INVOKABLE void clearVlist();
 
+    Q_INVOKABLE int getLineCoordinatesNum();
+    Q_INVOKABLE double getLineCoordinateLatAt(int i);
+    Q_INVOKABLE double getLineCoordinateLonAt(int i);
+
 private:
     float myLat;
     float myLon;
 
     QLandmarkManager *landMan;
         QLandmark pom;
+    QVector<QPointF> lineVector;
 
     void fixMapBug();
 
@@ -52,6 +57,7 @@ public slots:
     void updateMyPosition(double lon, double lat);
 
     void getPointFromCentral(QString point);
+    void getLineFromCentral(QString line);
     void updateUserPosition(QString jid, QGeoCoordinate coordinate);
         void setUserOffline(QString jid);
 

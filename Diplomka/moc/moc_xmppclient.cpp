@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'xmppclient.h'
 **
-** Created: Mon 27. Feb 21:13:23 2012
+** Created: Tue 27. Mar 17:51:47 2012
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.4)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -23,38 +23,44 @@ static const uint qt_meta_data_xmppClient[] = {
        5,       // revision
        0,       // classname
        0,    0, // classinfo
-       8,   14, // methods
+      11,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
        0,       // flags
-       3,       // signalCount
+       5,       // signalCount
 
  // signals: signature, parameters, type, tag, flags
       12,   11,   11,   11, 0x05,
       28,   22,   11,   11, 0x05,
-      73,   58,   11,   11, 0x05,
+      63,   58,   11,   11, 0x05,
+     107,   92,   11,   11, 0x05,
+     146,  142,   11,   11, 0x05,
 
  // slots: signature, parameters, type, tag, flags
-     108,   11,   11,   11, 0x0a,
-     134,  126,   11,   11, 0x0a,
-     177,  160,   11,   11, 0x0a,
-     219,  210,   11,   11, 0x0a,
-     267,  251,   11,   11, 0x0a,
+     170,   11,   11,   11, 0x0a,
+     196,  188,   11,   11, 0x0a,
+     239,  222,   11,   11, 0x0a,
+     281,  272,   11,   11, 0x0a,
+     329,  313,   11,   11, 0x0a,
+     375,   11,   11,   11, 0x0a,
 
        0        // eod
 };
 
 static const char qt_meta_stringdata_xmppClient[] = {
     "xmppClient\0\0refresh()\0point\0"
-    "sendPointFromCentral(QString)\0"
+    "sendPointFromCentral(QString)\0line\0"
+    "sendLineFromCentral(QString)\0"
     "jid,coordinate\0updateUser(QString,QGeoCoordinate)\0"
+    "jid\0setUserOffline(QString)\0"
     "clientConnected()\0message\0"
     "messageRecv(QXmppMessage)\0bareJid,resource\0"
     "presenceChanged(QString,QString)\0"
     "presence\0presenceReceived(QXmppPresence)\0"
     "jid,lat,lon,acc\0"
     "getNewCoords(QString,QString,QString,QString)\0"
+    "subscribeLocation()\0"
 };
 
 const QMetaObject xmppClient::staticMetaObject = {
@@ -88,15 +94,18 @@ int xmppClient::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
         switch (_id) {
         case 0: refresh(); break;
         case 1: sendPointFromCentral((*reinterpret_cast< QString(*)>(_a[1]))); break;
-        case 2: updateUser((*reinterpret_cast< QString(*)>(_a[1])),(*reinterpret_cast< QGeoCoordinate(*)>(_a[2]))); break;
-        case 3: clientConnected(); break;
-        case 4: messageRecv((*reinterpret_cast< const QXmppMessage(*)>(_a[1]))); break;
-        case 5: presenceChanged((*reinterpret_cast< const QString(*)>(_a[1])),(*reinterpret_cast< const QString(*)>(_a[2]))); break;
-        case 6: presenceReceived((*reinterpret_cast< const QXmppPresence(*)>(_a[1]))); break;
-        case 7: getNewCoords((*reinterpret_cast< QString(*)>(_a[1])),(*reinterpret_cast< QString(*)>(_a[2])),(*reinterpret_cast< QString(*)>(_a[3])),(*reinterpret_cast< QString(*)>(_a[4]))); break;
+        case 2: sendLineFromCentral((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 3: updateUser((*reinterpret_cast< QString(*)>(_a[1])),(*reinterpret_cast< QGeoCoordinate(*)>(_a[2]))); break;
+        case 4: setUserOffline((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 5: clientConnected(); break;
+        case 6: messageRecv((*reinterpret_cast< const QXmppMessage(*)>(_a[1]))); break;
+        case 7: presenceChanged((*reinterpret_cast< const QString(*)>(_a[1])),(*reinterpret_cast< const QString(*)>(_a[2]))); break;
+        case 8: presenceReceived((*reinterpret_cast< const QXmppPresence(*)>(_a[1]))); break;
+        case 9: getNewCoords((*reinterpret_cast< QString(*)>(_a[1])),(*reinterpret_cast< QString(*)>(_a[2])),(*reinterpret_cast< QString(*)>(_a[3])),(*reinterpret_cast< QString(*)>(_a[4]))); break;
+        case 10: subscribeLocation(); break;
         default: ;
         }
-        _id -= 8;
+        _id -= 11;
     }
     return _id;
 }
@@ -115,9 +124,23 @@ void xmppClient::sendPointFromCentral(QString _t1)
 }
 
 // SIGNAL 2
+void xmppClient::sendLineFromCentral(QString _t1)
+{
+    void *_a[] = { 0, const_cast<void*>(reinterpret_cast<const void*>(&_t1)) };
+    QMetaObject::activate(this, &staticMetaObject, 2, _a);
+}
+
+// SIGNAL 3
 void xmppClient::updateUser(QString _t1, QGeoCoordinate _t2)
 {
     void *_a[] = { 0, const_cast<void*>(reinterpret_cast<const void*>(&_t1)), const_cast<void*>(reinterpret_cast<const void*>(&_t2)) };
-    QMetaObject::activate(this, &staticMetaObject, 2, _a);
+    QMetaObject::activate(this, &staticMetaObject, 3, _a);
+}
+
+// SIGNAL 4
+void xmppClient::setUserOffline(QString _t1)
+{
+    void *_a[] = { 0, const_cast<void*>(reinterpret_cast<const void*>(&_t1)) };
+    QMetaObject::activate(this, &staticMetaObject, 4, _a);
 }
 QT_END_MOC_NAMESPACE

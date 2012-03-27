@@ -44,6 +44,7 @@ int main(int argc, char *argv[])
 
     QObject::connect(&client,SIGNAL(refresh()),&iface,SLOT(refreshPoints()));
     QObject::connect(&client,SIGNAL(sendPointFromCentral(QString)),&iface,SLOT(getPointFromCentral(QString)));
+    QObject::connect(&client,SIGNAL(sendLineFromCentral(QString)),&iface,SLOT(getLineFromCentral(QString)));
   //  viewer.rootContext()->setContextProperty("iface", &iface);
 
     QObject::connect(&client,SIGNAL(setUserOffline(QString)),&iface,SLOT(setUserOffline(QString)));

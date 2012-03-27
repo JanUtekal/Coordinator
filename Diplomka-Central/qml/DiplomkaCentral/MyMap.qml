@@ -16,7 +16,7 @@ Rectangle {
 
     property bool objectEverSelected:false //slouzi ke kontrole jestli byl nekdy nejaky mapovy objekt vybran
 
-
+    property bool lostLineCoordinate: false//fix of a qml bug
     // property bool deleteButtonClicked: false
 
     // property variant array:[]
@@ -227,6 +227,15 @@ Rectangle {
             }
         }
 
+        MapPolyline {
+
+
+            id: tmpLine
+            border {color: "orange"; width: 3}
+            visible:false
+
+
+        }
 
         MapMouseArea {
             id: mousearea
@@ -272,10 +281,42 @@ Rectangle {
 
                     if (mouse.button == Qt.LeftButton){
                         cont.addLinePoint(map.toCoordinate(Qt.point(mouse.x,mouse.y)).latitude, map.toCoordinate(Qt.point(mouse.x,mouse.y)).longitude);
+
+                  //      var coord = Qt.createQmlObject('import Qt 4.7; import QtMobility.location 1.2; Coordinate{}', map, "coord");
+
+                      //  coord.latitude=cont.getLineCoordinateLatAt(i);
+                      //  coord.longitude=cont.getLineCoordinateLonAt(i);
+
+
+                        tmpLine.addCoordinate(map.toCoordinate(Qt.point(mouse.x,mouse.y)));
+                        if(lostLineCoordinate){
+                            tmpLine.removeCoordinate(tmpLine.path[0]);
+                            lostLineCoordinate=false;
+                        } else {
+                           tmpLine.visible=true;
+                        }
+
+
                     }
                     else{
                         cont.lineReady(userManagement.selectedMapAcl);
+                        console.log("hh",tmpLine.path.length)
+                        tmpLine.visible=false;
+
+                        while(tmpLine.path.length!==1){
+
+                            tmpLine.removeCoordinate(tmpLine.path[0]);
+
+
+                        }
+
+
+
+                        console.log("hh",tmpLine.path.length)
                         lineButtonClicked=false;
+                        lostLineCoordinate =true;
+
+
                     }
                 }
                 deselect();

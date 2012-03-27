@@ -105,8 +105,12 @@ void xmppClient::presenceChanged(const QString& bareJid,
 void xmppClient::messageRecv(const QXmppMessage& message){
 
     if(message.body().contains("POINT")){
-       // qDebug()<<message.body();
+        qDebug()<<message.body();
         emit sendPointFromCentral(message.body());
+    } else if(message.body().contains("LINESTRING")) {
+        QString coords=message.body().remove(0,11);//=location.split("LINESTRING(").
+        coords.chop(1);
+        emit sendLineFromCentral(coords);
     } else {
 
     }

@@ -32,7 +32,7 @@ void LocationWatcher::disable()
 
 void LocationWatcher::positionUpdated(const QGeoPositionInfo &info)
 {
-   // qDebug()<<"update";
+   //qDebug()<<"update";
     if (info.isValid()) {
         emit updateMyLocation(info.coordinate().longitude(),info.coordinate().latitude());
        // qDebug()<<"WAT" << info;

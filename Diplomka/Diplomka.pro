@@ -66,10 +66,10 @@ LIBS +=-LC:/projects/qxmpp/lib -lqxmpp_d
 
 
 
-#contains(MEEGO_EDITION,harmattan) {
-#    INCLUDEPATH += $$quote(C:/projects/qxmpp-0.3.91/src)
-#    LIBS +=-LC:/projects/qxmpp-0.3.91/lib -lqxmpp
-#}
+contains(MEEGO_EDITION,harmattan) {
+    INCLUDEPATH += $$quote(C:/projects/qxmpp/src)
+    LIBS +=-LC:/projects/qxmpp/lib -lqxmpp
+}
 
 
 

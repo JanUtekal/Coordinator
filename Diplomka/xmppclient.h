@@ -57,6 +57,7 @@ private:
 signals:
     void refresh();
     void sendPointFromCentral(QString point);
+    void sendLineFromCentral(QString line);
     void updateUser(QString jid, QGeoCoordinate coordinate);
     void setUserOffline(QString jid);
 

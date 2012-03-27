@@ -51,7 +51,7 @@ Rectangle {
 
       }
 
-      MapObjectView {
+   /*   MapObjectView {
 
           id: allLandmarks
           model: landmarkModel
@@ -81,7 +81,127 @@ Rectangle {
 
               }
 
+          }*/
+      MapObjectView {
+
+          id: allLandmarks
+          model: landmarkModel
+          delegate: Component {
+
+
+
+
+
+              MapCircle {
+
+                  property double lat:landmark.coordinate.latitude
+                  property double lon:landmark.coordinate.longitude
+                  property string name:landmark.name
+                  property int type: -1
+
+                  id: point
+                  //   color: type== 0 ? "green" : type== 2 ? "grey" : "blue"
+                  radius: 300
+                  center: landmark.coordinate
+
+                  //    visible: type<10 ? true : false
+
+
+                  Component.onCompleted: {
+                      type= parseInt(landmark.phoneNumber);
+                      console.log("TYPE", type,landmark.phoneNumber)
+                      if(type<10){
+
+                          if(type==0){
+
+                              color="green";
+                          }
+
+                          if(type==1){
+
+                              color="blue";
+                          }
+
+                          if(type==2){
+
+                              color="grey";
+                          }
+                      } else {
+                          if(type==10){
+
+                              visible=false;
+                              border.width=0
+                              //  color="red"
+                          }
+                      }
+
+
+                  }
+
+              }
+
+
           }
+      }
+
+
+
+      MapObjectView {
+
+          id: allLandmarks2
+          model: landmarkModel
+          delegate: Component {
+
+
+
+
+
+
+
+
+              MapPolyline {
+                  // property double lat:landmark.coordinate.latitude
+                  // property double lon:landmark.coordinate.longitude
+                  property string name: landmark.name
+                  property int type: -1
+
+                  id: line
+                  border {color: "red"; width: 4}
+                  visible:true
+
+
+
+
+
+                  Component.onCompleted: {
+
+
+                      type= parseInt(landmark.phoneNumber);
+
+
+                      if(type==10){
+                          var num=iface.getLineCoordinatesNum();
+                          for(var i=0; i<num;i++){
+                              var coord = Qt.createQmlObject('import Qt 4.7; import QtMobility.location 1.2; Coordinate{}', map, "coord"+i);
+
+                              coord.latitude=iface.getLineCoordinateLatAt(i);
+                              coord.longitude=iface.getLineCoordinateLonAt(i);
+                              line.addCoordinate(coord);
+                              line.visible=true;
+
+                              console.log("Line length", line.path.length)
+                          }
+
+                      }
+                  }
+
+
+              }
+
+
+
+          }
+
       }
 
    }

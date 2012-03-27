@@ -86,21 +86,43 @@ void Interface::getPointFromCentral(QString point){
     double lat=point.split(" ").at(0).split("(").at(1).toDouble();
     double lon=point.split(" ").at(1).split(")").at(0).toDouble();
 
-    qDebug()<<"1";
+   // qDebug()<<"1";
     QLandmark lm;
     lm.setName("lm");
     QGeoCoordinate coord(lat,lon);
     lm.setCoordinate(coord);
-    qDebug()<<"1";
+  //  qDebug()<<"1";
     //..
     qDebug()<< landMan->saveLandmark(&lm);
     qDebug()<<landMan->errorString()<<landMan->error();
 
     qDebug()<<"saving landmark"<<landMan->landmarks().length();
     foreach(QLandmark l, landMan->landmarks()){
-        qDebug()<<l.name()<<l.coordinate().latitude()<<l.coordinate().longitude();
+  //      qDebug()<<l.name()<<l.coordinate().latitude()<<l.coordinate().longitude();
 
     }
+ //   landMan->exportLandmarks("landmarks",QLandmarkManager::Lmx);
+}
+
+void Interface::getLineFromCentral(QString line){
+
+    QLandmark lm;
+    lm.setDescription(line);
+    lm.setName("line");
+    lm.setPhoneNumber("10");
+qDebug()<<line;
+    QStringList coordList=line.split(",");
+
+
+    foreach(QString coord, coordList){
+        QStringList c=coord.split(" ");
+        QPointF point(c.at(0).toDouble(), c.at(1).toDouble());
+        lineVector.append(point);
+
+    }
+    lm.setCoordinate(QGeoCoordinate(lineVector.at(0).x(), lineVector.at(1).y()));
+    qDebug()<< landMan->saveLandmark(&lm);
+    qDebug()<<landMan->errorString()<<landMan->error();
  //   landMan->exportLandmarks("landmarks",QLandmarkManager::Lmx);
 }
 
@@ -178,4 +200,32 @@ void Interface::setUserOffline(QString jid){
 
 
     }
+}
+
+int Interface::getLineCoordinatesNum(){
+    qDebug()<<"SIZE"<<lineVector.size();
+    return lineVector.size();
+}
+
+double Interface::getLineCoordinateLatAt(int i){
+
+    return lineVector.at(i).x();
+
+
+
+}
+
+double Interface::getLineCoordinateLonAt(int i){
+
+    double y=lineVector.at(i).y();
+    qDebug()<<"getting y"<<i<<y;
+
+    if(i==lineVector.size()-1){
+
+        lineVector.clear();
+        //addLineFromDB();
+    }
+
+    return y;
+
 }
