@@ -97,7 +97,7 @@ int main(int argc, char *argv[])
 
     QObject::connect(&cont,SIGNAL(sendObjects(QList<QLandmark>*)),&client,SLOT(sendObjectsToUsers(QList<QLandmark>*)));
     QObject::connect(&cont,SIGNAL(test()),&client,SLOT(subscribeLocation()));
-    QObject::connect(&cont,SIGNAL(sendMapObject(QLandmark,QList<TerrainUser>)),&client,SLOT(sendObjectToUsers(QLandmark, QList<TerrainUser>)));
+    QObject::connect(&cont,SIGNAL(sendMapObject(QString,QList<TerrainUser>)),&client,SLOT(sendObjectToUsers(QString,QList<TerrainUser>)));
 
 
 

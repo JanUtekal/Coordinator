@@ -180,12 +180,12 @@ Rectangle {
 
 
                       if(type==10){
-                          var num=iface.getLineCoordinatesNum();
+                          var num=cont.getLineCoordinatesNum();
                           for(var i=0; i<num;i++){
                               var coord = Qt.createQmlObject('import Qt 4.7; import QtMobility.location 1.2; Coordinate{}', map, "coord"+i);
 
-                              coord.latitude=iface.getLineCoordinateLatAt(i);
-                              coord.longitude=iface.getLineCoordinateLonAt(i);
+                              coord.latitude=cont.getLineCoordinateLatAt(i);
+                              coord.longitude=cont.getLineCoordinateLonAt(i);
                               line.addCoordinate(coord);
                               line.visible=true;
 
@@ -267,16 +267,16 @@ Rectangle {
    }
 /*
     Connections {
-        target: iface
+        target: cont
 
         onRefresh:{
 
-            for(var i=0;i<iface.getMapPointNum();i++){
-                map.removeMapObject(iface.getFromVlistAt(i));
+            for(var i=0;i<cont.getMapPointNum();i++){
+                map.removeMapObject(cont.getFromVlistAt(i));
             }
-            iface.clearVlist();
+            cont.clearVlist();
 
-            var num= iface.getPointNum();
+            var num= cont.getPointNum();
             console.log("ooooooooooo",num)
             for(var i=0;i<num;i++){
 
@@ -284,8 +284,8 @@ Rectangle {
 
                 var coord = Qt.createQmlObject('import Qt 4.7; import QtMobility.location 1.2; Coordinate{}', map, "coord"+i);
 
-                coord.latitude=iface.getLatFor(i);
-                coord.longitude=iface.getLonFor(i);
+                coord.latitude=cont.getLatFor(i);
+                coord.longitude=cont.getLonFor(i);
 
 //                console.log(coord.id)
 
@@ -295,20 +295,20 @@ Rectangle {
                 marker.color = "red";
                 marker.radius = 300;
 
-              //  console.log("i je",i,iface.getLatFor(i),iface.getLonFor(i),iface.getJidFor(i))
+              //  console.log("i je",i,cont.getLatFor(i),cont.getLonFor(i),cont.getJidFor(i))
 
               //  array.push(marker);
-                iface.setToVlist(marker);
+                cont.setToVlist(marker);
 
               //  array[0]=1;
 
            //     map.array.push(1);
               //  console.log(array.length);
-              //  console.log(iface.getFromVlist());
-              //  var o=iface.getFromVlist();
+              //  console.log(cont.getFromVlist());
+              //  var o=cont.getFromVlist();
               //  map.removeMapObject(o);
 
-                map.addMapObject(iface.getFromVlistAt(0));
+                map.addMapObject(cont.getFromVlistAt(0));
 
 
          //       bla.push(marker);
@@ -320,8 +320,8 @@ Rectangle {
         }
 
         onRefreshMyPosition:{
-            myPos.myLat=iface.getLatForMe();
-            myPos.myLon=iface.getLonForMe();
+            myPos.myLat=cont.getLatForMe();
+            myPos.myLon=cont.getLonForMe();
           //  myPos.visible=false;
           //  myPos.visible=true;
             map.removeMapObject(myPos);
@@ -362,11 +362,14 @@ Rectangle {
                 console.log('oooQML: Key - was pressed');
 
                 map.zoomLevel -= 1.5
+
             }
 
         }
 
     }
+
+
    Component.onCompleted: {
 
      //  var a=Qt.createComponent("MapCircle {center: Coordinate{latitude: defaultLatitude;longitude: defaultLongitude;};radius: 10000;color: \"yellow\"}");

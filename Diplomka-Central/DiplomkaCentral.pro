@@ -37,7 +37,8 @@ SOURCES += main.cpp \
     contact.cpp \
     extension.cpp \
     acl.cpp \
-    terrainuser.cpp
+    terrainuser.cpp \
+    datapreparator.cpp
 
 # Please do not modify the following two lines. Required for deployment.
 include(qmlapplicationviewer/qmlapplicationviewer.pri)
@@ -53,9 +54,10 @@ HEADERS += \
     contact.h \
     extension.h \
     acl.h \
-    terrainuser.h
+    terrainuser.h \
+    datapreparator.h
 
-QT+=sql core network xml
+QT+=sql core network xml svg
 
 
 #INCLUDEPATH += $$quote(C:/projects/qxmpp/src)

@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'extension.h'
 **
-** Created: Mon 27. Feb 21:13:28 2012
+** Created: Wed 28. Mar 11:40:32 2012
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.4)
 **
 ** WARNING! All changes made in this file will be lost!

@@ -15,8 +15,8 @@
 #include <QLandmarkNameFilter>
 #include "acl.h"
 #include "terrainuser.h"
-#include <QDeclarativeListProperty>
 
+#include "datapreparator.h"
 QTM_USE_NAMESPACE
 
 class Controller : public QObject
@@ -87,18 +87,21 @@ private:
     QList<Acl> aclList;
     QList<TerrainUser> terrainUserList;
     QList<TerrainUser> terrainUserFromAclList;
+    QVector<QPointF> lineVector;
+    QList<QLandmark> *dbLineLandmarks;
 
     void deselectCurrentObject();
     void fixMapBug();
     void sendMapObjects();
     QList<TerrainUser> prepareCustomTerrainUserFromAclList(int i);
+    //QString prepareSvg(QVector<QPointF> coordList, int type);
 
-    QVector<QPointF> lineVector;
-    QList<QLandmark> *dbLineLandmarks;
+
+
 
 signals:
     void sendObjects(QList<QLandmark> *landmarks);
-    void sendMapObject(QLandmark landmark, QList<TerrainUser> userList);
+    void sendMapObject(QString svg, QList<TerrainUser> userList);
     void aclListReady();
     void terrainUserListReady();
     void terrainUserFromAclListReady();

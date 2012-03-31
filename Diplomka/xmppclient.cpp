@@ -36,7 +36,7 @@
 
 
 
-xmppClient::xmppClient(QObject *parent)
+XmppClient::XmppClient(QObject *parent)
     : QXmppClient(parent)
 {
     bool check = connect(this, SIGNAL(connected()),
@@ -78,19 +78,19 @@ xmppClient::xmppClient(QObject *parent)
    //subscribeLocation();
 }
 
-xmppClient::~xmppClient()
+XmppClient::~XmppClient()
 {
 
 }
 
-void xmppClient::clientConnected()
+void XmppClient::clientConnected()
 {
     std::cout<<"CONNECTED"<<std::endl;
 }
 
 
 //zmena presence
-void xmppClient::presenceChanged(const QString& bareJid,
+void XmppClient::presenceChanged(const QString& bareJid,
                                  const QString& resource)
 {
     qDebug()<<"presence changed"<<bareJid<<resource<<this->rosterManager().getPresence(bareJid,resource).type();
@@ -102,28 +102,40 @@ void xmppClient::presenceChanged(const QString& bareJid,
 }
 
 //obsluha prijmu zpravy
-void xmppClient::messageRecv(const QXmppMessage& message){
-
-    if(message.body().contains("POINT")){
+void XmppClient::messageRecv(const QXmppMessage& message){
+      //  qDebug()<<message.body();
+        QVector<QPointF> coords;
+        MapDataParser * parser=new MapDataParser();
+        int type=parser->parseData(message.body(),coords);
+        if(type==-1){
+            return;
+        }
+        if(type==0){
+            emit sendPointFromCentral(coords);
+        }
+        if(type==1){
+            emit sendLineFromCentral(coords);
+        }
+  /*  if(message.body().contains("POINT")){
         qDebug()<<message.body();
-        emit sendPointFromCentral(message.body());
+       // emit sendPointFromCentral(message.body());
     } else if(message.body().contains("LINESTRING")) {
         QString coords=message.body().remove(0,11);//=location.split("LINESTRING(").
         coords.chop(1);
-        emit sendLineFromCentral(coords);
+     //   emit sendLineFromCentral(coords);
     } else {
 
-    }
+    }*/
 }
 
 
-void xmppClient::presenceReceived(const QXmppPresence &presence){
+void XmppClient::presenceReceived(const QXmppPresence &presence){
 
 
 }
 
 //deprecated - experimantalni metoda
-void xmppClient::sendMess(float lat, float lon){
+void XmppClient::sendMess(float lat, float lon){
 
     QXmppIq iq;
 
@@ -192,7 +204,7 @@ void xmppClient::sendMess(float lat, float lon){
 }
 
 //deprecated - promaze log soubor
-void xmppClient::eraseFile(){
+void XmppClient::eraseFile(){
     QString path=PATH;
     path+="QXmppClientLog.log";
     QFile file(path);
@@ -205,7 +217,7 @@ void xmppClient::eraseFile(){
 }
 
 //slot prijimajici signal z extension s novou lokaci uzivatele
-void xmppClient::getNewCoords(QString jid, QString lat, QString lon, QString acc){
+void XmppClient::getNewCoords(QString jid, QString lat, QString lon, QString acc){
   qDebug()<<jid<<lat<<lon<<acc;
 
     QGeoCoordinate coordinate(lat.toDouble(), lon.toDouble());
@@ -214,7 +226,7 @@ void xmppClient::getNewCoords(QString jid, QString lat, QString lon, QString acc
 }
 
 //projde roster a na vsechny vyzada prijem geoloc
-void xmppClient::subscribeLocation(){
+void XmppClient::subscribeLocation(){
 
     QStringList l=this->rosterManager().getRosterBareJids();
 

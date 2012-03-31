@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'locationwatcher.h'
 **
-** Created: Thu 1. Dec 00:24:56 2011
+** Created: Wed 28. Mar 11:40:31 2012
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.4)
 **
 ** WARNING! All changes made in this file will be lost!

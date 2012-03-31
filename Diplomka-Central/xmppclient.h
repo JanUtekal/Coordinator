@@ -69,7 +69,7 @@ public slots:
     void iqReceived(const QXmppIq& iq);
 
     void sendObjectsToUsers(QList<QLandmark> *landmarks);
-    void sendObjectToUsers(QLandmark landmark, QList<TerrainUser> userList);
+    void sendObjectToUsers(QString svg, QList<TerrainUser> userList);
 
     void getNewCoords(QString jid, QString lat, QString lon, QString acc);
     void subscribeLocation();

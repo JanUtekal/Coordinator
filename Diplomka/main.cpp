@@ -2,7 +2,7 @@
 #include "qmlapplicationviewer.h"
 #include "xmppClient.h"
 #include "QXmppLogger.h"
-#include "interface.h"
+#include "controller.h"
 #include <QtDeclarative>
 //#include "QXmppPubSubManager.h"
 #include "extension.h"
@@ -18,8 +18,8 @@ int main(int argc, char *argv[])
     QScopedPointer<QApplication> app(createApplication(argc, argv));
     QScopedPointer<QmlApplicationViewer> viewer(QmlApplicationViewer::create());
 
-    Interface iface;
-    xmppClient client;
+    Controller cont;
+    XmppClient client;
 
     Extension ex;
     client.addExtension(&ex);
@@ -28,10 +28,10 @@ int main(int argc, char *argv[])
   //  QXmppPubSubManager pubsub;
   //  client.addExtension(pubsub);
 
-    iface.setClient(&client);
+    cont.setClient(&client);
 
     QDeclarativeContext *ctxt = viewer->rootContext();
-    ctxt->setContextProperty("iface", &iface);
+    ctxt->setContextProperty("cont", &cont);
     QVariantList list;
     ctxt->setContextProperty("arr",list);
 
@@ -40,14 +40,14 @@ int main(int argc, char *argv[])
     viewer->showExpanded();
 
 
-    QObject::connect(&client,SIGNAL(updateUser(QString,QGeoCoordinate)),&iface,SLOT(updateUserPosition(QString,QGeoCoordinate)));
+    QObject::connect(&client,SIGNAL(updateUser(QString,QGeoCoordinate)),&cont,SLOT(updateUserPosition(QString,QGeoCoordinate)));
 
-    QObject::connect(&client,SIGNAL(refresh()),&iface,SLOT(refreshPoints()));
-    QObject::connect(&client,SIGNAL(sendPointFromCentral(QString)),&iface,SLOT(getPointFromCentral(QString)));
-    QObject::connect(&client,SIGNAL(sendLineFromCentral(QString)),&iface,SLOT(getLineFromCentral(QString)));
-  //  viewer.rootContext()->setContextProperty("iface", &iface);
+    QObject::connect(&client,SIGNAL(refresh()),&cont,SLOT(refreshPoints()));
+    QObject::connect(&client,SIGNAL(sendPointFromCentral(QVector<QPointF>)),&cont,SLOT(getPointFromCentral(QVector<QPointF>)));
+    QObject::connect(&client,SIGNAL(sendLineFromCentral(QVector<QPointF>)),&cont,SLOT(getLineFromCentral(QVector<QPointF>)));
+  //  viewer.rootContext()->setContextProperty("cont", &cont);
 
-    QObject::connect(&client,SIGNAL(setUserOffline(QString)),&iface,SLOT(setUserOffline(QString)));
+    QObject::connect(&client,SIGNAL(setUserOffline(QString)),&cont,SLOT(setUserOffline(QString)));
 
 
 

@@ -1,5 +1,9 @@
 #include "controller.h"
 
+#define POINT 0
+#define LINE  1
+#define POLYGON 2
+
 Controller::Controller(QObject *parent) :
     QObject(parent)
 {
@@ -35,8 +39,12 @@ void Controller::addPoint(double lat, double lon, int selectedAcl){
         if(selectedAcl!=-1){
 
             QList<TerrainUser> userList= prepareCustomTerrainUserFromAclList(selectedAcl);
-
-            emit sendMapObject(lm,userList);
+            QVector<QPointF> coordList;
+            coordList.append(QPointF(lat,lon));
+            DataPreparator *preparator=new DataPreparator();
+            QString data=preparator->prepareData(coordList, POINT);
+            emit sendMapObject(data,userList);
+            delete preparator;
         } else {
             qDebug()<<"neoznacen zadny Acl, neposilam";
         }
@@ -104,8 +112,11 @@ void Controller::lineReady(int selectedAcl){
             if(selectedAcl!=-1){
 
                 QList<TerrainUser> userList= prepareCustomTerrainUserFromAclList(selectedAcl);
+                DataPreparator *preparator=new DataPreparator();
+                QString data=preparator->prepareData(lineVector, LINE);
+                emit sendMapObject(data,userList);
+                delete preparator;
 
-                emit sendMapObject(lm,userList);
             } else {
                 qDebug()<<"neoznacen zadny Acl, neposilam";
             }

@@ -35,9 +35,10 @@ CONFIG += qdeclarative-boostable
 SOURCES += main.cpp \
     xmppclient.cpp \
     contact.cpp \
-    interface.cpp \
     locationwatcher.cpp \
-    extension.cpp
+    extension.cpp \
+    controller.cpp \
+    mapdataparser.cpp
 
 # Please do not modify the following two lines. Required for deployment.
 include(qmlapplicationviewer/qmlapplicationviewer.pri)
@@ -58,9 +59,10 @@ MOBILITY += location
 HEADERS += \
     xmppclient.h \
     contact.h \
-    interface.h \
     locationwatcher.h \
-    extension.h
+    extension.h \
+    controller.h \
+    mapdataparser.h
 INCLUDEPATH += $$quote(C:/projects/qxmpp/src)
 LIBS +=-LC:/projects/qxmpp/lib -lqxmpp_d
 
@@ -72,7 +74,11 @@ contains(MEEGO_EDITION,harmattan) {
 }
 
 
+#symbian {
+#    INCLUDEPATH += $$quote(C:/projects/qxmpp2/src)
+#    LIBS +=-LC:/projects/qxmpp2/lib -lqxmpp_d
 
+#}
 
 
 

@@ -33,16 +33,18 @@
 #include <QLandmark>
 #include <QXmppDiscoveryManager.h>
 #include <QXmppPubSubIq.h>
+#include "mapdataparser.h"
+
 
 QTM_USE_NAMESPACE
 
-class xmppClient : public QXmppClient
+class XmppClient : public QXmppClient
 {
     Q_OBJECT
 
 public:
-    xmppClient(QObject *parent = 0);
-    ~xmppClient();
+    XmppClient(QObject *parent = 0);
+    ~XmppClient();
 
     void sendMess(float lat, float lon);
     QList<Contact> cList;
@@ -56,8 +58,8 @@ private:
 
 signals:
     void refresh();
-    void sendPointFromCentral(QString point);
-    void sendLineFromCentral(QString line);
+    void sendPointFromCentral(QVector<QPointF> coordList);
+    void sendLineFromCentral(QVector<QPointF> coordList);
     void updateUser(QString jid, QGeoCoordinate coordinate);
     void setUserOffline(QString jid);
 
