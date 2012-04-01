@@ -115,6 +115,20 @@ void Controller::getLineFromCentral(QVector<QPointF> coordList){
  //   landMan->exportLandmarks("landmarks",QLandmarkManager::Lmx);
 }
 
+void Controller::getPolygonFromCentral(QVector<QPointF> coordList){
+
+    QLandmark lm;
+    //lm.setDescription(line);
+    lm.setName("polygon");
+    lm.setPhoneNumber("20");
+    polygonVector=coordList;
+
+    lm.setCoordinate(QGeoCoordinate(polygonVector.at(0).x(), polygonVector.at(1).y()));
+    qDebug()<< landMan->saveLandmark(&lm);
+    qDebug()<<landMan->errorString()<<landMan->error();
+ //   landMan->exportLandmarks("landmarks",QLandmarkManager::Lmx);
+}
+
 void Controller::updateUserPosition(QString jid, QGeoCoordinate coordinate){
     QLandmarkNameFilter filter;
     filter.setName(jid);
@@ -207,11 +221,39 @@ double Controller::getLineCoordinateLatAt(int i){
 double Controller::getLineCoordinateLonAt(int i){
 
     double y=lineVector.at(i).y();
-    qDebug()<<"getting y"<<i<<y;
+
 
     if(i==lineVector.size()-1){
 
         lineVector.clear();
+        //addLineFromDB();
+    }
+
+    return y;
+
+}
+
+int Controller::getPolygonCoordinatesNum(){
+
+    return polygonVector.size();
+}
+
+double Controller::getPolygonCoordinateLatAt(int i){
+
+    return polygonVector.at(i).x();
+
+
+
+}
+
+double Controller::getPolygonCoordinateLonAt(int i){
+
+    double y=polygonVector.at(i).y();
+
+
+    if(i==polygonVector.size()-1){
+
+        polygonVector.clear();
         //addLineFromDB();
     }
 

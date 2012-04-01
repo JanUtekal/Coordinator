@@ -17,6 +17,7 @@
 #include "terrainuser.h"
 
 #include "datapreparator.h"
+#include "mapobject.h"
 QTM_USE_NAMESPACE
 
 class Controller : public QObject
@@ -33,6 +34,9 @@ public:
     Q_INVOKABLE void addPoint(double lat, double lon, int selectedAcl);
     Q_INVOKABLE void addLinePoint(double lat, double lon);
     Q_INVOKABLE void lineReady(int selectedAcl);
+    Q_INVOKABLE void addPolygonPoint(double lat, double lon);
+    Q_INVOKABLE void polygonReady(int selectedAcl);
+    Q_INVOKABLE void createPolygonReference(QVariant paintedObject, QString name, int type);
 
 
     Q_INVOKABLE void selectObject(QString name);
@@ -78,6 +82,12 @@ public:
     Q_INVOKABLE double getLineCoordinateLatAt(int i);
     Q_INVOKABLE double getLineCoordinateLonAt(int i);
 
+    Q_INVOKABLE int getPolygonCoordinatesNum();
+    Q_INVOKABLE double getPolygonCoordinateLatAt(int i);
+    Q_INVOKABLE double getPolygonCoordinateLonAt(int i);
+
+    Q_INVOKABLE QVariant getId(double lat, double lon);
+
 private:
     QObject *object;
     QVariant selectedMapObject;
@@ -88,11 +98,15 @@ private:
     QList<TerrainUser> terrainUserList;
     QList<TerrainUser> terrainUserFromAclList;
     QVector<QPointF> lineVector;
+    QVector<QPointF> polygonVector;
     QList<QLandmark> *dbLineLandmarks;
+    QList<QLandmark> *dbPolygonLandmarks;
+    QMap<QString, MapObject>* mapObjectMap;
 
     void deselectCurrentObject();
     void fixMapBug();
     void sendMapObjects();
+
     QList<TerrainUser> prepareCustomTerrainUserFromAclList(int i);
     //QString prepareSvg(QVector<QPointF> coordList, int type);
 
@@ -110,13 +124,14 @@ signals:
 public slots:
     void getAllPoints(QList<QLandmark> *dbLandmarks);
     void getAllLines(QList<QLandmark> *dbLandmarks);
+    void getAllPolygons(QList<QLandmark> *dbLandmarks);
     void getConnectedUsers(QList<QLandmark> *userLandmarks);
 
     void updateUserPosition(QString jid, QGeoCoordinate coordinate);
     void setUserOffline(QString jid);
 
     void addLineFromDB();
-    
+    void addPolygonFromDB();
 };
 
 #endif // CONTROLLER_H

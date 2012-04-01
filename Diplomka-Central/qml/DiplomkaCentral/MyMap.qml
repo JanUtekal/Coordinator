@@ -13,6 +13,7 @@ Rectangle {
 
     property bool pointButtonClicked: false
     property bool lineButtonClicked: false
+    property bool polygonButtonClicked: false
 
     property bool objectEverSelected:false //slouzi ke kontrole jestli byl nekdy nejaky mapovy objekt vybran
 
@@ -30,8 +31,10 @@ Rectangle {
         if(objectEverSelected){
             if(cont.getSelectedMapObject().type<10){
                 cont.getSelectedMapObject().color="green";
-            } else {
+            } else if(cont.getSelectedMapObject().type<20){
                 cont.getSelectedMapObject().border.color="red";
+            } else {
+                cont.getSelectedMapObject().border.color="blue";
             }
 
             cont.deselectObject();
@@ -136,6 +139,13 @@ Rectangle {
                                 border.width=0
                                 //  color="red"
                             }
+
+                            if(type==20){
+
+                                visible=false;
+                                border.width=0
+                                //  color="red"
+                            }
                         }
 
 
@@ -227,6 +237,109 @@ Rectangle {
             }
         }
 
+        MapObjectView {
+
+            id: allLandmarks3
+            model: landmarkModel
+            delegate: Component {
+
+
+
+
+                MapGroup{
+                        //bacause of an error in MapPolygon we cannot add anything else than Coordinates into the polygon definition, so we define the polygon geometry here
+                        Component.onCompleted: {
+
+
+                            var type= parseInt(landmark.phoneNumber);
+
+
+                            if(type==20){
+                                var num=cont.getPolygonCoordinatesNum();
+                                for(var i=0; i<num;i++){
+                                    var coord = Qt.createQmlObject('import Qt 4.7; import QtMobility.location 1.2; Coordinate{}', map, "coord"+i);
+
+                                    coord.latitude=cont.getPolygonCoordinateLatAt(i);
+                                    coord.longitude=cont.getPolygonCoordinateLonAt(i);
+                                    polygon.addCoordinate(coord);
+                                    //helpLine.addCoordinate(coord)
+                                    polygon.visible=true;
+                                   // visible=true;
+                                }
+                                cont.createPolygonReference(polygon,polygon.name,2);//to be able to select the object we need to make a reference on it
+
+                            }
+                        }
+
+
+
+                    MapPolygon {
+                        // property double lat:landmark.coordinate.latitude
+                        // property double lon:landmark.coordinate.longitude
+                        property string name: landmark.name
+                        property int type: -1
+
+                        id: polygon
+                        border {color: "blue"; width: 4}
+                        visible:false
+                        color: "lightblue"
+
+                   /*
+                        MapMouseArea{
+                            anchors.fill: parent
+                            acceptedButtons: Qt.LeftButton
+                            onClicked: {
+                                if(!polygonButtonClicked){
+                                    if(type==20){
+
+                                        //console.log("bla");
+
+                                        deselect();
+
+                                        polygon.border.color="yellow";
+                                        cont.setSelectedMapObject(parent);
+                                        cont.selectObject(name);
+                                        objectEverSelected=true;
+
+                                    }
+                                }
+
+
+                            }
+
+                        }
+
+
+
+                        Component.onCompleted: {
+
+
+                            type= parseInt(landmark.phoneNumber);
+
+
+                            if(type==20){
+                                var num=cont.getPolygonCoordinatesNum();
+                                for(var i=0; i<num;i++){
+                                    var coord = Qt.createQmlObject('import Qt 4.7; import QtMobility.location 1.2; Coordinate{}', map, "coord"+i);
+
+                                    coord.latitude=cont.getPolygonCoordinateLatAt(i);
+                                    coord.longitude=cont.getPolygonCoordinateLonAt(i);
+                                    polygon.addCoordinate(coord);
+                                    visible=true;
+                                }
+
+                            }
+                        }
+
+                        */
+                    }
+
+
+
+                }
+            }
+        }
+
         MapPolyline {
 
 
@@ -276,9 +389,7 @@ Rectangle {
 
                     cont.addPoint(map.toCoordinate(Qt.point(mouse.x,mouse.y)).latitude, map.toCoordinate(Qt.point(mouse.x,mouse.y)).longitude, userManagement.selectedMapAcl);
                     pointButtonClicked=false;
-                }
-
-                if(lineButtonClicked) {
+                } else if(lineButtonClicked) {
 
 
                     if (mouse.button == Qt.LeftButton){
@@ -286,10 +397,10 @@ Rectangle {
 
                         cont.addLinePoint(map.toCoordinate(Qt.point(mouse.x,mouse.y)).latitude, map.toCoordinate(Qt.point(mouse.x,mouse.y)).longitude);
 
-                  //      var coord = Qt.createQmlObject('import Qt 4.7; import QtMobility.location 1.2; Coordinate{}', map, "coord");
+                        //      var coord = Qt.createQmlObject('import Qt 4.7; import QtMobility.location 1.2; Coordinate{}', map, "coord");
 
-                      //  coord.latitude=cont.getLineCoordinateLatAt(i);
-                      //  coord.longitude=cont.getLineCoordinateLonAt(i);
+                        //  coord.latitude=cont.getLineCoordinateLatAt(i);
+                        //  coord.longitude=cont.getLineCoordinateLonAt(i);
 
 
                         tmpLine.addCoordinate(map.toCoordinate(Qt.point(mouse.x,mouse.y)));
@@ -297,7 +408,7 @@ Rectangle {
                             tmpLine.removeCoordinate(tmpLine.path[0]);
                             lostLineCoordinate=false;
                         } else {
-                           tmpLine.visible=true;
+                            tmpLine.visible=true;
                         }
 
 
@@ -322,8 +433,69 @@ Rectangle {
 
 
                     }
+                } else if(polygonButtonClicked) {
+
+
+                    if (mouse.button == Qt.LeftButton){
+
+
+                        cont.addPolygonPoint(map.toCoordinate(Qt.point(mouse.x,mouse.y)).latitude, map.toCoordinate(Qt.point(mouse.x,mouse.y)).longitude);
+
+                        //      var coord = Qt.createQmlObject('import Qt 4.7; import QtMobility.location 1.2; Coordinate{}', map, "coord");
+
+                        //  coord.latitude=cont.getLineCoordinateLatAt(i);
+                        //  coord.longitude=cont.getLineCoordinateLonAt(i);
+
+                        console.log("adding coordinate")
+                        tmpLine.addCoordinate(map.toCoordinate(Qt.point(mouse.x,mouse.y)));
+                        if(lostLineCoordinate){
+                            tmpLine.removeCoordinate(tmpLine.path[0]);
+                            lostLineCoordinate=false;
+                        } else {
+                            tmpLine.visible=true;
+                        }
+
+
+                    }
+                    else{
+                        cont.polygonReady(userManagement.selectedMapAcl);
+
+                        console.log("hh",tmpLine.path.length)
+                        tmpLine.visible=false;
+
+                        while(tmpLine.path.length!==1){
+
+                            tmpLine.removeCoordinate(tmpLine.path[0]);
+
+
+                        }
+
+
+
+                        //  console.log("hh",tmpLine.path.length)
+                        polygonButtonClicked=false;
+                        lostLineCoordinate =true;
+
+
+                    }
+                } else {
+
+                    var paintedObject=cont.getId(map.toCoordinate(Qt.point(mouse.x,mouse.y)).latitude, map.toCoordinate(Qt.point(mouse.x,mouse.y)).longitude);
+                    if(paintedObject){
+                        deselect();
+
+                        paintedObject.border.color="yellow";
+                        cont.setSelectedMapObject(paintedObject);
+                        cont.selectObject(paintedObject.name);
+                        objectEverSelected=true;
+
+
+                    } else {
+                        deselect();
+                    }
                 }
-                deselect();
+
+
 
             }
 
@@ -351,7 +523,7 @@ Rectangle {
             onButtonClick: {
                 pointButtonClicked=true;
                 lineButtonClicked=false;
-
+                polygonButtonClicked=false;
             }
 
         }
@@ -367,11 +539,31 @@ Rectangle {
             onButtonClick: {
                 lineButtonClicked=true;
                 pointButtonClicked=false;
+                polygonButtonClicked=false;
                 //cont.testButtonOperation();
 
             }
 
         }
+
+        Button{
+            id: polygonButton
+            width: 120
+            height: 50
+
+            z: 2
+            label: "Přidat oblast"
+
+            onButtonClick: {
+                polygonButtonClicked=true;
+                pointButtonClicked=false;
+                lineButtonClicked=false;
+                //cont.testButtonOperation();
+
+            }
+
+        }
+
 
         Button{
             id: testButton

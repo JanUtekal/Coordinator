@@ -100,8 +100,49 @@ int DbConnection::insertLine(QVector<QPointF> lineVector){
     return insertedId;
 }
 
+int DbConnection::insertPolygon(QVector<QPointF> polygonVector){
+    int insertedId=-1;
+
+    QSqlQuery query(db);
+
+    QString q=QString("INSERT INTO polygon (coordinates) VALUES (ST_GeographyFromText('SRID=4326;POLYGON((");
+
+    int i=0;
+    foreach(QPointF point, polygonVector){
+        i++;
+        q+=QString::number(point.y());
+        q+=" ";
+        q+=QString::number(point.x());
+        q+=",";
+
+    }
+    QPointF closingPoint=polygonVector.at(0);
+    q+=QString::number(closingPoint.y());
+    q+=" ";
+    q+=QString::number(closingPoint.x());
+    q+="))')) RETURNING id";
+    query.prepare(q);
 
 
+
+    qDebug()<< query.exec()<<query.executedQuery();
+
+    while (query.next()) {
+        //  int id = query.value(0).toInt();
+        //  QString name= query.value(1).toString();
+
+        qDebug()<<query.value(0).toInt();
+
+        insertedId=query.value(0).toInt();
+    }
+
+    return insertedId;
+}
+
+
+//select * from polygon as pol where St_DWithin(pol.coordinates,
+//ST_GeographyFromText('SRID=4326;POINT(16.6210 49.1947)'),1)
+//
 void DbConnection::getObjectsFromDB(){
 
     QList<QLandmark> *dbLandmarks = new QList<QLandmark>();
@@ -188,7 +229,52 @@ void DbConnection::getObjectsFromDB(){
 
     qDebug()<<"sending";
 
-    sendAllLines(dbLandmarks2);
+    emit sendAllLines(dbLandmarks2);
+
+
+
+    //line query
+    QList<QLandmark> *dbLandmarks3 = new QList<QLandmark>();
+    q=QString("SELECT id,ST_AsText(coordinates::geometry) from polygon");
+
+    query.prepare(q);
+
+
+    qDebug()<< query.exec()<<query.executedQuery();
+
+    while (query.next()) {
+        QString id = query.value(0).toString();
+        QString location= query.value(1).toString();
+
+        //qDebug()<<id<<location;
+
+        QLandmark lm;
+        lm.setName(id);
+
+        if(location.contains("POLYGON")){
+
+            QString coords=location.remove(0,9);//=location.split("LINESTRING(").
+            coords.chop(2);
+
+    //  qDebug()<<coords;
+            lm.setDescription(coords);
+            lm.setPhoneNumber("20");
+            //QGeoCoordinate coordinate(lat,lon);
+
+
+
+
+          //  lm.setCoordinate(coordinate);
+        }
+
+        dbLandmarks3->append(lm);
+
+    }
+
+
+    qDebug()<<"sending polys"<<dbLandmarks3->length();
+
+    emit sendAllPolygons(dbLandmarks3);
 
 
 
@@ -457,4 +543,26 @@ void DbConnection::deleteTerrainUser(QString id){
 
 
     qDebug()<< query.exec()<<query.executedQuery();
+}
+
+QString DbConnection::getPolygonIdAtCoordinates(double lat, double lon){
+    QString id="-1";
+
+    QSqlQuery query(db);
+
+    QString q=QString("SELECT id FROM polygon AS pol where St_DWithin(pol.coordinates, ST_GeographyFromText('SRID=4326;POINT(%1 %2)'),1) ORDER BY ST_Distance(pol.coordinates, ST_GeographyFromText('SRID=4326;POINT(%1 %2)'))").arg(lon).arg(lat);
+
+    query.prepare(q);
+
+
+
+    qDebug()<< query.exec()<<query.executedQuery();
+
+    if(query.next()){
+       id = query.value(0).toString();
+    }
+
+
+
+    return id;
 }

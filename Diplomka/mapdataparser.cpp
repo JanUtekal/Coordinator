@@ -29,6 +29,9 @@ int MapDataParser::parseData(QString data, QVector<QPointF> &coordList){
             if(el.text()=="LINE"){
                 type=1;
             }
+            if(el.text()=="POLYGON"){
+                type=2;
+            }
 
         }
 
@@ -60,6 +63,24 @@ int MapDataParser::parseData(QString data, QVector<QPointF> &coordList){
                             coordList.append(point);
 
                         }
+                    }
+
+                    if(type==2 && el2.nodeName()=="path"){
+                        QString path=el2.attribute("d");
+                        path.remove("M");
+                        path.remove("L");
+
+                        QStringList list=path.trimmed().split(" ");
+
+                        qDebug()<<"POLYLENJ"<<list.length();
+                        foreach(QString coord, list){
+                            QStringList c=coord.split(",");
+                            QPointF point(c.at(0).toDouble(), c.at(1).toDouble());
+                            coordList.append(point);
+
+                        }
+                        qDebug()<< coordList.size();
+
                     }
                     node2=node.nextSibling();
                 }

@@ -38,7 +38,8 @@ SOURCES += main.cpp \
     extension.cpp \
     acl.cpp \
     terrainuser.cpp \
-    datapreparator.cpp
+    datapreparator.cpp \
+    mapobject.cpp
 
 # Please do not modify the following two lines. Required for deployment.
 include(qmlapplicationviewer/qmlapplicationviewer.pri)
@@ -55,7 +56,8 @@ HEADERS += \
     extension.h \
     acl.h \
     terrainuser.h \
-    datapreparator.h
+    datapreparator.h \
+    mapobject.h
 
 QT+=sql core network xml svg
 
@@ -64,3 +66,6 @@ QT+=sql core network xml svg
 #LIBS +=-lqxmpp_d -L $$quote(C:/projects/qxmpp/lib/libqxmpp_d.a)
 INCLUDEPATH += $$quote(C:/projects/qxmpp/src)
 LIBS +=-LC:/projects/qxmpp/lib -lqxmpp_d
+
+
+#CONFIG(release, debug|release):DEFINES += QT_NO_DEBUG_OUTPUT

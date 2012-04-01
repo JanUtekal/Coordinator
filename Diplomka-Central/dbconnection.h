@@ -25,7 +25,7 @@ public:
     int deleteObject(QString id);
 
     int insertLine(QVector<QPointF> lineVector);
-
+    int insertPolygon(QVector<QPointF> polygonVector);
 
     void getObjectsFromDB();
     QString getLastObjectIdFor(QString jid);
@@ -39,6 +39,7 @@ public:
     void updateTerrainUserAcl(QString idUser, QString idAcl);
     void deleteAcl(QString id);
     void deleteTerrainUser(QString id);
+    QString getPolygonIdAtCoordinates(double lat, double lon);
 
 private:
     QSqlDatabase db;
@@ -46,7 +47,8 @@ private:
 signals:
     void sendAllPoints(QList<QLandmark> *dbLandmarks);
     void sendAllLines(QList<QLandmark> *dbLandmarks2);
-    
+    void sendAllPolygons(QList<QLandmark> *dbLandmarks3);
+
 public slots:
     
 };

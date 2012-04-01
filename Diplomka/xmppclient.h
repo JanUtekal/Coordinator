@@ -60,6 +60,8 @@ signals:
     void refresh();
     void sendPointFromCentral(QVector<QPointF> coordList);
     void sendLineFromCentral(QVector<QPointF> coordList);
+    void sendPolygonFromCentral(QVector<QPointF> coordList);
+
     void updateUser(QString jid, QGeoCoordinate coordinate);
     void setUserOffline(QString jid);
 

@@ -133,6 +133,12 @@ Rectangle {
                               border.width=0
                               //  color="red"
                           }
+                          if(type==20){
+
+                              visible=false;
+                              border.width=0
+                              //  color="red"
+                          }
                       }
 
 
@@ -202,6 +208,62 @@ Rectangle {
 
           }
 
+      }
+
+
+      MapObjectView {
+
+          id: allLandmarks3
+          model: landmarkModel
+          delegate: Component {
+
+
+
+
+              MapGroup{
+
+                  Component.onCompleted: {
+
+
+                      var type= parseInt(landmark.phoneNumber);
+
+
+                      if(type==20){
+                          var num=cont.getPolygonCoordinatesNum();
+                          for(var i=0; i<num;i++){
+                              var coord = Qt.createQmlObject('import Qt 4.7; import QtMobility.location 1.2; Coordinate{}', map, "coord"+i);
+
+                              coord.latitude=cont.getPolygonCoordinateLatAt(i);
+                              coord.longitude=cont.getPolygonCoordinateLonAt(i);
+                              polygon.addCoordinate(coord);
+                              //helpLine.addCoordinate(coord)
+                              polygon.visible=true;
+                             // visible=true;
+                          }
+
+                      }
+                  }
+
+
+
+                  MapPolygon {
+                      // property double lat:landmark.coordinate.latitude
+                      // property double lon:landmark.coordinate.longitude
+                      property string name: landmark.name
+                      property int type: -1
+
+                      id: polygon
+                      border {color: "blue"; width: 4}
+                      visible:false
+                      color: "lightblue"
+
+
+                  }
+
+
+
+              }
+          }
       }
 
    }

@@ -66,7 +66,7 @@ QString DataPreparator::prepareData(QVector<QPointF> coordList, int type){
             break;
 
           case 2 :
-
+            painter.drawPolygon(coordList);
             break;
 
           default :

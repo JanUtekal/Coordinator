@@ -45,7 +45,9 @@ int main(int argc, char *argv[])
     QObject::connect(&client,SIGNAL(refresh()),&cont,SLOT(refreshPoints()));
     QObject::connect(&client,SIGNAL(sendPointFromCentral(QVector<QPointF>)),&cont,SLOT(getPointFromCentral(QVector<QPointF>)));
     QObject::connect(&client,SIGNAL(sendLineFromCentral(QVector<QPointF>)),&cont,SLOT(getLineFromCentral(QVector<QPointF>)));
-  //  viewer.rootContext()->setContextProperty("cont", &cont);
+    QObject::connect(&client,SIGNAL(sendPolygonFromCentral(QVector<QPointF>)),&cont,SLOT(getPolygonFromCentral(QVector<QPointF>)));
+
+    //  viewer.rootContext()->setContextProperty("cont", &cont);
 
     QObject::connect(&client,SIGNAL(setUserOffline(QString)),&cont,SLOT(setUserOffline(QString)));
 

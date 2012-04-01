@@ -116,6 +116,10 @@ void XmppClient::messageRecv(const QXmppMessage& message){
         if(type==1){
             emit sendLineFromCentral(coords);
         }
+
+        if(type==2){
+            emit sendPolygonFromCentral(coords);
+        }
   /*  if(message.body().contains("POINT")){
         qDebug()<<message.body();
        // emit sendPointFromCentral(message.body());

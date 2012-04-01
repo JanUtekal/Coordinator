@@ -1,5 +1,4 @@
 #include "controller.h"
-
 #define POINT 0
 #define LINE  1
 #define POLYGON 2
@@ -10,6 +9,9 @@ Controller::Controller(QObject *parent) :
     landMan= new QLandmarkManager(this);
     landMan->removeLandmarks(landMan->landmarks());
 
+    dbLineLandmarks =new QList<QLandmark>();
+    dbPolygonLandmarks =new QList<QLandmark>();
+    mapObjectMap =new QMap<QString, MapObject>();
 }
 
 void Controller::getRootObject(QObject *obj){
@@ -89,7 +91,7 @@ void Controller::lineReady(int selectedAcl){
         if(dbId!=-1){
 
             QLandmark lm;
-            lm.setName("lm");
+
             QGeoCoordinate coord(QPointF(lineVector.at(0)).x(),QPointF(lineVector.at(0)).y());
             lm.setCoordinate(coord);
             lm.setName(QString::number(dbId));
@@ -128,6 +130,77 @@ void Controller::lineReady(int selectedAcl){
 
     }
 
+
+}
+
+void Controller::addPolygonPoint(double lat, double lon){
+    polygonVector.append(QPointF(lat,lon));
+}
+
+void Controller::polygonReady(int selectedAcl){
+    qDebug()<<"polygon ready";
+
+    /*   foreach(QPointF point, lineVector){
+        qDebug()<<point.x()<<point.y();
+    }*/
+
+
+    if(polygonVector.size()>2){
+
+        int dbId=dbConnection->insertPolygon(polygonVector);
+
+        if(dbId!=-1){
+
+            QLandmark lm;
+
+            QGeoCoordinate coord(QPointF(polygonVector.at(0)).x(),QPointF(polygonVector.at(0)).y());
+            lm.setCoordinate(coord);
+            lm.setName(QString::number(dbId));
+        //not necessary for this moment
+            QString coords;
+
+            foreach(QPointF p, polygonVector){
+               coords+=QString::number(p.x());
+               coords+=" ";
+               coords+=QString::number(p.y());
+               coords+=",";
+            }
+            coords.chop(1);
+            lm.setDescription(coords);
+           // qDebug()<<lm.description();
+            lm.setPhoneNumber("20");
+            //..
+            landMan->saveLandmark(&lm);
+
+            if(selectedAcl!=-1){
+
+                QList<TerrainUser> userList= prepareCustomTerrainUserFromAclList(selectedAcl);
+                DataPreparator *preparator=new DataPreparator();
+                QString data=preparator->prepareData(polygonVector, POLYGON);
+                emit sendMapObject(data,userList);
+                delete preparator;
+
+            } else {
+                qDebug()<<"neoznacen zadny Acl, neposilam";
+            }
+
+        }
+
+
+        //lineVector.clear();
+
+    }
+
+
+
+}
+
+void Controller::createPolygonReference(QVariant paintedObject, QString name, int type){
+    MapObject mapObject;
+    mapObject.setName(name);
+    mapObject.setPaintedObject(paintedObject);
+    mapObject.setType(type);
+    mapObjectMap->insert(name,mapObject);
 
 }
 
@@ -227,6 +300,7 @@ void Controller::createDb(QSqlDatabase db){
 
     connect(dbConnection,SIGNAL(sendAllPoints(QList<QLandmark>*)),this,SLOT(getAllPoints(QList<QLandmark>*)));
     connect(dbConnection,SIGNAL(sendAllLines(QList<QLandmark>*)),this,SLOT(getAllLines(QList<QLandmark>*)));
+    connect(dbConnection,SIGNAL(sendAllPolygons(QList<QLandmark>*)),this,SLOT(getAllPolygons(QList<QLandmark>*)));
 
     dbConnection->setDb(db);
 
@@ -244,6 +318,17 @@ void Controller::getAllLines(QList<QLandmark> *dbLandmarks){
   //  qDebug()<<"got LINES";
     dbLineLandmarks=dbLandmarks;
     addLineFromDB();
+
+
+
+}
+
+void Controller::getAllPolygons(QList<QLandmark> *dbLandmarks){
+
+    qDebug()<<"got LINES";
+    dbPolygonLandmarks=dbLandmarks;
+    qDebug()<<"got polys";
+    addPolygonFromDB();
 
 
 
@@ -270,6 +355,29 @@ void Controller::addLineFromDB(){
     }
 
 }
+
+void Controller::addPolygonFromDB(){
+    if(dbPolygonLandmarks->length()>0){
+        QLandmark lm=dbPolygonLandmarks->takeFirst();
+        QString coords=lm.description();
+qDebug()<<coords;
+        QStringList coordList=coords.split(",");
+
+
+        foreach(QString coord, coordList){
+            QStringList c=coord.split(" ");
+            QPointF point(c.at(1).toDouble(), c.at(0).toDouble());
+            polygonVector.append(point);
+
+        }
+        lm.setCoordinate(QGeoCoordinate(polygonVector.at(0).x(), polygonVector.at(1).y()));
+        landMan->saveLandmark(&lm);
+
+
+    }
+
+}
+
 
 void Controller::getConnectedUsers(QList<QLandmark> *userLandmarks){
     qDebug()<<"saving user landmarks" << landMan->saveLandmarks(userLandmarks);
@@ -506,4 +614,42 @@ double Controller::getLineCoordinateLonAt(int i){
 
     return y;
 
+}
+
+int Controller::getPolygonCoordinatesNum(){
+    qDebug()<<"poly SIZE"<<polygonVector.size();
+    return polygonVector.size();
+}
+
+double Controller::getPolygonCoordinateLatAt(int i){
+
+    return polygonVector.at(i).x();
+
+
+
+}
+
+double Controller::getPolygonCoordinateLonAt(int i){
+
+    double y=polygonVector.at(i).y();
+
+
+    if(i==polygonVector.size()-1){
+
+        polygonVector.clear();
+        addPolygonFromDB();
+    }
+
+    return y;
+
+}
+
+QVariant Controller::getId(double lat, double lon){
+
+    QString id=dbConnection->getPolygonIdAtCoordinates(lat,lon);
+    qDebug()<<id;
+
+    MapObject obj=mapObjectMap->value(id);
+
+    return obj.getPaintedObject();
 }

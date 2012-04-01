@@ -38,6 +38,10 @@ public:
     Q_INVOKABLE double getLineCoordinateLatAt(int i);
     Q_INVOKABLE double getLineCoordinateLonAt(int i);
 
+    Q_INVOKABLE int getPolygonCoordinatesNum();
+    Q_INVOKABLE double getPolygonCoordinateLatAt(int i);
+    Q_INVOKABLE double getPolygonCoordinateLonAt(int i);
+
 
 private:
     float myLat;
@@ -46,6 +50,7 @@ private:
     QLandmarkManager *landMan;
         QLandmark pom;
     QVector<QPointF> lineVector;
+    QVector<QPointF> polygonVector;
 
     void fixMapBug();
 
@@ -59,6 +64,7 @@ public slots:
 
     void getPointFromCentral(QVector<QPointF> coordList);
     void getLineFromCentral(QVector<QPointF> coordList);
+    void getPolygonFromCentral(QVector<QPointF> coordList);
     void updateUserPosition(QString jid, QGeoCoordinate coordinate);
     void setUserOffline(QString jid);
 
