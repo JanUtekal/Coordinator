@@ -12,6 +12,15 @@ Controller::Controller(QObject *parent) :
     dbLineLandmarks =new QList<QLandmark>();
     dbPolygonLandmarks =new QList<QLandmark>();
     mapObjectMap =new QMap<QString, MapObject>();
+
+    registrationTool = new JabberRegistrationTool(this);
+    connect(registrationTool, SIGNAL(sendCaptcha(QString)),this,SLOT(getCaptchaRegistrationUrl(QString)));
+    connect(registrationTool, SIGNAL(sendError(QString)),this,SLOT(getError(QString)));
+    connect(registrationTool, SIGNAL(sendSuccess()),this,SLOT(getSuccess()));
+
+    server="jabber.cz";
+
+
 }
 
 void Controller::getRootObject(QObject *obj){
@@ -195,7 +204,7 @@ void Controller::polygonReady(int selectedAcl){
 
 }
 
-void Controller::createPolygonReference(QVariant paintedObject, QString name, int type){
+void Controller::createMapObjectReference(QVariant paintedObject, QString name, int type){
     MapObject mapObject;
     mapObject.setName(name);
     mapObject.setPaintedObject(paintedObject);
@@ -250,6 +259,7 @@ void Controller::deleteCurrentObject(){
         int result=dbConnection->deleteObject(actualLandmark.name());
 
         if(result!=-1){
+            mapObjectMap->remove(actualLandmark.name());
             landMan->removeLandmark(actualLandmark);
             actualLandmark=pom;
             qDebug()<<"sql point delete succesful";
@@ -453,12 +463,56 @@ void Controller::sendMapObjects(){
 
 void Controller::testButtonOperation(){
     // sendMapObjects();
-    emit test();
+    qDebug()<<"test";
+   // emit test();
+   // emit subscribeToUser("terrainuser2@jabber.sh.cvut.cz");
+
+    //
+
+
+   // registrationTool->cancelRegistration(jid,"jabber.cz");
+ /*   QStringList jidList=dbConnection->getAllJids();
+
+    QXmppConfiguration config;
+
+    config.setJid("terrainuser3@jabber.cz");
+    config.setPassword("asasasd");
+    config.setAutoAcceptSubscriptions(true);
+   // config.setIgnoreAuth(true);
+  //  emit disconnectUser();
+    cl.connectToServer(config);
+    cl.startSubscribingToUsers(jidList);*/
+    emit subscribeToLocation("terrainuser1@jabber.cz/QXmpp");
+
 }
 
-void Controller::createNewTerrainUser(QString id, QString name, QString surname, QString jid, QString password){
+
+void Controller::testButtonOperation2(){
+    // sendMapObjects();
+    qDebug()<<"test2";
+    QStringList jidList=dbConnection->getAllJids();
+   // emit test();
+    QXmppConfiguration config;
+
+    config.setJid("terrainuser4@jabber.cz");
+    config.setPassword("asasasd");
+    config.setAutoAcceptSubscriptions(true);
+   // config.setIgnoreAuth(true);
+  //  emit disconnectUser();
+    cl.connectToServer(config);
+    cl.startSubscribingToUsers(jidList);
+
+}
+
+void Controller::createNewTerrainUser(QString id, QString name, QString surname, QString username, QString password){
     //qDebug()<<name<<surname<<jid<<password;
+    QString jid=username;
+    jid+="@";
+    jid+=server;
+
     dbConnection->insertTerrainUser(id, name,surname,jid,password);
+
+    this->makeRosterForUser(jid,password);
 
 }
 
@@ -471,6 +525,7 @@ void Controller::createNewAcl(QString name){
 
 void Controller::prepareAclList(){
     this->aclList=dbConnection->getAllAcls();
+    qDebug()<<"acls got"<<aclList.length();
 
     emit aclListReady();
 }
@@ -549,6 +604,20 @@ void Controller::removeAcl(int i){
 
 void Controller::removeTerrainUser(int i){
     QString id=((TerrainUser)terrainUserList.at(i)).getId();
+    QString jid=((TerrainUser)terrainUserList.at(i)).getJid();
+    QString password("asasasd");
+
+   // registrationTool->cancelRegistration(jid,"jabber.cz");
+    QXmppConfiguration config;
+    qDebug()<<jid;
+    config.setJid(jid);
+    config.setPassword(password);
+    config.setAutoAcceptSubscriptions(true);
+   // config.setIgnoreAuth(true);
+  //  emit disconnectUser();
+    cl.connectToServer(config);
+
+    cl.unregister();
 
     dbConnection->deleteTerrainUser(id);
 }
@@ -644,12 +713,69 @@ double Controller::getPolygonCoordinateLonAt(int i){
 
 }
 
-QVariant Controller::getId(double lat, double lon){
+QVariant Controller::findObjectUnderCursor(double lat, double lon){
 
     QString id=dbConnection->getPolygonIdAtCoordinates(lat,lon);
-    qDebug()<<id;
+
+    QString id2=dbConnection->getLineIdAtCoordinates(lat,lon);
+
+    if(id2!="-1"){//return line instead of polygon if both had been found
+        id=id2;
+    }
 
     MapObject obj=mapObjectMap->value(id);
 
     return obj.getPaintedObject();
+}
+
+void Controller::getCaptchaRegistrationUrl(QString captcha){
+
+    this->captcha=captcha;
+    emit captchaReady();
+
+}
+
+QString Controller::getCaptchaUrl(){
+    return this->captcha;
+}
+
+void Controller::prepareRegistration(){
+    registrationTool->connectToServer();
+}
+
+void Controller::registerUser(QString name, QString password, QString captcha){
+    registrationTool->registerUser(name,password,captcha);
+}
+
+void Controller::getError(QString error){
+    this->errorMessage=error;
+    qDebug()<<"errorget";
+    emit registrationError();
+}
+
+QString Controller::getErrorMessage(){
+    return this->errorMessage;
+}
+
+void Controller::getSuccess(){
+    emit registrationSuccess();
+}
+
+void Controller::stopRegistration(){
+    registrationTool->closeStream();
+}
+
+void Controller::makeRosterForUser(QString jid, QString password){
+    QStringList jidList=dbConnection->getAllJids();
+
+
+    QXmppConfiguration config;
+
+    config.setJid(jid);
+    config.setPassword(password);
+    config.setAutoAcceptSubscriptions(true);
+
+    cl.connectToServer(config);
+    cl.startSubscribingToUsers(jidList);
+
 }

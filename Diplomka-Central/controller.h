@@ -18,6 +18,9 @@
 
 #include "datapreparator.h"
 #include "mapobject.h"
+#include "jabberregistrationtool.h"
+#include "xmppclient.h"
+
 QTM_USE_NAMESPACE
 
 class Controller : public QObject
@@ -36,7 +39,7 @@ public:
     Q_INVOKABLE void lineReady(int selectedAcl);
     Q_INVOKABLE void addPolygonPoint(double lat, double lon);
     Q_INVOKABLE void polygonReady(int selectedAcl);
-    Q_INVOKABLE void createPolygonReference(QVariant paintedObject, QString name, int type);
+    Q_INVOKABLE void createMapObjectReference(QVariant paintedObject, QString name, int type);
 
 
     Q_INVOKABLE void selectObject(QString name);
@@ -49,6 +52,7 @@ public:
     Q_INVOKABLE QVariant getSelectedMapObject();
 
     Q_INVOKABLE void testButtonOperation();
+    Q_INVOKABLE void testButtonOperation2();
     Q_INVOKABLE void createNewTerrainUser(QString id, QString name, QString surname, QString jid, QString password);
     Q_INVOKABLE void createNewAcl(QString name);
 
@@ -74,6 +78,8 @@ public:
     Q_INVOKABLE void setTerrainUserAcl(int i, int j);
     Q_INVOKABLE void unsetTerrainUserAcl(int i);
 
+    Q_INVOKABLE QString getCaptchaUrl();
+
 
 
   //  Q_INVOKABLE QList<QGeoCoordinate *> getLineGeometry(QString textGeometry);
@@ -86,7 +92,11 @@ public:
     Q_INVOKABLE double getPolygonCoordinateLatAt(int i);
     Q_INVOKABLE double getPolygonCoordinateLonAt(int i);
 
-    Q_INVOKABLE QVariant getId(double lat, double lon);
+    Q_INVOKABLE QVariant findObjectUnderCursor(double lat, double lon);
+    Q_INVOKABLE void prepareRegistration();
+    Q_INVOKABLE void registerUser(QString name, QString password, QString captcha);
+    Q_INVOKABLE QString getErrorMessage();
+    Q_INVOKABLE void stopRegistration();
 
 private:
     QObject *object;
@@ -102,24 +112,34 @@ private:
     QList<QLandmark> *dbLineLandmarks;
     QList<QLandmark> *dbPolygonLandmarks;
     QMap<QString, MapObject>* mapObjectMap;
+    QString captcha;
+    QString errorMessage;
+    QString server;
 
     void deselectCurrentObject();
     void fixMapBug();
     void sendMapObjects();
+    void makeRosterForUser(QString jid, QString password);
 
     QList<TerrainUser> prepareCustomTerrainUserFromAclList(int i);
     //QString prepareSvg(QVector<QPointF> coordList, int type);
 
+    JabberRegistrationTool *registrationTool;
 
-
-
+    XmppClient cl;
 signals:
     void sendObjects(QList<QLandmark> *landmarks);
     void sendMapObject(QString svg, QList<TerrainUser> userList);
     void aclListReady();
     void terrainUserListReady();
     void terrainUserFromAclListReady();
+    void subscribeToUser(QString userJid);
     void test();
+    void captchaReady();
+    void registrationError();
+    void registrationSuccess();
+    void disconnectUser();
+    void subscribeToLocation(QString jid);
     
 public slots:
     void getAllPoints(QList<QLandmark> *dbLandmarks);
@@ -132,6 +152,10 @@ public slots:
 
     void addLineFromDB();
     void addPolygonFromDB();
+
+    void getCaptchaRegistrationUrl(QString captcha);
+    void getError(QString error);
+    void getSuccess();
 };
 
 #endif // CONTROLLER_H

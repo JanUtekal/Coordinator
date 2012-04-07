@@ -2,8 +2,7 @@
 import QtQuick 1.1
 
 Rectangle {
-    width: 400
-    height: 300
+
     color: "lightgrey"
     border.width: 3
     border.color: "black"

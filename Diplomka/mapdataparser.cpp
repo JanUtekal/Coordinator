@@ -82,7 +82,7 @@ int MapDataParser::parseData(QString data, QVector<QPointF> &coordList){
                         qDebug()<< coordList.size();
 
                     }
-                    node2=node.nextSibling();
+                    node2=node2.nextSibling();//!!!!!!!
                 }
 
             }

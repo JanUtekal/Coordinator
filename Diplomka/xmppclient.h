@@ -56,6 +56,7 @@ private:
     void eraseFile();
 
 
+
 signals:
     void refresh();
     void sendPointFromCentral(QVector<QPointF> coordList);
@@ -71,7 +72,7 @@ public slots:
     void presenceChanged(const QString& bareJid, const QString& resource);
     void presenceReceived(const QXmppPresence &presence);
     void getNewCoords(QString jid, QString lat, QString lon, QString acc);
-    void subscribeLocation();
+    void subscribeLocation(QString jid);
 
 };
 

@@ -41,8 +41,9 @@ Rectangle {
         label: "Vytvořit nového uživatele v terénu"
 
         onButtonClick: {
+            cont.prepareRegistration();
             newTerrainUser.visible=true;
-            userManegement.color="darkgrey";
+            userManagement.color="darkgrey";
 
         }
 
@@ -155,12 +156,18 @@ Rectangle {
         id: newTerrainUser
         anchors.centerIn: parent
         visible: false;
+        width: 400
+        height: 400
+        z:2
     }
 
     NewACL{
         id: newACL
         anchors.centerIn: parent
         visible: false;
+        width: 400
+        height: 300
+        z:2
     }
 
 }

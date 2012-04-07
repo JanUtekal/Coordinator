@@ -431,7 +431,7 @@ QList<Acl> DbConnection::getAllAcls(){
         aclList.append(acl);
 
     }
-
+    qDebug()<<"acl list length"<<aclList.length();
     return aclList;
 
 }
@@ -443,7 +443,7 @@ QList<TerrainUser> DbConnection::getAllTerrainUsers(){
 
     QSqlQuery query(db);
 
-    QString q=QString("SELECT id,name,surname,jid FROM terrainuser");
+    QString q=QString("SELECT id,name,surname, password, jid FROM terrainuser");
 
     query.prepare(q);
 
@@ -455,9 +455,12 @@ QList<TerrainUser> DbConnection::getAllTerrainUsers(){
         QString id = query.value(0).toString();
         QString name= query.value(1).toString();
         QString surname= query.value(2).toString();
-        QString jid=query.value(3).toString();
+        QString password= query.value(3).toString();
+        QString jid=query.value(4).toString();
 
-        TerrainUser user(id,name,surname,jid);
+        QString username=jid.split("@").at(0);
+        QString server=jid.split("@").at(1);
+        TerrainUser user(id,name,surname, password, username,server);
 
         terrainUserList.append(user);
 
@@ -474,7 +477,7 @@ QList<TerrainUser> DbConnection::getTerrainUsersFromAcl(QString id){
 
     QSqlQuery query(db);
 
-    QString q=QString("SELECT id, name, surname, jid FROM terrainuser WHERE acl=%1").arg(id);
+    QString q=QString("SELECT id, name, surname, password, jid FROM terrainuser WHERE acl=%1").arg(id);
 
     query.prepare(q);
 
@@ -486,9 +489,12 @@ QList<TerrainUser> DbConnection::getTerrainUsersFromAcl(QString id){
         QString id = query.value(0).toString();
         QString name= query.value(1).toString();
         QString surname= query.value(2).toString();
-        QString jid=query.value(3).toString();
+        QString password= query.value(3).toString();
+        QString jid=query.value(4).toString();
+        QString username=jid.split("@").at(0);
+        QString server=jid.split("@").at(1);
+        TerrainUser user(id, name, surname, password, username, server);
 
-        TerrainUser user(id,name,surname,jid);
 
         terrainUserList.append(user);
 
@@ -565,4 +571,51 @@ QString DbConnection::getPolygonIdAtCoordinates(double lat, double lon){
 
 
     return id;
+}
+
+QString DbConnection::getLineIdAtCoordinates(double lat, double lon){
+    QString id="-1";
+
+    QSqlQuery query(db);
+
+    QString q=QString("SELECT id FROM line AS lin where ST_Distance(lin.coordinates, ST_GeographyFromText('SRID=4326;POINT(%1 %2)'))<100 ORDER BY ST_Distance(lin.coordinates, ST_GeographyFromText('SRID=4326;POINT(%1 %2)'))").arg(lon).arg(lat);
+
+    query.prepare(q);
+
+
+
+    qDebug()<< query.exec()<<query.executedQuery();
+
+    if(query.next()){
+       id = query.value(0).toString();
+    }
+
+
+
+    return id;
+}
+
+QStringList DbConnection::getAllJids(){
+    QString id="-1";
+
+    QSqlQuery query(db);
+
+    QString q=QString("SELECT jid FROM terrainuser UNION SELECT jid FROM centraluser");
+
+    query.prepare(q);
+
+
+
+    qDebug()<< query.exec()<<query.executedQuery();
+
+    QStringList jidList;
+
+    while(query.next()){
+       QString jid = query.value(0).toString();
+       jidList.append(jid);
+    }
+
+
+
+    return jidList;
 }

@@ -2,8 +2,7 @@
 import QtQuick 1.1
 
 Rectangle {
-    width: 400
-    height: 300
+
     color: "lightgrey"
     border.width: 3
     border.color: "black"
@@ -16,7 +15,7 @@ Rectangle {
         y:20
 
         Column{
-            width:parent.width/4
+            width:3*parent.width/8
             height: 2*parent.height/3
             spacing: 20
 
@@ -29,7 +28,7 @@ Rectangle {
             }
 
             Text{
-                text: "Jméno"
+                text: "Name"
                 color: "black"
                 z:1
                 font.pixelSize: 15
@@ -37,7 +36,7 @@ Rectangle {
             }
 
             Text{
-                text: "Příjmení"
+                text: "Surname"
                 color: "black"
                 z:1
                 font.pixelSize: 15
@@ -45,7 +44,7 @@ Rectangle {
             }
 
             Text{
-                text: "JID"
+                text: "Username"
                 color: "black"
                 z:1
                 font.pixelSize: 15
@@ -53,7 +52,22 @@ Rectangle {
             }
 
             Text{
-                text: "Heslo"
+                text: "Password"
+                color: "black"
+                z:1
+                font.pixelSize: 15
+                font.family: font1
+            }
+
+            Rectangle{
+               width: 1
+               height:30
+               color:"transparent"
+            }
+
+
+            Text{
+                text: "Text z obrázku"
                 color: "black"
                 z:1
                 font.pixelSize: 15
@@ -95,9 +109,48 @@ Rectangle {
                 width: parent.width
                 height: 20
             }
+            Row{
+                spacing: 30
+                Image{
+                    id: captcha
+                    width: 120
+                    height: 40
+                    source: "";
+                    Connections{
+                        target: cont
+
+                        onCaptchaReady:{
+                            captcha.source=cont.getCaptchaUrl();
+                            captcha.visible=false;
+                            captcha.visible=true;
+                            console.log(captcha.source)
+                        }
+                    }
+
+
+                }
+                Rectangle{
+                    width:40
+                    height: 40
+                    MouseArea{
+                        anchors.fill:parent
+                        onClicked: {
+                            cont.prepareRegistration();
+                        }
+                    }
+                }
+            }
+
+            TextInputField{
+                id: textField5
+                width: parent.width
+                height: 20
+            }
+
 
 
         }
+
 
     }
 
@@ -112,11 +165,9 @@ Rectangle {
         label: "Vytvořit"
 
         onButtonClick: {
-            newTerrainUser.visible=false;
-            cont.createNewTerrainUser(textField0.input, textField1.input, textField2.input, textField3.input, textField4.input);
-            userManegement.color="lightgrey"
-            userManagement.selectedUser=-1;
-            cont.prepareTerrainUserList();
+
+
+            cont.registerUser(textField3.input, textField4.input, textField5.input)
 
 
         }
@@ -134,10 +185,33 @@ Rectangle {
 
         onButtonClick: {
             newTerrainUser.visible=false;
-            userManegement.color="lightgrey"
+            userManagement.color="lightgrey"
+            cont.stopRegistration();
 
         }
 
     }
 
+    RegistrationError{
+        id: regError
+        width: 200
+        height: 200
+        anchors.centerIn: parent
+        visible:false
+    }
+
+    Connections{
+        target: cont
+        onRegistrationError:{
+            regError.visible=true;
+        }
+
+        onRegistrationSuccess:{
+            newTerrainUser.visible=false;
+            cont.createNewTerrainUser(textField0.input, textField1.input, textField2.input, textField3.input, textField4.input);
+            userManagement.color="lightgrey"
+            userManagement.selectedUser=-1;
+            cont.prepareTerrainUserList();
+        }
+    }
 }

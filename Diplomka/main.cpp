@@ -7,7 +7,7 @@
 //#include "QXmppPubSubManager.h"
 #include "extension.h"
 
-#define USERNAME "terrainuser1@jabber.cz"
+#define USERNAME "terrainuser4@jabber.cz"
 
 #define PASSWORD "asasasd"
 
@@ -57,8 +57,23 @@ int main(int argc, char *argv[])
     QXmppLogger::getLogger()->setLoggingType(QXmppLogger::FileLogging);
 
 
-   client.connectToServer(USERNAME, PASSWORD);
+  // client.connectToServer(USERNAME, PASSWORD);
+   QXmppConfiguration config;
+   config.setJid(USERNAME);
+   config.setPassword(PASSWORD);
+   config.setAutoAcceptSubscriptions(true);
+   config.setIgnoreSslErrors(true);
 
+  // QXmppPresence pr;
+  // pr.setCapabilityNode("http://jabber.org/protocol/geoloc");
+  // client.addProperCapability(pr);
+ //  QXmppDiscoveryManager d;
+  // d.setClientCapabilitiesNode("http://jabber.org/protocol/geoloc");
+
+   client.connectToServer(config);
+
+
+   qDebug()<<"vypis";
 
     return app->exec();
 }

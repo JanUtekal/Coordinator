@@ -16,6 +16,8 @@
 #include "QXmppLogger.h"
 #include "extension.h"
 
+#include "QXmppStream.h"
+
 #define USERNAME "centraluser1@jabber.cz"
 
 #define PASSWORD "asasasd"
@@ -96,16 +98,54 @@ int main(int argc, char *argv[])
 
 
     QObject::connect(&cont,SIGNAL(sendObjects(QList<QLandmark>*)),&client,SLOT(sendObjectsToUsers(QList<QLandmark>*)));
-    QObject::connect(&cont,SIGNAL(test()),&client,SLOT(subscribeLocation()));
+    QObject::connect(&cont,SIGNAL(test()),&client,SLOT(sendMess()));
+    QObject::connect(&cont,SIGNAL(subscribeToUser(QString)),&client,SLOT(subscribeToUser(QString)));
     QObject::connect(&cont,SIGNAL(sendMapObject(QString,QList<TerrainUser>)),&client,SLOT(sendObjectToUsers(QString,QList<TerrainUser>)));
 
+    QObject::connect(&cont,SIGNAL(disconnectUser()),&client,SLOT(disconnectFromServer()));
+
+
+    QObject::connect(&cont,SIGNAL(subscribeToLocation(QString)),&client,SLOT(subscribeLocation(QString)));
 
 
     QXmppLogger::getLogger()->setLoggingType(QXmppLogger::FileLogging);
     QXmppLogger::getLogger()->setMessageTypes(QXmppLogger::AnyMessage);
-    client.connectToServer(USERNAME, PASSWORD);
+  //  client.connectToServer(USERNAME, PASSWORD);
+    QXmppConfiguration config;
+    config.setJid(USERNAME);
+    config.setPassword(PASSWORD);
+    config.setAutoAcceptSubscriptions(true);
+   // config.setIgnoreAuth(true);
+    client.connectToServer(config);
+
+/*
+    QXmppIq iq;
+        iq.setTo("jabber.org");
+       // iq.setFrom("pokusnfhg1@jabber.cz");
+        iq.setType(QXmppIq::Get);
+      //  iq.setQueryNode("jabber:iq:register");
+     //   iq.setItems(items);
+        QXmppElement query;
+        query.setTagName("query");
+        query.setAttribute("xmlns","jabber:iq:register");
+
+        QXmppElementList elList;
+        elList.append(query);
 
 
+
+        iq.setExtensions(elList);
+
+        QXmppConfiguration config;
+        //config.setDomain("jabber.cz");
+        config.setHost("jabber.cz");
+       //config.setIgnoreAuth(true);
+       config.setIgnoreSslErrors(true);
+     //  config.set
+        //config.setJid("");
+        //config.setPassword("");
+        client.connectToServer(config);
+*/
  //   QObject::connect(&cont, SIGNAL(aclListReady()),&object,SLOT())
 
    // client.findExtension<QXmppDiscoveryManager>()->setClientCapabilitiesNode ("http://jabber.org/protocol/geoloc+notify");;

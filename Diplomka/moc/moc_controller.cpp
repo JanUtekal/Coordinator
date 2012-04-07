@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'controller.h'
 **
-** Created: Sat 31. Mar 12:07:00 2012
+** Created: Wed 4. Apr 18:12:29 2012
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.4)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -23,7 +23,7 @@ static const uint qt_meta_data_Controller[] = {
        5,       // revision
        0,       // classname
        0,    0, // classinfo
-      21,   14, // methods
+      25,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -39,23 +39,27 @@ static const uint qt_meta_data_Controller[] = {
       66,   58,   11,   11, 0x0a,
      108,   98,   11,   11, 0x0a,
      146,   98,   11,   11, 0x0a,
-     198,  183,   11,   11, 0x0a,
-     245,  241,   11,   11, 0x0a,
+     183,   98,   11,   11, 0x0a,
+     238,  223,   11,   11, 0x0a,
+     285,  281,   11,   11, 0x0a,
 
  // methods: signature, parameters, type, tag, flags
-     273,   11,  269,   11, 0x02,
-     297,  295,  287,   11, 0x02,
-     318,  295,  312,   11, 0x02,
-     333,  295,  312,   11, 0x02,
-     348,   11,  312,   11, 0x02,
-     362,   11,  312,   11, 0x02,
-     378,  376,   11,   11, 0x02,
-     408,  295,  399,   11, 0x02,
-     428,   11,  269,   11, 0x02,
-     445,   11,   11,   11, 0x02,
-     458,   11,  269,   11, 0x02,
-     489,  295,  482,   11, 0x02,
-     517,  295,  482,   11, 0x02,
+     313,   11,  309,   11, 0x02,
+     337,  335,  327,   11, 0x02,
+     358,  335,  352,   11, 0x02,
+     373,  335,  352,   11, 0x02,
+     388,   11,  352,   11, 0x02,
+     402,   11,  352,   11, 0x02,
+     418,  416,   11,   11, 0x02,
+     448,  335,  439,   11, 0x02,
+     468,   11,  309,   11, 0x02,
+     485,   11,   11,   11, 0x02,
+     498,   11,  309,   11, 0x02,
+     529,  335,  522,   11, 0x02,
+     557,  335,  522,   11, 0x02,
+     585,   11,  309,   11, 0x02,
+     612,  335,  522,   11, 0x02,
+     643,  335,  522,   11, 0x02,
 
        0        // eod
 };
@@ -66,6 +70,7 @@ static const char qt_meta_stringdata_Controller[] = {
     "updateMyPosition(double,double)\0"
     "coordList\0getPointFromCentral(QVector<QPointF>)\0"
     "getLineFromCentral(QVector<QPointF>)\0"
+    "getPolygonFromCentral(QVector<QPointF>)\0"
     "jid,coordinate\0"
     "updateUserPosition(QString,QGeoCoordinate)\0"
     "jid\0setUserOffline(QString)\0int\0"
@@ -77,6 +82,9 @@ static const char qt_meta_stringdata_Controller[] = {
     "clearVlist()\0getLineCoordinatesNum()\0"
     "double\0getLineCoordinateLatAt(int)\0"
     "getLineCoordinateLonAt(int)\0"
+    "getPolygonCoordinatesNum()\0"
+    "getPolygonCoordinateLatAt(int)\0"
+    "getPolygonCoordinateLonAt(int)\0"
 };
 
 const QMetaObject Controller::staticMetaObject = {
@@ -114,35 +122,42 @@ int Controller::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
         case 3: updateMyPosition((*reinterpret_cast< double(*)>(_a[1])),(*reinterpret_cast< double(*)>(_a[2]))); break;
         case 4: getPointFromCentral((*reinterpret_cast< QVector<QPointF>(*)>(_a[1]))); break;
         case 5: getLineFromCentral((*reinterpret_cast< QVector<QPointF>(*)>(_a[1]))); break;
-        case 6: updateUserPosition((*reinterpret_cast< QString(*)>(_a[1])),(*reinterpret_cast< QGeoCoordinate(*)>(_a[2]))); break;
-        case 7: setUserOffline((*reinterpret_cast< QString(*)>(_a[1]))); break;
-        case 8: { int _r = getPointNum();
+        case 6: getPolygonFromCentral((*reinterpret_cast< QVector<QPointF>(*)>(_a[1]))); break;
+        case 7: updateUserPosition((*reinterpret_cast< QString(*)>(_a[1])),(*reinterpret_cast< QGeoCoordinate(*)>(_a[2]))); break;
+        case 8: setUserOffline((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 9: { int _r = getPointNum();
             if (_a[0]) *reinterpret_cast< int*>(_a[0]) = _r; }  break;
-        case 9: { QString _r = getJidFor((*reinterpret_cast< int(*)>(_a[1])));
+        case 10: { QString _r = getJidFor((*reinterpret_cast< int(*)>(_a[1])));
             if (_a[0]) *reinterpret_cast< QString*>(_a[0]) = _r; }  break;
-        case 10: { float _r = getLatFor((*reinterpret_cast< int(*)>(_a[1])));
+        case 11: { float _r = getLatFor((*reinterpret_cast< int(*)>(_a[1])));
             if (_a[0]) *reinterpret_cast< float*>(_a[0]) = _r; }  break;
-        case 11: { float _r = getLonFor((*reinterpret_cast< int(*)>(_a[1])));
+        case 12: { float _r = getLonFor((*reinterpret_cast< int(*)>(_a[1])));
             if (_a[0]) *reinterpret_cast< float*>(_a[0]) = _r; }  break;
-        case 12: { float _r = getLatForMe();
+        case 13: { float _r = getLatForMe();
             if (_a[0]) *reinterpret_cast< float*>(_a[0]) = _r; }  break;
-        case 13: { float _r = getLonForMe();
+        case 14: { float _r = getLonForMe();
             if (_a[0]) *reinterpret_cast< float*>(_a[0]) = _r; }  break;
-        case 14: setToVlist((*reinterpret_cast< QVariant(*)>(_a[1]))); break;
-        case 15: { QVariant _r = getFromVlistAt((*reinterpret_cast< int(*)>(_a[1])));
+        case 15: setToVlist((*reinterpret_cast< QVariant(*)>(_a[1]))); break;
+        case 16: { QVariant _r = getFromVlistAt((*reinterpret_cast< int(*)>(_a[1])));
             if (_a[0]) *reinterpret_cast< QVariant*>(_a[0]) = _r; }  break;
-        case 16: { int _r = getMapPointNum();
+        case 17: { int _r = getMapPointNum();
             if (_a[0]) *reinterpret_cast< int*>(_a[0]) = _r; }  break;
-        case 17: clearVlist(); break;
-        case 18: { int _r = getLineCoordinatesNum();
+        case 18: clearVlist(); break;
+        case 19: { int _r = getLineCoordinatesNum();
             if (_a[0]) *reinterpret_cast< int*>(_a[0]) = _r; }  break;
-        case 19: { double _r = getLineCoordinateLatAt((*reinterpret_cast< int(*)>(_a[1])));
+        case 20: { double _r = getLineCoordinateLatAt((*reinterpret_cast< int(*)>(_a[1])));
             if (_a[0]) *reinterpret_cast< double*>(_a[0]) = _r; }  break;
-        case 20: { double _r = getLineCoordinateLonAt((*reinterpret_cast< int(*)>(_a[1])));
+        case 21: { double _r = getLineCoordinateLonAt((*reinterpret_cast< int(*)>(_a[1])));
+            if (_a[0]) *reinterpret_cast< double*>(_a[0]) = _r; }  break;
+        case 22: { int _r = getPolygonCoordinatesNum();
+            if (_a[0]) *reinterpret_cast< int*>(_a[0]) = _r; }  break;
+        case 23: { double _r = getPolygonCoordinateLatAt((*reinterpret_cast< int(*)>(_a[1])));
+            if (_a[0]) *reinterpret_cast< double*>(_a[0]) = _r; }  break;
+        case 24: { double _r = getPolygonCoordinateLonAt((*reinterpret_cast< int(*)>(_a[1])));
             if (_a[0]) *reinterpret_cast< double*>(_a[0]) = _r; }  break;
         default: ;
         }
-        _id -= 21;
+        _id -= 25;
     }
     return _id;
 }

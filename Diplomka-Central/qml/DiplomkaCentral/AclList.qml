@@ -155,7 +155,7 @@ Rectangle {
         target: cont
 
         onAclListReady:{
-            //  console.log("tvorim list",cont.getAclNum());
+              console.log("tvorim list",cont.getAclNum());
             create(cont.getAclNum());
         }
 

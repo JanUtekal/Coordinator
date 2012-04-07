@@ -15,9 +15,9 @@ Changes:
  .
    * Initial Release.
 Checksums-Sha1: 
- 118e283d34517ebd80d9def62e27a48d6b9da364 259368 diplomka_0.0.1_armel.deb
+ e7ffc372871e1cdacdc4c708c04d67667cccaf59 261460 diplomka_0.0.1_armel.deb
 Checksums-Sha256: 
- 0b8ca70c2490b7e1ef0bbb9dd6ef7fd7767ff667cea9e286875ee2fc8e6b973d 259368 diplomka_0.0.1_armel.deb
+ 38aafc726cd2d93655adf899b4207500b008c8fc6b12c1578b047007c06fcc58 261460 diplomka_0.0.1_armel.deb
 Files: 
- b15986b17f0e2ea4cd6d9fe1a72d8e9c 259368 user/other optional diplomka_0.0.1_armel.deb
+ 386ee04d33a84ea53b8834d3fe9294d7 261460 user/other optional diplomka_0.0.1_armel.deb
 Maemo-Display-Name: Diplomka

@@ -40,6 +40,8 @@ public:
     void deleteAcl(QString id);
     void deleteTerrainUser(QString id);
     QString getPolygonIdAtCoordinates(double lat, double lon);
+    QString getLineIdAtCoordinates(double lat, double lon);
+    QStringList getAllJids();
 
 private:
     QSqlDatabase db;

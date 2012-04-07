@@ -30,9 +30,9 @@
 #include <QXmlStreamWriter>
 
 #define PATH ""
-#define USERNAME "terrainuser1@jabber.cz"
+//#define USERNAME "terrainuser1@jabber.cz"
 
-#define PASSWORD "asasasd"
+//#define PASSWORD "asasasd"
 
 
 
@@ -134,8 +134,11 @@ void XmppClient::messageRecv(const QXmppMessage& message){
 
 
 void XmppClient::presenceReceived(const QXmppPresence &presence){
+    qDebug()<<"presence rcvd"<<presence.from()<<presence.type();
+    if(presence.type()==4){//subscribed
+        subscribeLocation(presence.from());
 
-
+    }
 }
 
 //deprecated - experimantalni metoda
@@ -143,7 +146,7 @@ void XmppClient::sendMess(float lat, float lon){
 
     QXmppIq iq;
 
-    iq.setFrom(USERNAME);
+    iq.setFrom(this->configuration().jid());
     iq.setType(QXmppIq::Set);
     iq.setId("publish1111");
    // iq.setTo("asasasd@jabber.cz");
@@ -230,7 +233,7 @@ void XmppClient::getNewCoords(QString jid, QString lat, QString lon, QString acc
 }
 
 //projde roster a na vsechny vyzada prijem geoloc
-void XmppClient::subscribeLocation(){
+void XmppClient::subscribeLocation(QString jid){
 
     QStringList l=this->rosterManager().getRosterBareJids();
 
@@ -238,7 +241,7 @@ void XmppClient::subscribeLocation(){
 
         QXmppPubSubIq iq;
         iq.setTo(jid);
-        QString userName=USERNAME;
+        QString userName=this->configuration().jidBare();
         userName+="/QXmpp";
 
         iq.setFrom(userName);
@@ -253,3 +256,5 @@ void XmppClient::subscribeLocation(){
     }
 
 }
+
+

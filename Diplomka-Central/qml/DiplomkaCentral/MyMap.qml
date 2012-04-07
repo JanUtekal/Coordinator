@@ -18,6 +18,12 @@ Rectangle {
     property bool objectEverSelected:false //slouzi ke kontrole jestli byl nekdy nejaky mapovy objekt vybran
 
     property bool lostLineCoordinate: false//fix of a qml bug
+
+
+    property color lineColor: "red"
+    property color polygonBorderColor:  "blue"
+    property color polygonColor:  Qt.rgba(0, 1, 1, 0.1)
+
     // property bool deleteButtonClicked: false
 
     // property variant array:[]
@@ -29,12 +35,13 @@ Rectangle {
     //   property list<Item> ar
     function deselect(){
         if(objectEverSelected){
+            console.log("type",cont.getSelectedMapObject().type)
             if(cont.getSelectedMapObject().type<10){
                 cont.getSelectedMapObject().color="green";
             } else if(cont.getSelectedMapObject().type<20){
-                cont.getSelectedMapObject().border.color="red";
+                cont.getSelectedMapObject().border.color=lineColor;
             } else {
-                cont.getSelectedMapObject().border.color="blue";
+                cont.getSelectedMapObject().border.color=polygonBorderColor;
             }
 
             cont.deselectObject();
@@ -178,12 +185,12 @@ Rectangle {
                     property int type: -1
 
                     id: line
-                    border {color: "red"; width: 4}
+                    border {color: lineColor; width: 4}
                     visible:false
 
 
 
-                    MapMouseArea{
+                /*    MapMouseArea{
                         //anchors.fill: parent
                         //acceptedButtons: Qt.LeftButton
                         onClicked: {
@@ -205,7 +212,7 @@ Rectangle {
 
                         }
 
-                    }
+                    }*/
 
 
 
@@ -225,6 +232,7 @@ Rectangle {
                                 line.addCoordinate(coord);
                                 visible=true;
                             }
+                            cont.createMapObjectReference(line,line.name,1);//to be able to select the object we need to make a reference on it
 
                         }
                     }
@@ -247,7 +255,8 @@ Rectangle {
 
 
                 MapGroup{
-                        //bacause of an error in MapPolygon we cannot add anything else than Coordinates into the polygon definition, so we define the polygon geometry here
+                    opacity: 0.3
+                    //bacause of an error in MapPolygon we cannot add anything else than Coordinates into the polygon definition, so we define the polygon geometry here
                         Component.onCompleted: {
 
 
@@ -255,6 +264,8 @@ Rectangle {
 
 
                             if(type==20){
+                                polygon.type=type;
+
                                 var num=cont.getPolygonCoordinatesNum();
                                 for(var i=0; i<num;i++){
                                     var coord = Qt.createQmlObject('import Qt 4.7; import QtMobility.location 1.2; Coordinate{}', map, "coord"+i);
@@ -266,7 +277,7 @@ Rectangle {
                                     polygon.visible=true;
                                    // visible=true;
                                 }
-                                cont.createPolygonReference(polygon,polygon.name,2);//to be able to select the object we need to make a reference on it
+                                cont.createMapObjectReference(polygon,polygon.name,2);//to be able to select the object we need to make a reference on it
 
                             }
                         }
@@ -280,9 +291,10 @@ Rectangle {
                         property int type: -1
 
                         id: polygon
-                        border {color: "blue"; width: 4}
+                        border {color: polygonBorderColor; width: 4}
                         visible:false
-                        color: "lightblue"
+                        color: polygonColor
+
 
                    /*
                         MapMouseArea{
@@ -349,6 +361,33 @@ Rectangle {
 
 
         }
+
+     /*   MapPolygon {
+            // property double lat:landmark.coordinate.latitude
+            // property double lon:landmark.coordinate.longitude
+
+
+            id: polygon
+            border {color: "blue"; width: 4}
+
+
+
+
+
+            Coordinate{
+                latitude: 49.1886
+                longitude: 16.5671
+            }
+            Coordinate{
+                latitude: 49.2886
+                longitude: 16.5671
+            }
+
+            Coordinate{
+                latitude: 49.1886
+                longitude: 16.6671
+            }
+        }*/
 
         MapMouseArea {
             id: mousearea
@@ -480,7 +519,7 @@ Rectangle {
                     }
                 } else {
 
-                    var paintedObject=cont.getId(map.toCoordinate(Qt.point(mouse.x,mouse.y)).latitude, map.toCoordinate(Qt.point(mouse.x,mouse.y)).longitude);
+                    var paintedObject=cont.findObjectUnderCursor(map.toCoordinate(Qt.point(mouse.x,mouse.y)).latitude, map.toCoordinate(Qt.point(mouse.x,mouse.y)).longitude);
                     if(paintedObject){
                         deselect();
 
@@ -575,6 +614,20 @@ Rectangle {
 
             onButtonClick: {
                 cont.testButtonOperation();
+
+            }
+
+        }
+        Button{
+            id: testButton2
+            width: 120
+            height: 50
+
+            z: 2
+            label: "test"
+
+            onButtonClick: {
+                cont.testButtonOperation2();
 
             }
 

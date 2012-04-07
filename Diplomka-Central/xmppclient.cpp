@@ -75,7 +75,8 @@ XmppClient::XmppClient(QObject *parent)
     //  QTimer::s:setInterval()
        deleted=0;
 
-
+    unregisterMe=false;
+    subscribe=false;
 }
 
 XmppClient::~XmppClient()
@@ -86,6 +87,18 @@ XmppClient::~XmppClient()
 void XmppClient::clientConnected()
 {
     std::cout<<"CONNECTED"<<std::endl;
+    if(unregisterMe){
+        unregisterUser();
+    }
+    if(subscribe){
+
+
+
+        publishFirstLocation();
+        subscribeToUsers();
+        //
+    }
+
 }
 
 
@@ -117,7 +130,11 @@ void XmppClient::messageRecv(const QXmppMessage& message){
 }
 
 void XmppClient::presenceReceived(const QXmppPresence &presence){
-   // qDebug()<<"presence"<<presence.from();
+    qDebug()<<"presence"<<presence.from()<<presence.type();
+    if(presence.type()==4){//subscribed
+        subscribeLocation(presence.from());
+
+    }
 
 }
 
@@ -188,7 +205,7 @@ void XmppClient::iqReceived(const QXmppIq &iq){
 
 
 void XmppClient::sendMess(){
-
+    qDebug()<<"in send mess";
   /*  QXmppIq iq;
 
     iq.setType(QXmppIq::Set);
@@ -364,7 +381,7 @@ QXmppIq iq2;
 
 */
 
-    QXmppPubSubIq iq;
+  /*  QXmppPubSubIq iq;
     iq.setTo("terrainuser1@jabber.cz/");
     iq.setFrom("centraluser1@jabber.cz/QXmpp");
     iq.setType(QXmppIq::Set);
@@ -375,9 +392,68 @@ QXmppIq iq2;
     this->sendPacket (iq);
 
     qDebug()<<"sent";
-
+*/
  // QXmppDiscoveryManager m;
   //qDebug()<< m.requestInfo("H.a.n.s@jabber.cz","geoloc");
+
+    //zadost o registraci
+    QXmppIq iq;
+        iq.setTo("jabber.sh.cvut.cz");
+       // iq.setFrom("centraluser1@jabber.sh.cvut.cz");
+        iq.setType(QXmppIq::Get);
+      //  iq.setQueryNode("jabber:iq:register");
+     //   iq.setItems(items);
+        QXmppElement query;
+        query.setTagName("query");
+        query.setAttribute("xmlns","jabber:iq:register");
+
+        QXmppElementList elList;
+        elList.append(query);
+
+
+        iq.setExtensions(elList);
+        this->sendPacket (iq);
+
+     /*   QXmppClient cl;
+        QXmppConfiguration config;
+        config.setDomain("jabber.cz");
+        config.setHost("jabber.cz");
+        //config.setJid("");
+        //config.setPassword("");
+        cl.connectToServer(config);
+       // cl.sendPacket(iq);*/
+        qDebug()<<"sent";
+//jabber.sh.cvut.cz - spatny certifikat, jen jmeno heslo
+//
+{
+    QXmppIq iq;
+        iq.setTo("jabber.sh.cvut.cz");
+     //   iq.setFrom("centraluser1@jabber.cz/QXmpp");
+        iq.setType(QXmppIq::Set);
+      //  iq.setQueryNode("jabber:iq:register");
+     //   iq.setItems(items);
+        QXmppElement query;
+        query.setTagName("query");
+        query.setAttribute("xmlns","jabber:iq:register");
+
+        QXmppElement username;
+        username.setTagName("username");
+        username.setValue("terrainuser1@jabber.sh.cvut.cz");
+        query.appendChild (username);
+
+        QXmppElement password;
+        password.setTagName("password");
+        password.setValue("asasasd");
+        query.appendChild (password);
+
+        QXmppElementList elList;
+        elList.append(query);
+
+
+        iq.setExtensions(elList);
+        this->sendPacket (iq);
+}
+        qDebug()<<"sent";
 
 
 
@@ -393,28 +469,159 @@ void XmppClient::getNewCoords(QString jid, QString lat, QString lon, QString acc
     emit updateUser(jid.toLower(),coordinate);
 }
 
-void XmppClient::subscribeLocation(){
+void XmppClient::subscribeLocation(QString jid){
 
-    QStringList l=this->rosterManager().getRosterBareJids();
+  //  QStringList l=this->rosterManager().getRosterBareJids();
 
-    foreach(QString jid, l){
+  //  foreach(QString jid, l){
 
         QXmppPubSubIq iq;
         iq.setTo(jid);
-        QString userName=USERNAME;
-        userName+="/QXmpp";
+        QString userName=this->configuration().jid();
+
 
         iq.setFrom(userName);
         iq.setType(QXmppIq::Set);
         iq.setQueryType(QXmppPubSubIq::SubscribeQuery);
-        iq.setQueryJid("terrainuser@jabber.cz/QXmpp");
+        iq.setQueryJid(this->configuration().jid());
         iq.setQueryNode("http://jabber.org/protocol/geoloc");
      //   iq.setItems(items);
         this->sendPacket (iq);
 
 
-    }
+  //  }
 
 }
 
+void XmppClient::subscribeToUser(QString userJid){
 
+    QXmppPresence packet;
+    packet.setTo(userJid);
+    packet.setType(QXmppPresence::Subscribe);
+    this->sendPacket(packet);
+
+
+}
+
+void XmppClient::unregister(){
+    unregisterMe=true;
+
+
+
+}
+void XmppClient::unregisterUser(){
+        unregisterMe=false;
+
+
+        QXmppIq iq;
+        iq.setFrom(this->configuration().jid());
+
+        iq.setType(QXmppIq::Set);
+
+        QXmppElement query;
+        query.setTagName("query");
+        query.setAttribute("xmlns","jabber:iq:register");
+
+        QXmppElement remove;
+        remove.setTagName("remove");
+
+        query.appendChild (remove);
+
+
+        QXmppElementList elList;
+        elList.append(query);
+
+
+        iq.setExtensions(elList);
+        this->sendPacket (iq);
+
+
+        this->disconnectFromServer();
+
+}
+
+void XmppClient::startSubscribingToUsers(QStringList jidList){
+    this->jidList=jidList;
+    subscribe=true;
+
+
+}
+
+void XmppClient::subscribeToUsers(){
+    qDebug()<<jidList.length();
+    foreach(QString jid, jidList){
+        qDebug()<<"subscribing to"<<jid;
+        subscribeToUser(jid);
+    }
+  //  subscribeToUser("centraluser1@jabber.cz");
+    jidList.clear();
+    subscribe=false;
+
+
+
+    this->disconnectFromServer();
+}
+
+void XmppClient::publishFirstLocation(){
+    QXmppIq iq;
+
+    iq.setFrom(this->configuration().jid());
+    iq.setType(QXmppIq::Set);
+    iq.setId("publish1111");
+   // iq.setTo("asasasd@jabber.cz");
+
+    QXmppElement pubsub;
+    pubsub.setTagName("pubsub");
+    pubsub.setAttribute("xmlns","http://jabber.org/protocol/pubsub");
+
+    QXmppElement publish;
+    publish.setTagName("publish");
+    publish.setAttribute("node","http://jabber.org/protocol/geoloc");
+
+    pubsub.appendChild(publish);
+
+    QXmppElement elItem;
+    elItem.setTagName("item");
+    publish.appendChild(elItem);
+
+    QXmppElement elGeoloc;
+    elGeoloc.setTagName("geoloc");
+    elGeoloc.setAttribute("xmlns","http://jabber.org/protocol/geoloc");
+    elGeoloc.setAttribute("xml:lang","en");
+    elItem.appendChild(elGeoloc);
+
+    QXmppElement elLat;
+    elLat.setTagName("lat");
+    QString slat;
+    slat.setNum(0);
+    elLat.setValue(slat);
+    elGeoloc.appendChild(elLat);
+
+    QXmppElement elLon;
+    elLon.setTagName("lon");
+    QString slon;
+    slon.setNum(0);
+    //  qDebug()<<"IIIIIIIIIIIIIIIIIII"<<lon<<slon;
+    elLon.setValue(slon);
+    elGeoloc.appendChild(elLon);
+
+    QXmppElement elAlt;
+    elAlt.setTagName("alt");
+    elAlt.setValue("nan");
+    elGeoloc.appendChild(elAlt);
+
+    QXmppElement elAccuracy;
+    elAccuracy.setTagName("accuracy");
+    elAccuracy.setValue("1880.590000");
+    elGeoloc.appendChild(elAccuracy);
+
+
+    QXmppElementList elList;
+    elList.append(pubsub);
+
+
+    iq.setExtensions(elList);
+    //   mess.setType(QXmppMessage::Normal);
+    // sendMessage("asasasd@jabber.cz","bla");
+    sendPacket(iq);
+}

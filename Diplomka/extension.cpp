@@ -101,6 +101,6 @@ QStringList Extension::discoveryFeatures () const
 {
     QStringList result;
     result << "http://jabber.org/protocol/geoloc";
-
+    result << "http://jabber.org/protocol/pubsub";
     return result;
 }

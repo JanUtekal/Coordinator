@@ -44,16 +44,23 @@ public:
     XmppClient(QObject *parent = 0);
     ~XmppClient();
 
+    void unregister();
+    void startSubscribingToUsers(QStringList jidList);
+
 
   //  QList<Contact> cList;
 
 private:
 
     int deleted;
+    bool unregisterMe;
+    bool subscribe;
 
     void eraseFile();
-
-
+    void unregisterUser();
+    void subscribeToUsers();
+    void publishFirstLocation();
+    QStringList jidList;
 
 signals:
     void refresh(QList<QLandmark> *landmarkList);
@@ -72,10 +79,15 @@ public slots:
     void sendObjectToUsers(QString svg, QList<TerrainUser> userList);
 
     void getNewCoords(QString jid, QString lat, QString lon, QString acc);
-    void subscribeLocation();
+    void subscribeLocation(QString jid);
+
+    void subscribeToUser(QString jid);
+
   //  void userStateChanged(QXmppClient::State state);
 
     void sendMess();
+
+
 };
 
 #endif // XMPPCLIENT_H
