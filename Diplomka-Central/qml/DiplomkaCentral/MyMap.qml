@@ -19,11 +19,14 @@ Rectangle {
 
     property bool lostLineCoordinate: false//fix of a qml bug
 
-
+    property color pointColor: Qt.rgba(1, 1, 1, 0.8)
     property color lineColor: "red"
     property color polygonBorderColor:  "blue"
     property color polygonColor:  Qt.rgba(0, 1, 1, 0.1)
 
+    property int textSize:15
+
+    property bool selectingPermited:false
     // property bool deleteButtonClicked: false
 
     // property variant array:[]
@@ -37,7 +40,7 @@ Rectangle {
         if(objectEverSelected){
             console.log("type",cont.getSelectedMapObject().type)
             if(cont.getSelectedMapObject().type<10){
-                cont.getSelectedMapObject().color="green";
+                cont.getSelectedMapObject().source="images/pointergreen.png";
             } else if(cont.getSelectedMapObject().type<20){
                 cont.getSelectedMapObject().border.color=lineColor;
             } else {
@@ -82,84 +85,126 @@ Rectangle {
 
 
 
+                MapGroup{
 
-                MapCircle {
+                    MapImage{
+                        property double lat:landmark.coordinate.latitude
+                        property double lon:landmark.coordinate.longitude
+                        property string name:landmark.name
+                         property int type: -1//landmark.radius
+                        property string note:landmark.phoneNumber
 
-                    property double lat:landmark.coordinate.latitude
-                    property double lon:landmark.coordinate.longitude
-                    property string name:landmark.name
-                    property int type: -1
+                        id: point
+                        coordinate: landmark.coordinate
+                        source: point.type==0 ? "images/pointergreen.png" : point.type==1 ? "images/pointerblue.png" : "images/pointergrey.png"
+                        offset.x: -15
+                        offset.y: -96
+                        z:1
 
-                    id: point
-                    //   color: type== 0 ? "green" : type== 2 ? "grey" : "blue"
-                    radius: 300
-                    center: landmark.coordinate
+                        Component.onCompleted: {
+                            type=landmark.radius
+                            console.log("TYPE", type,landmark.radius)
+                            //  circle.color=pointColor;
+                            if(type<10){
 
-                    //    visible: type<10 ? true : false
+                                //  if(type==0){
 
-                    MapMouseArea{
-                        //anchors.fill: parent
-                        //acceptedButtons: Qt.LeftButton
-                        onClicked: {
 
-                            if(type==0){
+                                //  }
 
-                                //console.log("bla");
+                                //   if(type==1){
 
-                                deselect();
+                                //     color="blue";
+                                //   }
 
-                                point.color="yellow";
-                                cont.setSelectedMapObject(parent);
-                                cont.selectObject(name);
-                                objectEverSelected=true;
+                                /*  if(type==2){
 
+                                    color="grey";
+                                }*/
+                                cont.createMapObjectReference(point,point.name,0);
+
+                            } else {
+                                if(type==10){
+
+                                    visible=false;
+                                    border.width=0
+                                    //  color="red"
+                                }
+
+                                if(type==20){
+
+                                    visible=false;
+                                    border.width=0
+                                    //  color="red"
+                                }
                             }
 
 
                         }
 
-                    }
+                        onNoteChanged: {
+                            type=landmark.radius;
 
-                    Component.onCompleted: {
-                        type= parseInt(landmark.phoneNumber);
-                        console.log("TYPE", type,landmark.phoneNumber)
-                        if(type<10){
 
-                            if(type==0){
-
-                                color="green";
-                            }
-
-                            if(type==1){
-
-                                color="blue";
-                            }
-
-                            if(type==2){
-
-                                color="grey";
-                            }
-                        } else {
-                            if(type==10){
-
-                                visible=false;
-                                border.width=0
-                                //  color="red"
-                            }
-
-                            if(type==20){
-
-                                visible=false;
-                                border.width=0
-                                //  color="red"
+                            if(point.type<10){
+                                mapT.text=point.note.split("////")[0];
+                                background.makeBackGround();
                             }
                         }
 
 
                     }
+
+
+                    MapText{
+                        id: mapT
+                        coordinate: landmark.coordinate
+                        text:""
+                        font.pointSize: textSize
+                        z: 3
+        /*                Component.onCompleted: {
+                            if(point.type<10){
+                                text=point.note.split("////")[0];
+                                background.makeBackGround();
+                            } else {
+                                visible=false;
+                            }
+
+
+                        }
+
+*/
+
+                    }
+
+                    MapText{
+                        id: background
+                        coordinate: landmark.coordinate
+                        //   text:"toto je komentar"
+                        text:""
+                        color: pointColor
+                        font.pointSize: textSize
+                        z: 2
+
+                        function makeBackGround() {
+
+                            if(point.type<10){
+                                text="";
+                                for(var i=0;i<2*mapT.text.length/3;i++){
+                                    text+="█";
+                                }
+                            } else {
+                                visible=false;
+                            }
+                        }
+
+
+
+                    }
+
+
 
                 }
-
 
             }
         }
@@ -174,23 +219,23 @@ Rectangle {
 
 
 
+                MapGroup{
 
 
 
-
-                MapPolyline {
-                    // property double lat:landmark.coordinate.latitude
-                    // property double lon:landmark.coordinate.longitude
-                    property string name: landmark.name
-                    property int type: -1
-
-                    id: line
-                    border {color: lineColor; width: 4}
-                    visible:false
-
+                    MapPolyline {
+                        // property double lat:landmark.coordinate.latitude
+                        // property double lon:landmark.coordinate.longitude
+                        property string name: landmark.name
+                        property int type: -1//landmark.radius
+                        property string note:landmark.phoneNumber
+                        id: line
+                        border {color: lineColor; width: 4}
+                        visible:false
 
 
-                /*    MapMouseArea{
+
+                        /*    MapMouseArea{
                         //anchors.fill: parent
                         //acceptedButtons: Qt.LeftButton
                         onClicked: {
@@ -216,28 +261,76 @@ Rectangle {
 
 
 
-                    Component.onCompleted: {
+                        Component.onCompleted: {
 
 
-                        type= parseInt(landmark.phoneNumber);
+                            type= landmark.radius;
 
 
-                        if(type==10){
-                            var num=cont.getLineCoordinatesNum();
-                            for(var i=0; i<num;i++){
-                                var coord = Qt.createQmlObject('import Qt 4.7; import QtMobility.location 1.2; Coordinate{}', map, "coord"+i);
+                            if(type==10){
+                                var num=cont.getLineCoordinatesNum();
+                                for(var i=0; i<num;i++){
+                                    var coord = Qt.createQmlObject('import Qt 4.7; import QtMobility.location 1.2; Coordinate{}', map, "coord"+i);
 
-                                coord.latitude=cont.getLineCoordinateLatAt(i);
-                                coord.longitude=cont.getLineCoordinateLonAt(i);
-                                line.addCoordinate(coord);
-                                visible=true;
+                                    coord.latitude=cont.getLineCoordinateLatAt(i);
+                                    coord.longitude=cont.getLineCoordinateLonAt(i);
+                                    line.addCoordinate(coord);
+                                    visible=true;
+                                }
+                                cont.createMapObjectReference(line,line.name,1);//to be able to select the object we need to make a reference on it
+
                             }
-                            cont.createMapObjectReference(line,line.name,1);//to be able to select the object we need to make a reference on it
+
 
                         }
+
+                        onNoteChanged: {
+                            // console.log("changed")
+                            type=landmark.radius;
+
+                            if(line.type>=10 && line.type<20){
+                                mapT.text=line.note.split("////")[0];
+                                background.makeBackGround();
+                            }
+                        }
+
+
                     }
 
+                    MapText{
+                        id: mapT
+                        coordinate: landmark.coordinate
+                        text:""
+                        font.pointSize: textSize
+                        z: 3
 
+
+                    }
+
+                    MapText{
+                        id: background
+                        coordinate: landmark.coordinate
+                        //   text:"toto je komentar"
+                        text:""
+                        color: pointColor
+                        font.pointSize: textSize
+                        z: 2
+
+                        function makeBackGround() {
+
+                            if(line.type>=10 && line.type<20){
+                                text="";
+                                for(var i=0;i<2*mapT.text.length/3;i++){
+                                    text+="█";
+                                }
+                            } else {
+                                visible=false;
+                            }
+                        }
+
+
+
+                    }
                 }
 
 
@@ -255,33 +348,43 @@ Rectangle {
 
 
                 MapGroup{
-                    opacity: 0.3
+                    property string note:polygon.note//this property is here because when onNoteChange is declared in polygon, we get an error (qt bug)
+
                     //bacause of an error in MapPolygon we cannot add anything else than Coordinates into the polygon definition, so we define the polygon geometry here
-                        Component.onCompleted: {
+                    Component.onCompleted: {
+
+                        var type= landmark.radius;
 
 
-                            var type= parseInt(landmark.phoneNumber);
+                        if(type==20){
+                            polygon.type=type;
 
+                            var num=cont.getPolygonCoordinatesNum();
+                            for(var i=0; i<num;i++){
+                                var coord = Qt.createQmlObject('import Qt 4.7; import QtMobility.location 1.2; Coordinate{}', map, "coord"+i);
 
-                            if(type==20){
-                                polygon.type=type;
-
-                                var num=cont.getPolygonCoordinatesNum();
-                                for(var i=0; i<num;i++){
-                                    var coord = Qt.createQmlObject('import Qt 4.7; import QtMobility.location 1.2; Coordinate{}', map, "coord"+i);
-
-                                    coord.latitude=cont.getPolygonCoordinateLatAt(i);
-                                    coord.longitude=cont.getPolygonCoordinateLonAt(i);
-                                    polygon.addCoordinate(coord);
-                                    //helpLine.addCoordinate(coord)
-                                    polygon.visible=true;
-                                   // visible=true;
-                                }
-                                cont.createMapObjectReference(polygon,polygon.name,2);//to be able to select the object we need to make a reference on it
-
+                                coord.latitude=cont.getPolygonCoordinateLatAt(i);
+                                coord.longitude=cont.getPolygonCoordinateLonAt(i);
+                                polygon.addCoordinate(coord);
+                                //helpLine.addCoordinate(coord)
+                                polygon.visible=true;
+                                // visible=true;
                             }
+                            cont.createMapObjectReference(polygon,polygon.name,2);//to be able to select the object we need to make a reference on it
+
                         }
 
+
+                    }
+                    onNoteChanged: {
+                        // console.log("changed")
+                        polygon.type=landmark.radius;
+
+                        if(polygon.type>=20){
+                            mapT.text=note.split("////")[0];
+                            background.makeBackGround();
+                        }
+                    }
 
 
                     MapPolygon {
@@ -289,61 +392,48 @@ Rectangle {
                         // property double lon:landmark.coordinate.longitude
                         property string name: landmark.name
                         property int type: -1
-
+                        property string note:landmark.phoneNumber
                         id: polygon
                         border {color: polygonBorderColor; width: 4}
                         visible:false
                         color: polygonColor
 
 
-                   /*
-                        MapMouseArea{
-                            anchors.fill: parent
-                            acceptedButtons: Qt.LeftButton
-                            onClicked: {
-                                if(!polygonButtonClicked){
-                                    if(type==20){
+                    }
 
-                                        //console.log("bla");
+                    MapText{
+                        id: mapT
+                        coordinate: landmark.coordinate
+                        text:""
+                        font.pointSize: textSize
+                        z: 3
 
-                                        deselect();
 
-                                        polygon.border.color="yellow";
-                                        cont.setSelectedMapObject(parent);
-                                        cont.selectObject(name);
-                                        objectEverSelected=true;
+                    }
 
-                                    }
+                    MapText{
+                        id: background
+                        coordinate: landmark.coordinate
+                        //   text:"toto je komentar"
+                        text:""
+                        color: pointColor
+                        font.pointSize: textSize
+                        z: 2
+
+                        function makeBackGround() {
+
+                            if(polygon.type>=20){
+                                text="";
+                                for(var i=0;i<2*mapT.text.length/3;i++){
+                                    text+="█";
                                 }
-
-
-                            }
-
-                        }
-
-
-
-                        Component.onCompleted: {
-
-
-                            type= parseInt(landmark.phoneNumber);
-
-
-                            if(type==20){
-                                var num=cont.getPolygonCoordinatesNum();
-                                for(var i=0; i<num;i++){
-                                    var coord = Qt.createQmlObject('import Qt 4.7; import QtMobility.location 1.2; Coordinate{}', map, "coord"+i);
-
-                                    coord.latitude=cont.getPolygonCoordinateLatAt(i);
-                                    coord.longitude=cont.getPolygonCoordinateLonAt(i);
-                                    polygon.addCoordinate(coord);
-                                    visible=true;
-                                }
-
+                            } else {
+                                visible=false;
                             }
                         }
 
-                        */
+
+
                     }
 
 
@@ -362,7 +452,7 @@ Rectangle {
 
         }
 
-     /*   MapPolygon {
+        /*   MapPolygon {
             // property double lat:landmark.coordinate.latitude
             // property double lon:landmark.coordinate.longitude
 
@@ -518,19 +608,24 @@ Rectangle {
 
                     }
                 } else {
+                    if(!selectingPermited){
+                        var paintedObject=cont.findObjectUnderCursor(map.toCoordinate(Qt.point(mouse.x,mouse.y)).latitude, map.toCoordinate(Qt.point(mouse.x,mouse.y)).longitude);
+                        if(paintedObject){
+                            deselect();
 
-                    var paintedObject=cont.findObjectUnderCursor(map.toCoordinate(Qt.point(mouse.x,mouse.y)).latitude, map.toCoordinate(Qt.point(mouse.x,mouse.y)).longitude);
-                    if(paintedObject){
-                        deselect();
+                            if(paintedObject.type<10){
+                                paintedObject.source="images/pointeryellow.png";
+                            } else {
+                                paintedObject.border.color="yellow";
+                            }
+                            cont.setSelectedMapObject(paintedObject);
+                            cont.selectObject(paintedObject.name);
+                            objectEverSelected=true;
 
-                        paintedObject.border.color="yellow";
-                        cont.setSelectedMapObject(paintedObject);
-                        cont.selectObject(paintedObject.name);
-                        objectEverSelected=true;
 
-
-                    } else {
-                        deselect();
+                        } else {
+                            deselect();
+                        }
                     }
                 }
 
@@ -603,6 +698,50 @@ Rectangle {
 
         }
 
+        Button{
+            id: noteButton
+            width: 120
+            height: 50
+
+            z: 2
+            label: "Přidat poznámku"
+
+            onButtonClick: {
+                if(cont.getSelectedMapObject()){
+                    noteEditor.visible=true;
+                    selectingPermited=true;
+                }
+
+            }
+
+        }
+
+
+
+    }
+
+    Column{
+        x: parent.width-140
+        y: 20
+        z: 2
+        spacing: 20
+
+        Button{
+            id: userManagementButton
+            width: 120
+            height: 50
+
+            label: "Spravovat uživatele"
+
+            onButtonClick: {
+                userManagement.visible=true;
+                cont.prepareAclList();
+                cont.prepareTerrainUserList();
+
+
+            }
+
+        }
 
         Button{
             id: testButton
@@ -630,26 +769,6 @@ Rectangle {
                 cont.testButtonOperation2();
 
             }
-
-        }
-    }
-
-
-
-    Button{
-        id: userManagementButton
-        width: 120
-        height: 50
-        x: parent.width-140
-        y: 20
-        z: 2
-        label: "Spravovat uživatele"
-
-        onButtonClick: {
-            userManagement.visible=true;
-            cont.prepareAclList();
-            cont.prepareTerrainUserList();
-
 
         }
 
@@ -681,14 +800,20 @@ Rectangle {
             if (event.key == Qt.Key_Plus) {
 
                 console.log('oooQML: Key + was pressed');
-                map.zoomLevel += 0.5
+
+                if(map.zoomLevel<map.maximumZoomLevel){
+                    map.zoomLevel += 0.5
+                    textSize+=1
+                }
 
             }
             if (event.key == Qt.Key_Minus) {
 
                 console.log('oooQML: Key - was pressed');
-
-                map.zoomLevel -= 1.5
+                if(map.zoomLevel>map.minimumZoomLevel){
+                    map.zoomLevel -= 1.5
+                    textSize-=1
+                }
             }
 
             if (event.key == Qt.Key_Delete) {
@@ -722,6 +847,15 @@ Rectangle {
         visible: false
 
 
+    }
+
+    NoteEditor{
+        id: noteEditor
+        anchors.centerIn: parent
+        width:250
+        height: 260
+        z:2
+        visible:false
     }
 
 

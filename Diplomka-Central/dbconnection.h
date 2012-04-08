@@ -27,6 +27,10 @@ public:
     int insertLine(QVector<QPointF> lineVector);
     int insertPolygon(QVector<QPointF> polygonVector);
 
+    QString insertOrUpdateNote(QString mapObjectId, QString name, QString text);
+    QString insertNote(QString mapObjectId, QString name, QString text);
+    QString updateNote(QString noteId, QString name, QString text);
+
     void getObjectsFromDB();
     QString getLastObjectIdFor(QString jid);
     QList<QLandmark> getMapObjectsNotSentFor(QString jid);
@@ -41,7 +45,11 @@ public:
     void deleteTerrainUser(QString id);
     QString getPolygonIdAtCoordinates(double lat, double lon);
     QString getLineIdAtCoordinates(double lat, double lon);
+    QString getPointIdAtCoordinates(double lat, double lon);
     QStringList getAllJids();
+    QPair<QString, QString> getNoteForMapObject(QString id);
+
+
 
 private:
     QSqlDatabase db;

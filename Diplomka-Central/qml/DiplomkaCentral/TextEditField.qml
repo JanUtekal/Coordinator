@@ -13,7 +13,7 @@ Rectangle{
         inputText.text=textt;
     }
 
-    TextInput {
+    TextEdit {
         id: inputText
         width:parent.width
         height: parent.height
@@ -23,6 +23,7 @@ Rectangle{
         font.pixelSize: 15
         font.family: font1
         text: ""
+        wrapMode: TextEdit.WordWrap
 
         onVisibleChanged: {
             //console.log("focus"+inputText.activeFocus)

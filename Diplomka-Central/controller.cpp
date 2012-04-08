@@ -41,7 +41,7 @@ void Controller::addPoint(double lat, double lon, int selectedAcl){
         QGeoCoordinate coord(lat,lon);
         lm.setCoordinate(coord);
         lm.setName(QString::number(dbId));
-        lm.setPhoneNumber("0");
+        lm.setRadius(0);
         //..
         landMan->saveLandmark(&lm);
 
@@ -116,7 +116,7 @@ void Controller::lineReady(int selectedAcl){
             coords.chop(1);
             lm.setDescription(coords);
            // qDebug()<<lm.description();
-            lm.setPhoneNumber("10");
+            lm.setRadius(10);
             //..
             landMan->saveLandmark(&lm);
 
@@ -177,7 +177,7 @@ void Controller::polygonReady(int selectedAcl){
             coords.chop(1);
             lm.setDescription(coords);
            // qDebug()<<lm.description();
-            lm.setPhoneNumber("20");
+            lm.setRadius(20);
             //..
             landMan->saveLandmark(&lm);
 
@@ -298,7 +298,7 @@ void Controller::fixMapBug(){//ted se nepouziva
     pom2.setName("pom");
     QGeoCoordinate coord2(0,0);
     pom2.setCoordinate(coord2);
-    pom2.setPhoneNumber("0");
+    pom2.setRadius(0);
     //..
     landMan->saveLandmark(&pom2);
 
@@ -370,7 +370,7 @@ void Controller::addPolygonFromDB(){
     if(dbPolygonLandmarks->length()>0){
         QLandmark lm=dbPolygonLandmarks->takeFirst();
         QString coords=lm.description();
-qDebug()<<coords;
+//qDebug()<<coords;
         QStringList coordList=coords.split(",");
 
 
@@ -402,7 +402,7 @@ void Controller::updateUserPosition(QString jid, QGeoCoordinate coordinate){
         QLandmark *lm = new QLandmark();
         lm->setName(jid);
         lm->setCoordinate(coordinate);
-        lm->setPhoneNumber("1");
+        lm->setRadius(1);
         landMan->saveLandmark(lm);
     } else {
 
@@ -412,7 +412,7 @@ void Controller::updateUserPosition(QString jid, QGeoCoordinate coordinate){
         QLandmark *updatedLm = new QLandmark();
         // updatedLm->setLandmarkId(id);
         updatedLm->setName(jid);
-        updatedLm->setPhoneNumber("1");
+        updatedLm->setRadius(1);
         updatedLm->setCoordinate(coordinate);
         qDebug()<< landMan->saveLandmark(updatedLm);
 
@@ -437,7 +437,7 @@ void Controller::setUserOffline(QString jid){
         QLandmark *updatedLm = new QLandmark();
         // updatedLm->setLandmarkId(id);
         updatedLm->setName(jid);
-        updatedLm->setPhoneNumber("2");
+        updatedLm->setRadius(2);
         updatedLm->setCoordinate(lms.at(0).coordinate());
         qDebug()<< landMan->saveLandmark(updatedLm);
 
@@ -482,7 +482,9 @@ void Controller::testButtonOperation(){
   //  emit disconnectUser();
     cl.connectToServer(config);
     cl.startSubscribingToUsers(jidList);*/
-    emit subscribeToLocation("terrainuser1@jabber.cz/QXmpp");
+  //  emit subscribeToLocation("terrainuser1@jabber.cz/QXmpp");
+
+
 
 }
 
@@ -715,13 +717,16 @@ double Controller::getPolygonCoordinateLonAt(int i){
 
 QVariant Controller::findObjectUnderCursor(double lat, double lon){
 
-    QString id=dbConnection->getPolygonIdAtCoordinates(lat,lon);
+    QString id=dbConnection->getPointIdAtCoordinates(lat,lon);
 
-    QString id2=dbConnection->getLineIdAtCoordinates(lat,lon);
-
-    if(id2!="-1"){//return line instead of polygon if both had been found
-        id=id2;
+    if(id=="-1"){
+        id=dbConnection->getLineIdAtCoordinates(lat,lon);
     }
+
+    if(id=="-1"){
+        id=dbConnection->getPolygonIdAtCoordinates(lat,lon);
+    }
+
 
     MapObject obj=mapObjectMap->value(id);
 
@@ -777,5 +782,41 @@ void Controller::makeRosterForUser(QString jid, QString password){
 
     cl.connectToServer(config);
     cl.startSubscribingToUsers(jidList);
+
+}
+
+void Controller::addNoteTo(QString name, QString text, QString id, int selectedAcl){
+    QString dbId=dbConnection->insertOrUpdateNote(id, name, text);
+
+    if(dbId!="-1"){
+
+        QLandmarkNameFilter filter;
+        filter.setName(id);
+        QList<QLandmark> lms=landMan->landmarks(filter);
+        if(lms.length()>0){
+           // fixMapBug();
+            // QLandmarkId id=lms.first().landmarkId();
+
+            QLandmark lm=lms.first();
+            lm.setPhoneNumber(name+"////"+text);
+
+            landMan->saveLandmark(&lm);
+
+
+
+
+        } else{
+            qDebug()<<"didnt find landmark for note - error";
+        }
+
+    }
+
+    if(selectedAcl!=-1){
+
+        QList<TerrainUser> userList= prepareCustomTerrainUserFromAclList(selectedAcl);
+        emit sendNote(Note(name,text,id),userList);
+
+    }
+
 
 }

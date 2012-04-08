@@ -106,6 +106,7 @@ int main(int argc, char *argv[])
 
 
     QObject::connect(&cont,SIGNAL(subscribeToLocation(QString)),&client,SLOT(subscribeLocation(QString)));
+    QObject::connect(&cont,SIGNAL(sendNote(Note,QList<TerrainUser>)),&client,SLOT(sendNoteToUsers(Note,QList<TerrainUser>)));
 
 
     QXmppLogger::getLogger()->setLoggingType(QXmppLogger::FileLogging);

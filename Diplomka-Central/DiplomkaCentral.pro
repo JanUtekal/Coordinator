@@ -40,7 +40,8 @@ SOURCES += main.cpp \
     terrainuser.cpp \
     datapreparator.cpp \
     mapobject.cpp \
-    jabberregistrationtool.cpp
+    jabberregistrationtool.cpp \
+    note.cpp
 
 # Please do not modify the following two lines. Required for deployment.
 include(qmlapplicationviewer/qmlapplicationviewer.pri)
@@ -59,7 +60,8 @@ HEADERS += \
     terrainuser.h \
     datapreparator.h \
     mapobject.h \
-    jabberregistrationtool.h
+    jabberregistrationtool.h \
+    note.h
 
 QT+=sql core network xml svg
 

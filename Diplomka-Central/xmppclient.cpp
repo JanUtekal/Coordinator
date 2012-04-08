@@ -179,11 +179,46 @@ void XmppClient::sendObjectToUsers(QString svg, QList<TerrainUser> userList){
             message+=")";
         }*/
 
-        QXmppClient::sendMessage(user.getJid(),svg);
+        this->sendMessage(user.getJid(),svg);
 
 
     }
   //qDebug()<<svg;
+}
+
+void XmppClient::sendNoteToUsers(Note note, QList<TerrainUser> userList){
+    foreach(TerrainUser user, userList){
+
+        QDomDocument document;
+        QDomElement noteElem = document.createElement("note");
+        document.appendChild(noteElem);
+        noteElem.setAttribute("mapObjectId",note.getId());
+        QDomElement nameElem = document.createElement("name");
+
+
+        noteElem.appendChild(nameElem);
+        QDomElement textElem = document.createElement("text");
+
+        noteElem.appendChild(textElem);
+
+        QString data=document.toString();//this ignores text values set to nodes
+        qDebug()<<data;
+
+        QString n="<name>";//add value for name
+        n+=note.getName();
+        n+="</name>";
+        data.replace("<name/>",n);
+
+        QString t="<text>";
+        t+=note.getText();
+        t+="</text>";
+        data.replace("<text/>",t);
+
+
+        this->sendMessage(user.getJid(),data);
+
+
+    }
 }
 
 void XmppClient::eraseFile(){

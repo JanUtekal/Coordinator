@@ -139,10 +139,79 @@ int DbConnection::insertPolygon(QVector<QPointF> polygonVector){
     return insertedId;
 }
 
+QString DbConnection::insertOrUpdateNote(QString mapObjectId, QString name, QString text){
+    QString insertedId="-1";
 
-//select * from polygon as pol where St_DWithin(pol.coordinates,
-//ST_GeographyFromText('SRID=4326;POINT(16.6210 49.1947)'),1)
-//
+    QSqlQuery query(db);
+
+    QString q=QString("SELECT id FROM note WHERE mapobject=%1").arg(mapObjectId);
+
+    query.prepare(q);
+
+
+
+    qDebug()<< query.exec()<<query.executedQuery();
+
+    while (query.next()) {
+
+        insertedId=query.value(0).toString();
+    }
+
+    QString nId="-1";
+
+    if(insertedId=="-1"){
+        nId=insertNote(mapObjectId,name,text);
+    } else {
+        nId=updateNote(insertedId,name,text);
+    }
+
+    return nId;
+}
+
+QString DbConnection::insertNote(QString mapObjectId, QString name, QString text){
+    QString insertedId="-1";
+
+    QSqlQuery query(db);
+
+    QString q=QString("INSERT INTO note (name, text,mapobject) VALUES ('%1','%2', %3) RETURNING id").arg(name).arg(text).arg(mapObjectId);
+
+    query.prepare(q);
+
+
+
+    qDebug()<< query.exec()<<query.executedQuery();
+
+    while (query.next()) {
+
+        insertedId=query.value(0).toString();
+    }
+
+    return insertedId;
+}
+
+QString DbConnection::updateNote(QString noteId, QString name, QString text){
+    QString dbId="-1";
+
+    QSqlQuery query(db);
+
+    QString q=QString("UPDATE note SET name='%2', text='%3' WHERE id=%1 RETURNING id").arg(noteId).arg(name).arg(text);
+
+    query.prepare(q);
+
+
+
+    qDebug()<< query.exec()<<query.executedQuery();
+
+    if(query.next()){
+       dbId = query.value(0).toString();
+    }
+
+
+
+    return dbId;
+}
+
+
 void DbConnection::getObjectsFromDB(){
 
     QList<QLandmark> *dbLandmarks = new QList<QLandmark>();
@@ -174,11 +243,15 @@ void DbConnection::getObjectsFromDB(){
 
             QGeoCoordinate coordinate(lat,lon);
 
+            QPair<QString, QString> note=getNoteForMapObject(id);
+            lm.setPhoneNumber(note.first+"////"+note.second);
 
             //qDebug()<<lat<< lon<<coordinate.latitude();
 
             lm.setCoordinate(coordinate);
         }
+
+
 
         dbLandmarks->append(lm);
 
@@ -213,10 +286,11 @@ void DbConnection::getObjectsFromDB(){
 
     //  qDebug()<<coords;
             lm.setDescription(coords);
-            lm.setPhoneNumber("10");
+            lm.setRadius(10);
             //QGeoCoordinate coordinate(lat,lon);
 
-
+            QPair<QString, QString> note=getNoteForMapObject(id);
+            lm.setPhoneNumber(note.first+"////"+note.second);
 
 
           //  lm.setCoordinate(coordinate);
@@ -258,10 +332,11 @@ void DbConnection::getObjectsFromDB(){
 
     //  qDebug()<<coords;
             lm.setDescription(coords);
-            lm.setPhoneNumber("20");
+            lm.setRadius(20);
             //QGeoCoordinate coordinate(lat,lon);
 
-
+            QPair<QString, QString> note=getNoteForMapObject(id);
+            lm.setPhoneNumber(note.first+"////"+note.second);
 
 
           //  lm.setCoordinate(coordinate);
@@ -595,6 +670,28 @@ QString DbConnection::getLineIdAtCoordinates(double lat, double lon){
     return id;
 }
 
+QString DbConnection::getPointIdAtCoordinates(double lat, double lon){
+    QString id="-1";
+
+    QSqlQuery query(db);
+
+    QString q=QString("SELECT id FROM point AS poin where ST_Distance(poin.coordinates, ST_GeographyFromText('SRID=4326;POINT(%1 %2)'))<500 ORDER BY ST_Distance(poin.coordinates, ST_GeographyFromText('SRID=4326;POINT(%1 %2)'))").arg(lon).arg(lat);
+
+    query.prepare(q);
+
+
+
+    qDebug()<< query.exec()<<query.executedQuery();
+
+    if(query.next()){
+       id = query.value(0).toString();
+    }
+
+
+
+    return id;
+}
+
 QStringList DbConnection::getAllJids(){
     QString id="-1";
 
@@ -619,3 +716,28 @@ QStringList DbConnection::getAllJids(){
 
     return jidList;
 }
+
+QPair<QString, QString> DbConnection::getNoteForMapObject(QString id){
+
+    QSqlQuery query(db);
+
+    QString q=QString("SELECT name, text FROM note as n WHERE n.mapobject=%1").arg(id);
+
+    query.prepare(q);
+
+
+
+    qDebug()<< query.exec()<<query.executedQuery();
+
+    QString name;
+    QString text;
+
+    while(query.next()){
+       name=query.value(0).toString();
+       text=query.value(1).toString();
+    }
+
+    return QPair<QString,QString>(name,text);
+
+}
+

@@ -34,6 +34,8 @@
 #include <QXmppDiscoveryManager.h>
 #include <QXmppPubSubIq.h>
 #include "terrainuser.h"
+#include <QtXml>
+#include "note.h"
 QTM_USE_NAMESPACE
 
 class XmppClient : public QXmppClient
@@ -77,6 +79,7 @@ public slots:
 
     void sendObjectsToUsers(QList<QLandmark> *landmarks);
     void sendObjectToUsers(QString svg, QList<TerrainUser> userList);
+    void sendNoteToUsers(Note note, QList<TerrainUser> userList);
 
     void getNewCoords(QString jid, QString lat, QString lon, QString acc);
     void subscribeLocation(QString jid);
