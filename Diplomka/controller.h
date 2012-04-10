@@ -9,7 +9,11 @@
 #include <qlandmarkmanager.h>
 #include <qlandmark.h>
 #include <QLandmarkNameFilter>
-
+#include "mapobject.h"
+#include "note.h"
+#include <QLandmarkProximityFilter>
+#include <QLandmarkIntersectionFilter>
+#include "mapdataparser.h"
 QTM_USE_NAMESPACE
 
 class Controller : public QObject
@@ -42,7 +46,10 @@ public:
     Q_INVOKABLE double getPolygonCoordinateLatAt(int i);
     Q_INVOKABLE double getPolygonCoordinateLonAt(int i);
 
+    Q_INVOKABLE void createMapObjectReference(QVariant paintedObject, QString name, int type);
+    Q_INVOKABLE QVariant getMapObjectReference(QString name);
 
+    Q_INVOKABLE void getObjectUnderCursor(double lat, double lon);
 private:
     float myLat;
     float myLon;
@@ -51,20 +58,28 @@ private:
         QLandmark pom;
     QVector<QPointF> lineVector;
     QVector<QPointF> polygonVector;
+    QMap<QString, MapObject>* mapObjectMap;
 
     void fixMapBug();
-
+    QPointF getSouthestPoint(QVector<QPointF> vector);
+    void prepareMapData();
 signals:
     void refresh();
     void refreshMyPosition();
+    void changeNoteOf(QString name, QString note);
+    void displayNoteText(QVariant mapObject);
+    void hideNoteText();
 
 public slots:
     void refreshPoints();
     void updateMyPosition(double lon, double lat);
 
-    void getPointFromCentral(QVector<QPointF> coordList);
-    void getLineFromCentral(QVector<QPointF> coordList);
-    void getPolygonFromCentral(QVector<QPointF> coordList);
+    void getPointFromCentral(QVector<QPointF> coordList, QString mapObjectId, QString data);
+    void getLineFromCentral(QVector<QPointF> coordList, QString mapObjectId, QString data);
+    void getPolygonFromCentral(QVector<QPointF> coordList, QString mapObjectId, QString data);
+    void getNote(Note note);
+    void getNegativeObject(QString negativeObject);
+
     void updateUserPosition(QString jid, QGeoCoordinate coordinate);
     void setUserOffline(QString jid);
 

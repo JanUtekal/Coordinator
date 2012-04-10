@@ -38,7 +38,9 @@ SOURCES += main.cpp \
     locationwatcher.cpp \
     extension.cpp \
     controller.cpp \
-    mapdataparser.cpp
+    mapdataparser.cpp \
+    note.cpp \
+    mapobject.cpp
 
 # Please do not modify the following two lines. Required for deployment.
 include(qmlapplicationviewer/qmlapplicationviewer.pri)
@@ -62,7 +64,9 @@ HEADERS += \
     locationwatcher.h \
     extension.h \
     controller.h \
-    mapdataparser.h
+    mapdataparser.h \
+    note.h \
+    mapobject.h
 INCLUDEPATH += $$quote(C:/projects/qxmpp/src)
 LIBS +=-LC:/projects/qxmpp/lib -lqxmpp_d
 

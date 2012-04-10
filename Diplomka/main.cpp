@@ -1,7 +1,7 @@
 #include <QtGui/QApplication>
 #include "qmlapplicationviewer.h"
-#include "xmppClient.h"
-#include "QXmppLogger.h"
+#include "xmppclient.h"
+#include <QXmppLogger.h>
 #include "controller.h"
 #include <QtDeclarative>
 //#include "QXmppPubSubManager.h"
@@ -43,10 +43,11 @@ int main(int argc, char *argv[])
     QObject::connect(&client,SIGNAL(updateUser(QString,QGeoCoordinate)),&cont,SLOT(updateUserPosition(QString,QGeoCoordinate)));
 
     QObject::connect(&client,SIGNAL(refresh()),&cont,SLOT(refreshPoints()));
-    QObject::connect(&client,SIGNAL(sendPointFromCentral(QVector<QPointF>)),&cont,SLOT(getPointFromCentral(QVector<QPointF>)));
-    QObject::connect(&client,SIGNAL(sendLineFromCentral(QVector<QPointF>)),&cont,SLOT(getLineFromCentral(QVector<QPointF>)));
-    QObject::connect(&client,SIGNAL(sendPolygonFromCentral(QVector<QPointF>)),&cont,SLOT(getPolygonFromCentral(QVector<QPointF>)));
-
+    QObject::connect(&client,SIGNAL(sendPointFromCentral(QVector<QPointF>, QString, QString)),&cont,SLOT(getPointFromCentral(QVector<QPointF>, QString, QString)));
+    QObject::connect(&client,SIGNAL(sendLineFromCentral(QVector<QPointF>, QString, QString)),&cont,SLOT(getLineFromCentral(QVector<QPointF>, QString, QString)));
+    QObject::connect(&client,SIGNAL(sendPolygonFromCentral(QVector<QPointF>, QString, QString)),&cont,SLOT(getPolygonFromCentral(QVector<QPointF>, QString, QString)));
+    QObject::connect(&client,SIGNAL(sendNote(Note)),&cont,SLOT(getNote(Note)));
+    QObject::connect(&client,SIGNAL(sendNegativeObject(QString)),&cont,SLOT(getNegativeObject(QString)));
     //  viewer.rootContext()->setContextProperty("cont", &cont);
 
     QObject::connect(&client,SIGNAL(setUserOffline(QString)),&cont,SLOT(setUserOffline(QString)));

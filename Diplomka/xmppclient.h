@@ -59,12 +59,15 @@ private:
 
 signals:
     void refresh();
-    void sendPointFromCentral(QVector<QPointF> coordList);
-    void sendLineFromCentral(QVector<QPointF> coordList);
-    void sendPolygonFromCentral(QVector<QPointF> coordList);
+    void sendPointFromCentral(QVector<QPointF> coordList, QString mapObjectId, QString data);
+    void sendLineFromCentral(QVector<QPointF> coordList, QString mapObjectId, QString data);
+    void sendPolygonFromCentral(QVector<QPointF> coordList, QString mapObjectId, QString data);
+    void sendNote(Note note);
+    void sendNegativeObject(QString negativeObject);
 
     void updateUser(QString jid, QGeoCoordinate coordinate);
     void setUserOffline(QString jid);
+
 
 public slots:
     void clientConnected();

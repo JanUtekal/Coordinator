@@ -199,6 +199,7 @@ void XmppClient::sendNoteToUsers(Note note, QList<TerrainUser> userList){
         noteElem.appendChild(nameElem);
         QDomElement textElem = document.createElement("text");
 
+
         noteElem.appendChild(textElem);
 
         QString data=document.toString();//this ignores text values set to nodes
@@ -221,6 +222,16 @@ void XmppClient::sendNoteToUsers(Note note, QList<TerrainUser> userList){
     }
 }
 
+void XmppClient::sendNegativeObjectToUsers(QString id, QList<TerrainUser> userList){
+    QString negativeObject="<negativeObject>";
+    negativeObject+=id;
+    negativeObject+="</negativeObject>";
+
+    foreach(TerrainUser user, userList){
+        this->sendMessage(user.getJid(),negativeObject);
+
+    }
+}
 void XmppClient::eraseFile(){
     QString path=PATH;
     path+="QXmppClientLog.log";

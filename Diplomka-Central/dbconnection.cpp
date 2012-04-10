@@ -16,13 +16,21 @@ void DbConnection::setDb(QSqlDatabase db){
 
 }
 
-int DbConnection::insertPoint(double lat, double lon){
+int DbConnection::insertPoint(double lat, double lon, QString acl){
 
     int insertedId=-1;
 
     QSqlQuery query(db);
 
-    QString q=QString("INSERT INTO point (coordinates) VALUES (ST_GeographyFromText('SRID=4326;POINT(%1 %2)') ) RETURNING id").arg(lon).arg(lat);
+    QString q;
+
+    if(acl!="-1"){
+        q=QString("INSERT INTO point (coordinates,acl) VALUES (ST_GeographyFromText('SRID=4326;POINT(%1 %2)'), %3) RETURNING id").arg(lon).arg(lat).arg(acl);
+
+    } else {
+        q=QString("INSERT INTO point (coordinates) VALUES (ST_GeographyFromText('SRID=4326;POINT(%1 %2)')) RETURNING id").arg(lon).arg(lat);
+
+    }
 
     query.prepare(q);
 
@@ -62,12 +70,20 @@ int DbConnection::deleteObject(QString id){
 
 }
 
-int DbConnection::insertLine(QVector<QPointF> lineVector){
+int DbConnection::insertLine(QVector<QPointF> lineVector, QString acl){
     int insertedId=-1;
 
     QSqlQuery query(db);
 
-    QString q=QString("INSERT INTO line (coordinates) VALUES (ST_GeographyFromText('SRID=4326;LINESTRING(");
+    QString q;
+
+    if(acl!="-1"){
+        q=QString("INSERT INTO line (coordinates, acl) VALUES (ST_GeographyFromText('SRID=4326;LINESTRING(");
+
+    } else {
+        q=QString("INSERT INTO line (coordinates) VALUES (ST_GeographyFromText('SRID=4326;LINESTRING(");
+    }
+
 
     int i=0;
     foreach(QPointF point, lineVector){
@@ -81,7 +97,12 @@ int DbConnection::insertLine(QVector<QPointF> lineVector){
         }
     }
 
-    q+=")')) RETURNING id";
+    if(acl!="-1"){
+        q+=QString(")'), %1) RETURNING id").arg(acl);
+    } else {
+        q+=QString(")')) RETURNING id");
+    }
+
     query.prepare(q);
 
 
@@ -100,12 +121,21 @@ int DbConnection::insertLine(QVector<QPointF> lineVector){
     return insertedId;
 }
 
-int DbConnection::insertPolygon(QVector<QPointF> polygonVector){
+int DbConnection::insertPolygon(QVector<QPointF> polygonVector, QString acl){
     int insertedId=-1;
 
     QSqlQuery query(db);
 
-    QString q=QString("INSERT INTO polygon (coordinates) VALUES (ST_GeographyFromText('SRID=4326;POLYGON((");
+    QString q;
+
+    if(acl!="-1"){
+        q=QString("INSERT INTO polygon (coordinates,acl) VALUES (ST_GeographyFromText('SRID=4326;POLYGON((");
+    } else {
+        q=QString("INSERT INTO polygon (coordinates) VALUES (ST_GeographyFromText('SRID=4326;POLYGON((");
+    }
+
+
+
 
     int i=0;
     foreach(QPointF point, polygonVector){
@@ -120,7 +150,14 @@ int DbConnection::insertPolygon(QVector<QPointF> polygonVector){
     q+=QString::number(closingPoint.y());
     q+=" ";
     q+=QString::number(closingPoint.x());
-    q+="))')) RETURNING id";
+
+    if(acl!="-1"){
+        q+=QString("))'),%1) RETURNING id").arg(acl);
+    } else {
+        q+=QString("))')) RETURNING id");
+    }
+
+
     query.prepare(q);
 
 
@@ -637,7 +674,11 @@ QString DbConnection::getPolygonIdAtCoordinates(double lat, double lon){
 
 
 
-    qDebug()<< query.exec()<<query.executedQuery();
+    //qDebug()<< query.exec()<<query.executedQuery();
+
+    query.exec();
+    query.executedQuery();
+
 
     if(query.next()){
        id = query.value(0).toString();
@@ -659,7 +700,10 @@ QString DbConnection::getLineIdAtCoordinates(double lat, double lon){
 
 
 
-    qDebug()<< query.exec()<<query.executedQuery();
+  //  qDebug()<< query.exec()<<query.executedQuery();
+
+    query.exec();
+    query.executedQuery();
 
     if(query.next()){
        id = query.value(0).toString();
@@ -681,7 +725,10 @@ QString DbConnection::getPointIdAtCoordinates(double lat, double lon){
 
 
 
-    qDebug()<< query.exec()<<query.executedQuery();
+  //  qDebug()<< query.exec()<<query.executedQuery();
+
+    query.exec();
+    query.executedQuery();
 
     if(query.next()){
        id = query.value(0).toString();
@@ -741,3 +788,42 @@ QPair<QString, QString> DbConnection::getNoteForMapObject(QString id){
 
 }
 
+int DbConnection::deleteNote(QString id){
+
+    QSqlQuery query(db);
+
+    QString q=QString("DELETE FROM note WHERE mapobject=%1").arg(id);
+
+    query.prepare(q);
+
+
+
+    if(query.exec()){
+        return 0;
+    }
+
+    qDebug()<<query.executedQuery();
+
+    return -1;
+
+}
+
+QString DbConnection::getMapObjectAcl(QString mapObjectId){
+    QString acl="-1";
+
+    QSqlQuery query(db);
+
+    QString q=QString("SELECT acl FROM mapobject WHERE id=%1").arg(mapObjectId);
+
+    query.prepare(q);
+
+
+    qDebug()<< query.exec()<<query.executedQuery();
+
+
+    while(query.next()){
+        acl=query.value(0).toString();
+    }
+
+    return acl;
+}

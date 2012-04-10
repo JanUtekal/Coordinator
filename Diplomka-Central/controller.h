@@ -42,7 +42,7 @@ public:
     Q_INVOKABLE void polygonReady(int selectedAcl);
     Q_INVOKABLE void createMapObjectReference(QVariant paintedObject, QString name, int type);
 
-    Q_INVOKABLE void addNoteTo(QString name, QString text, QString id, int selectedAcl);
+    Q_INVOKABLE void addNoteTo(QString name, QString text, QString id);
 
     Q_INVOKABLE void selectObject(QString name);
     Q_INVOKABLE void deselectObject();
@@ -102,6 +102,8 @@ public:
 
 
 
+
+
 private:
     QObject *object;
     QVariant selectedMapObject;
@@ -124,6 +126,7 @@ private:
     void fixMapBug();
     void sendMapObjects();
     void makeRosterForUser(QString jid, QString password);
+    QPointF getSouthestPoint(QVector<QPointF> vector);
 
     QList<TerrainUser> prepareCustomTerrainUserFromAclList(int i);
     //QString prepareSvg(QVector<QPointF> coordList, int type);
@@ -135,6 +138,7 @@ signals:
     void sendObjects(QList<QLandmark> *landmarks);
     void sendMapObject(QString svg, QList<TerrainUser> userList);
     void sendNote(Note note, QList<TerrainUser> userList);
+    void sendNegativeObject(QString id, QList<TerrainUser> userList);
     void aclListReady();
     void terrainUserListReady();
     void terrainUserFromAclListReady();

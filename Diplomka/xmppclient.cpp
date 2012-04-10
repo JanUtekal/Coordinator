@@ -104,22 +104,50 @@ void XmppClient::presenceChanged(const QString& bareJid,
 //obsluha prijmu zpravy
 void XmppClient::messageRecv(const QXmppMessage& message){
       //  qDebug()<<message.body();
-        QVector<QPointF> coords;
+
         MapDataParser * parser=new MapDataParser();
-        int type=parser->parseData(message.body(),coords);
-        if(type==-1){
-            return;
-        }
-        if(type==0){
-            emit sendPointFromCentral(coords);
-        }
-        if(type==1){
-            emit sendLineFromCentral(coords);
+
+        int dataType=parser->getDataType(message.body());
+
+        if(dataType==0){
+
+            Note note=parser->parseNoteData(message.body());
+            emit sendNote(note);
+            qDebug()<<"sending noote";
+
         }
 
-        if(type==2){
-            emit sendPolygonFromCentral(coords);
+        if(dataType==1){
+
+            QString negativeObject=parser->parseNegativeObjectData(message.body());
+            emit sendNegativeObject(negativeObject);
+            qDebug()<<"sending negobj";
+
         }
+
+        if(dataType==2){
+            QVector<QPointF> coords;
+            QString mapObjectId;
+
+
+            int type=parser->parseSVGData(message.body(),mapObjectId,coords);
+
+            if(type==-1){
+                return;
+            }
+            if(type==0){
+                emit sendPointFromCentral(coords, mapObjectId, message.body());
+            }
+            if(type==1){
+                emit sendLineFromCentral(coords, mapObjectId, message.body());
+            }
+
+            if(type==2){
+                emit sendPolygonFromCentral(coords, mapObjectId, message.body());
+            }
+        }
+
+        delete parser;
   /*  if(message.body().contains("POINT")){
         qDebug()<<message.body();
        // emit sendPointFromCentral(message.body());
@@ -256,5 +284,4 @@ void XmppClient::subscribeLocation(QString jid){
     }
 
 }
-
 

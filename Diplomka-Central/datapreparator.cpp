@@ -5,7 +5,7 @@ DataPreparator::DataPreparator(QObject *parent) :
 {
 }
 
-QString DataPreparator::prepareData(QVector<QPointF> coordList, int type){
+QString DataPreparator::prepareData(QVector<QPointF> coordList, QString id, int type){
     //![configure SVG generator]
         QString name="object.svg";
 
@@ -37,7 +37,7 @@ QString DataPreparator::prepareData(QVector<QPointF> coordList, int type){
         }
         generator.setTitle(typeName);
 
-        generator.setDescription(tr(""));
+        generator.setDescription(id);
         QPainter painter;
         painter.begin(&generator);
 

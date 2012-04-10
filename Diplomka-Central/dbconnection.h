@@ -21,11 +21,11 @@ public:
     explicit DbConnection(QObject *parent = 0);
     void setDb(QSqlDatabase db);
 
-    int insertPoint(double lat, double lon);
+    int insertPoint(double lat, double lon, QString acl);
     int deleteObject(QString id);
 
-    int insertLine(QVector<QPointF> lineVector);
-    int insertPolygon(QVector<QPointF> polygonVector);
+    int insertLine(QVector<QPointF> lineVector, QString acl);
+    int insertPolygon(QVector<QPointF> polygonVector, QString acl);
 
     QString insertOrUpdateNote(QString mapObjectId, QString name, QString text);
     QString insertNote(QString mapObjectId, QString name, QString text);
@@ -43,11 +43,13 @@ public:
     void updateTerrainUserAcl(QString idUser, QString idAcl);
     void deleteAcl(QString id);
     void deleteTerrainUser(QString id);
+    int deleteNote(QString id);
     QString getPolygonIdAtCoordinates(double lat, double lon);
     QString getLineIdAtCoordinates(double lat, double lon);
     QString getPointIdAtCoordinates(double lat, double lon);
     QStringList getAllJids();
     QPair<QString, QString> getNoteForMapObject(QString id);
+    QString getMapObjectAcl(QString mapObjectId);
 
 
 

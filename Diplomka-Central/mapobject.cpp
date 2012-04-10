@@ -27,3 +27,11 @@ int MapObject::getType(){
 QString MapObject::getName(){
     return this->name;
 }
+
+void MapObject::setAclId(QString aclId){
+    this->aclId=aclId;
+}
+
+QString MapObject::getAClId(){
+    return this->aclId;
+}

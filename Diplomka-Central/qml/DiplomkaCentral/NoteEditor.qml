@@ -92,9 +92,12 @@ Rectangle {
 
                 onButtonClick: {
                     var newNote=textInput.input+"////"+textField.input;
-                    if(newNote!=cont.getSelectedMapObject().note){
-                        cont.addNoteTo(textInput.input, textField.input,cont.getSelectedMapObject().name, userManagement.selectedMapAcl);
+                    if(newNote!==cont.getSelectedMapObject().note){
+
+                        cont.addNoteTo(textInput.input, textField.input,cont.getSelectedMapObject().name);
+
                         cont.getSelectedMapObject().note=newNote;
+
                     }
                     noteEditor.visible=false;
                     selectingPermited=false;
@@ -117,6 +120,7 @@ Rectangle {
                 onButtonClick: {
                     noteEditor.visible=false;
                     selectingPermited=false;
+                    pinchmap.deselect();
                 }
             }
 

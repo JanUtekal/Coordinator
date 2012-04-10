@@ -37,8 +37,8 @@ Rectangle {
 
     //   property list<Item> ar
     function deselect(){
-        if(objectEverSelected){
-            console.log("type",cont.getSelectedMapObject().type)
+        if(objectEverSelected && cont.getSelectedMapObject()){
+            console.log("deselecting",cont.getSelectedMapObject().type)
             if(cont.getSelectedMapObject().type<10){
                 cont.getSelectedMapObject().source="images/pointergreen.png";
             } else if(cont.getSelectedMapObject().type<20){
@@ -48,6 +48,8 @@ Rectangle {
             }
 
             cont.deselectObject();
+            cont.setSelectedMapObject(null);
+            console.log("desel")
         }
     }
 
@@ -147,8 +149,12 @@ Rectangle {
 
 
                             if(point.type<10){
-                                mapT.text=point.note.split("////")[0];
-                                background.makeBackGround();
+                                var name=point.note.split("////")[0];
+
+                                background.makeBackGround(name.length);
+                                mapT.text=name;
+
+
                             }
                         }
 
@@ -161,7 +167,7 @@ Rectangle {
                         coordinate: landmark.coordinate
                         text:""
                         font.pointSize: textSize
-                        z: 3
+                        z: 1
         /*                Component.onCompleted: {
                             if(point.type<10){
                                 text=point.note.split("////")[0];
@@ -180,19 +186,22 @@ Rectangle {
                     MapText{
                         id: background
                         coordinate: landmark.coordinate
-                        //   text:"toto je komentar"
+
                         text:""
                         color: pointColor
                         font.pointSize: textSize
-                        z: 2
+                        z: 0
 
-                        function makeBackGround() {
+                        function makeBackGround(length) {
 
                             if(point.type<10){
                                 text="";
-                                for(var i=0;i<2*mapT.text.length/3;i++){
+                                for(var i=0;i<2*length/3;i++){//
+
                                     text+="█";
                                 }
+
+
                             } else {
                                 visible=false;
                             }
@@ -289,8 +298,10 @@ Rectangle {
                             type=landmark.radius;
 
                             if(line.type>=10 && line.type<20){
-                                mapT.text=line.note.split("////")[0];
-                                background.makeBackGround();
+                                var name=line.note.split("////")[0];
+
+                                background.makeBackGround(name.length);
+                                mapT.text=name;
                             }
                         }
 
@@ -316,13 +327,15 @@ Rectangle {
                         font.pointSize: textSize
                         z: 2
 
-                        function makeBackGround() {
+                        function makeBackGround(length) {
 
                             if(line.type>=10 && line.type<20){
                                 text="";
-                                for(var i=0;i<2*mapT.text.length/3;i++){
+                                for(var i=0;i<2*length/3;i++){//
+
                                     text+="█";
                                 }
+
                             } else {
                                 visible=false;
                             }
@@ -381,8 +394,10 @@ Rectangle {
                         polygon.type=landmark.radius;
 
                         if(polygon.type>=20){
-                            mapT.text=note.split("////")[0];
-                            background.makeBackGround();
+                            var name=polygon.note.split("////")[0];
+
+                            background.makeBackGround(name.length);
+                            mapT.text=name;
                         }
                     }
 
@@ -420,13 +435,15 @@ Rectangle {
                         font.pointSize: textSize
                         z: 2
 
-                        function makeBackGround() {
+                        function makeBackGround(length) {
 
                             if(polygon.type>=20){
                                 text="";
-                                for(var i=0;i<2*mapT.text.length/3;i++){
+                                for(var i=0;i<2*length/3;i++){//
+
                                     text+="█";
                                 }
+
                             } else {
                                 visible=false;
                             }
@@ -626,6 +643,8 @@ Rectangle {
                         } else {
                             deselect();
                         }
+
+
                     }
                 }
 
@@ -707,10 +726,16 @@ Rectangle {
             label: "Přidat poznámku"
 
             onButtonClick: {
-                if(cont.getSelectedMapObject()){
+                console.log("a")
+                if(objectEverSelected && cont.getSelectedMapObject() ){
+                    console.log("b")
+                    console.log(cont.getSelectedMapObject().name);
+                    console.log("c")
                     noteEditor.visible=true;
+                    console.log("d")
                     selectingPermited=true;
                 }
+                console.log("e")
 
             }
 
@@ -821,6 +846,7 @@ Rectangle {
                 console.log('oooQML: Key del was pressed');
                 cont.deleteCurrentObject();
                 objectEverSelected=false;
+                deselect();
             }
         }
 

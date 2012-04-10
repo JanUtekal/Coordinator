@@ -5,12 +5,17 @@
 #include <QPointF>
 #include <QVector>
 #include <QtXml>
+#include "note.h"
 class MapDataParser : public QObject
 {
     Q_OBJECT
 public:
     explicit MapDataParser(QObject *parent = 0);
-    int parseData(QString data,QVector<QPointF> &coordList);
+    int getDataType(QString data);
+    int parseSVGData(QString data, QString &mapObjectId, QVector<QPointF> &coordList);
+    QString parseNegativeObjectData(QString data);
+    Note parseNoteData(QString data);
+
     
 signals:
     

@@ -11,9 +11,12 @@ Controller::Controller(QObject *parent) :
     connect(&watcher,SIGNAL(updateMyLocation(double,double)),this,SLOT(updateMyPosition(double, double)));
     myLat=0.0;
     myLon=0.0;
-
+    mapObjectMap =new QMap<QString, MapObject>();
     landMan= new QLandmarkManager(this);
-    landMan->removeLandmarks(landMan->landmarks());
+    //prepareMapData();
+
+     landMan->removeLandmarks(landMan->landmarks());
+
 
 }
 
@@ -64,7 +67,7 @@ float Controller::getLonForMe(){
     return myLon;
 }
 
-void Controller::setToVlist(QVariant v){
+void Controller::setToVlist(QVariant v){//deprecated
     vList.push_front(v);
 }
 
@@ -81,49 +84,62 @@ void Controller::clearVlist(){
     vList.clear();
 }
 
-void Controller::getPointFromCentral(QVector<QPointF> coordList){
+void Controller::getPointFromCentral(QVector<QPointF> coordList, QString mapObjectId, QString data){
 
 
     QLandmark lm;
-    lm.setName("lm");
+    lm.setName(mapObjectId);
     qDebug()<<coordList.at(0).y();
     QGeoCoordinate coord(coordList.at(0).x(),coordList.at(0).y());
     lm.setCoordinate(coord);
+  //  lm.setDescription(data);
+
   //  qDebug()<<"1";
     //..
     qDebug()<< landMan->saveLandmark(&lm);
     qDebug()<<landMan->errorString()<<landMan->error();
 
     qDebug()<<"saving landmark"<<landMan->landmarks().length();
-    foreach(QLandmark l, landMan->landmarks()){
-  //      qDebug()<<l.name()<<l.coordinate().latitude()<<l.coordinate().longitude();
 
-    }
  //   landMan->exportLandmarks("landmarks",QLandmarkManager::Lmx);
 }
 
-void Controller::getLineFromCentral(QVector<QPointF> coordList){
+void Controller::getLineFromCentral(QVector<QPointF> coordList, QString mapObjectId, QString data){
 
     QLandmark lm;
     //lm.setDescription(line);
-    lm.setName("line");
-    lm.setPhoneNumber("10");
+    lm.setName(mapObjectId);
+    lm.setRadius(10);
+
     lineVector=coordList;
-    lm.setCoordinate(QGeoCoordinate(lineVector.at(0).x(), lineVector.at(1).y()));
+    if(lineVector.size()>0){
+        QPointF point=getSouthestPoint(lineVector);
+        QGeoCoordinate coord(point.x(),point.y());
+        lm.setCoordinate(coord);
+    } else {
+        qDebug()<<"polygonVector empty";
+    }
     qDebug()<< landMan->saveLandmark(&lm);
     qDebug()<<landMan->errorString()<<landMan->error();
  //   landMan->exportLandmarks("landmarks",QLandmarkManager::Lmx);
 }
 
-void Controller::getPolygonFromCentral(QVector<QPointF> coordList){
+void Controller::getPolygonFromCentral(QVector<QPointF> coordList, QString mapObjectId, QString data){
 
     QLandmark lm;
     //lm.setDescription(line);
-    lm.setName("polygon");
-    lm.setPhoneNumber("20");
+    lm.setName(mapObjectId);
+    lm.setRadius(20);
     polygonVector=coordList;
+ //   lm.setDescription(data.replace("\"","\\\""));
+    if(polygonVector.size()>0){
+        QPointF point=getSouthestPoint(polygonVector);
+        QGeoCoordinate coord(point.x(),point.y());
+        lm.setCoordinate(coord);
+    } else {
+        qDebug()<<"polygonVector empty";
+    }
 
-    lm.setCoordinate(QGeoCoordinate(polygonVector.at(0).x(), polygonVector.at(1).y()));
     qDebug()<< landMan->saveLandmark(&lm);
     qDebug()<<landMan->errorString()<<landMan->error();
  //   landMan->exportLandmarks("landmarks",QLandmarkManager::Lmx);
@@ -138,7 +154,7 @@ void Controller::updateUserPosition(QString jid, QGeoCoordinate coordinate){
         QLandmark *lm = new QLandmark();
         lm->setName(jid);
         lm->setCoordinate(coordinate);
-        lm->setPhoneNumber("1");
+        lm->setRadius(1);
         landMan->saveLandmark(lm);
     } else {
 
@@ -148,7 +164,7 @@ void Controller::updateUserPosition(QString jid, QGeoCoordinate coordinate){
         QLandmark *updatedLm = new QLandmark();
       // updatedLm->setLandmarkId(id);
         updatedLm->setName(jid);
-        updatedLm->setPhoneNumber("1");
+        updatedLm->setRadius(1);
         updatedLm->setCoordinate(coordinate);
         qDebug()<< landMan->saveLandmark(updatedLm);
 
@@ -173,7 +189,7 @@ void Controller::fixMapBug(){//ted se nepouziva
     pom2.setName("pom");
     QGeoCoordinate coord2(0,0);
     pom2.setCoordinate(coord2);
-    pom2.setPhoneNumber("0");
+    pom2.setRadius(0);
     //..
     landMan->saveLandmark(&pom2);
 
@@ -196,7 +212,7 @@ void Controller::setUserOffline(QString jid){
         QLandmark *updatedLm = new QLandmark();
       // updatedLm->setLandmarkId(id);
         updatedLm->setName(jid);
-        updatedLm->setPhoneNumber("2");
+        updatedLm->setRadius(2);
         updatedLm->setCoordinate(lms.at(0).coordinate());
         qDebug()<< landMan->saveLandmark(updatedLm);
 
@@ -259,4 +275,124 @@ double Controller::getPolygonCoordinateLonAt(int i){
 
     return y;
 
+}
+
+void Controller::createMapObjectReference(QVariant paintedObject, QString name, int type){
+    MapObject mapObject;
+    mapObject.setName(name);
+    mapObject.setPaintedObject(paintedObject);
+    mapObject.setType(type);
+    mapObjectMap->insert(name,mapObject);
+
+}
+
+void Controller::getNote(Note note){
+
+    QLandmarkNameFilter filter;
+    filter.setName(note.getId());
+    QList<QLandmark> lms=landMan->landmarks(filter);
+    if(lms.length()>0){
+       // fixMapBug();
+        // QLandmarkId id=lms.first().landmarkId();
+
+        QLandmark lm=lms.first();
+        lm.setPhoneNumber(note.getName()+"////"+note.getText());
+
+        landMan->saveLandmark(&lm);
+
+        emit changeNoteOf(note.getId(), note.getName()+"////"+note.getText());//the change has to be done from qml(mymap)
+
+    } else{
+        qDebug()<<"didnt find landmark for note - error";
+    }
+}
+
+QVariant Controller::getMapObjectReference(QString name){
+
+    MapObject obj=mapObjectMap->value(name);
+
+    return obj.getPaintedObject();
+}
+
+QPointF Controller::getSouthestPoint(QVector<QPointF> vector){
+
+
+    float lat=vector.at(0).x();
+    float lon=vector.at(0).y();
+
+    foreach(QPointF point, vector){
+        if(lat>point.x()){
+            lat=point.x();
+            lon=point.y();
+        }
+    }
+
+    return QPointF(lat,lon);
+
+
+}
+
+
+void Controller::getObjectUnderCursor(double lat, double lon){
+    QLandmarkIntersectionFilter filter;
+    QLandmarkProximityFilter proximityFilter;
+    QGeoCoordinate center;
+    center.setLatitude(lat);
+    center.setLongitude(lon);
+    proximityFilter.setCenter(center);
+    proximityFilter.setRadius(200);
+    filter.append(proximityFilter);
+
+
+
+    QList<QLandmark> lms=landMan->landmarks(filter);
+   // qDebug()<<"found on this coords"<<lms.length();
+    if(lms.length()>0){
+           MapObject obj=mapObjectMap->value(lms.at(0).name());
+           emit displayNoteText(obj.getPaintedObject());
+
+    } else {
+        emit hideNoteText();
+    }
+}
+
+void Controller::prepareMapData(){
+    QList<QLandmark> lms=landMan->landmarks();
+    landMan->removeLandmarks(landMan->landmarks());
+    MapDataParser * parser=new MapDataParser();
+
+
+    foreach(QLandmark lm, lms){
+      //  qDebug()<<lm.description();
+
+        QVector<QPointF> coords;
+        QString name;
+
+
+        int type=parser->parseSVGData(lm.description(),name,coords);
+
+        MapObject mapObject;
+        mapObject.setName(name);
+       // mapObject.setPaintedObject(paintedObject);
+        mapObject.setType(type);
+        mapObjectMap->insert(name,mapObject);
+
+        landMan->saveLandmark(&lm);
+    }
+}
+
+void Controller::getNegativeObject(QString negativeObject){
+    QLandmarkNameFilter filter;
+    filter.setName(negativeObject);
+    QList<QLandmark> lms=landMan->landmarks(filter);
+
+    if(lms.length()==0){
+        qDebug()<<"no object to negate";
+    } else {
+        QLandmark lm=lms.at(0);
+
+        landMan->removeLandmark(lm);
+        mapObjectMap->remove(negativeObject);
+
+    }
 }

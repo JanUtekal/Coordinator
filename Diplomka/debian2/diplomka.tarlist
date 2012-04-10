@@ -1,0 +1,31 @@
+# This file is created by MADDE 'dh_fixperms'.
+# MADDE 'dpkg-deb' uses this file when creating
+# 'data.tar.gz' for debian package ar archive.
+755 root root . ./opt /
+755 root root . ./opt/Diplomka /
+755 root root . ./opt/Diplomka/bin /
+755 root root . ./opt/Diplomka/bin/Diplomka debian/diplomka/opt/Diplomka/bin/Diplomka
+755 root root . ./opt/Diplomka/qml /
+755 root root . ./opt/Diplomka/qml/Diplomka /
+644 root root . ./opt/Diplomka/qml/Diplomka/Map.qml.autosave debian/diplomka/opt/Diplomka/qml/Diplomka/Map.qml.autosave
+644 root root . ./opt/Diplomka/qml/Diplomka/MyMap.qml debian/diplomka/opt/Diplomka/qml/Diplomka/MyMap.qml
+644 root root . ./opt/Diplomka/qml/Diplomka/NodeTextDisplay.qml debian/diplomka/opt/Diplomka/qml/Diplomka/NodeTextDisplay.qml
+755 root root . ./opt/Diplomka/qml/Diplomka/images /
+644 root root . ./opt/Diplomka/qml/Diplomka/images/pointerblue.png debian/diplomka/opt/Diplomka/qml/Diplomka/images/pointerblue.png
+644 root root . ./opt/Diplomka/qml/Diplomka/images/pointergreen.png debian/diplomka/opt/Diplomka/qml/Diplomka/images/pointergreen.png
+644 root root . ./opt/Diplomka/qml/Diplomka/images/pointergrey.png debian/diplomka/opt/Diplomka/qml/Diplomka/images/pointergrey.png
+644 root root . ./opt/Diplomka/qml/Diplomka/images/pointeryellow.png debian/diplomka/opt/Diplomka/qml/Diplomka/images/pointeryellow.png
+644 root root . ./opt/Diplomka/qml/Diplomka/main.qml debian/diplomka/opt/Diplomka/qml/Diplomka/main.qml
+755 root root . ./usr /
+755 root root . ./usr/share /
+755 root root . ./usr/share/applications /
+644 root root . ./usr/share/applications/Diplomka_harmattan.desktop debian/diplomka/usr/share/applications/Diplomka_harmattan.desktop
+755 root root . ./usr/share/doc /
+755 root root . ./usr/share/doc/diplomka /
+644 root root . ./usr/share/doc/diplomka/changelog.gz debian/diplomka/usr/share/doc/diplomka/changelog.gz
+644 root root . ./usr/share/doc/diplomka/copyright debian/diplomka/usr/share/doc/diplomka/copyright
+755 root root . ./usr/share/icons /
+755 root root . ./usr/share/icons/hicolor /
+755 root root . ./usr/share/icons/hicolor/80x80 /
+755 root root . ./usr/share/icons/hicolor/80x80/apps /
+644 root root . ./usr/share/icons/hicolor/80x80/apps/Diplomka80.png debian/diplomka/usr/share/icons/hicolor/80x80/apps/Diplomka80.png

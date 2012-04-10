@@ -5,7 +5,7 @@ MapDataParser::MapDataParser(QObject *parent) :
 {
 }
 
-int MapDataParser::parseData(QString data, QVector<QPointF> &coordList){
+int MapDataParser::parseSVGData(QString data, QString &mapObjectId, QVector<QPointF> &coordList){
 
     int type=-1;
 
@@ -34,6 +34,14 @@ int MapDataParser::parseData(QString data, QVector<QPointF> &coordList){
             }
 
         }
+
+
+       // qDebug()<<el.nodeName();
+        if(el.nodeName()=="desc"){
+            mapObjectId=el.text();
+
+        }
+
 
         if(el.nodeName()=="g"){
             if(node.hasChildNodes()){
@@ -98,4 +106,62 @@ int MapDataParser::parseData(QString data, QVector<QPointF> &coordList){
 
 
     return type;
+}
+
+int MapDataParser::getDataType(QString data){
+    int type=-1;
+
+    QDomDocument doc( "myDocument" );
+    doc.setContent( data );                        // myFile is a QFile
+
+    QDomElement docElement = doc.documentElement();
+
+    if(docElement.nodeName()=="note"){
+        type=0;
+    } else if(docElement.nodeName()=="negativeObject") {
+        type=1;
+    } else {
+        type=2;
+    }
+    return type;
+}
+
+Note MapDataParser::parseNoteData(QString data){
+
+    QDomDocument doc( "myDocument" );
+    doc.setContent( data );                        // myFile is a QFile
+
+    QDomElement docElement = doc.documentElement();   // docElement now refers to the node "xml"
+
+    QDomNode node = docElement.firstChild();
+
+    Note note;
+    note.setId(docElement.attribute("mapObjectId"));
+   // note.setId();
+  //  qDebug()<<node.isNull();
+    while( !node.isNull() )
+    {
+
+        QDomElement el = node.toElement();
+
+        if(el.nodeName()=="name"){
+            note.setName(el.text());
+        }
+        if(el.nodeName()=="text"){
+            note.setText(el.text());
+        }
+
+        node = node.nextSibling();
+    }
+
+    return note;
+}
+
+QString MapDataParser::parseNegativeObjectData(QString data){
+    QDomDocument doc( "myDocument" );
+    doc.setContent( data );                        // myFile is a QFile
+
+    QDomElement docElement = doc.documentElement();   // docElement now refers to the node "xml"
+
+    return docElement.text();
 }

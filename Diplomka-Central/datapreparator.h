@@ -12,7 +12,7 @@ class DataPreparator : public QObject
     Q_OBJECT
 public:
     explicit DataPreparator(QObject *parent = 0);
-    QString prepareData(QVector<QPointF> coordList,int type);
+    QString prepareData(QVector<QPointF> coordList, QString id, int type);
     
 signals:
     

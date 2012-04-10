@@ -31,13 +31,16 @@ void Controller::getRootObject(QObject *obj){
 
 void Controller::addPoint(double lat, double lon, int selectedAcl){
     deselectCurrentObject();
-
-    int dbId=dbConnection->insertPoint(lat,lon);
+    QString aclId = "-1";
+    if(selectedAcl!=-1){
+        aclId=((Acl)aclList.at(selectedAcl)).getId();
+    }
+    int dbId=dbConnection->insertPoint(lat,lon,aclId);
 
     if(dbId!=-1){
 
         QLandmark lm;
-        lm.setName("lm");
+
         QGeoCoordinate coord(lat,lon);
         lm.setCoordinate(coord);
         lm.setName(QString::number(dbId));
@@ -53,7 +56,7 @@ void Controller::addPoint(double lat, double lon, int selectedAcl){
             QVector<QPointF> coordList;
             coordList.append(QPointF(lat,lon));
             DataPreparator *preparator=new DataPreparator();
-            QString data=preparator->prepareData(coordList, POINT);
+            QString data=preparator->prepareData(coordList, QString::number(dbId), POINT);
             emit sendMapObject(data,userList);
             delete preparator;
         } else {
@@ -94,15 +97,24 @@ void Controller::lineReady(int selectedAcl){
         qDebug()<<point.x()<<point.y();
     }*/
     if(lineVector.size()>1){
-
-        int dbId=dbConnection->insertLine(lineVector);
+        QString aclId = "-1";
+        if(selectedAcl!=-1){
+            aclId=((Acl)aclList.at(selectedAcl)).getId();
+        }
+        int dbId=dbConnection->insertLine(lineVector, aclId);
 
         if(dbId!=-1){
 
             QLandmark lm;
 
-            QGeoCoordinate coord(QPointF(lineVector.at(0)).x(),QPointF(lineVector.at(0)).y());
-            lm.setCoordinate(coord);
+            if(lineVector.size()>0){
+                QPointF point=getSouthestPoint(lineVector);
+                QGeoCoordinate coord(point.x(),point.y());
+                lm.setCoordinate(coord);
+            } else {
+                qDebug()<<"lineVector empty";
+            }
+
             lm.setName(QString::number(dbId));
         //not necessary for this moment
             QString coords;
@@ -124,7 +136,7 @@ void Controller::lineReady(int selectedAcl){
 
                 QList<TerrainUser> userList= prepareCustomTerrainUserFromAclList(selectedAcl);
                 DataPreparator *preparator=new DataPreparator();
-                QString data=preparator->prepareData(lineVector, LINE);
+                QString data=preparator->prepareData(lineVector, QString::number(dbId), LINE);
                 emit sendMapObject(data,userList);
                 delete preparator;
 
@@ -155,15 +167,22 @@ void Controller::polygonReady(int selectedAcl){
 
 
     if(polygonVector.size()>2){
-
-        int dbId=dbConnection->insertPolygon(polygonVector);
+        QString aclId = "-1";
+        if(selectedAcl!=-1){
+            aclId=((Acl)aclList.at(selectedAcl)).getId();
+        }
+        int dbId=dbConnection->insertPolygon(polygonVector,aclId);
 
         if(dbId!=-1){
 
             QLandmark lm;
-
-            QGeoCoordinate coord(QPointF(polygonVector.at(0)).x(),QPointF(polygonVector.at(0)).y());
-            lm.setCoordinate(coord);
+            if(polygonVector.size()>0){
+                QPointF point=getSouthestPoint(polygonVector);
+                QGeoCoordinate coord(point.x(),point.y());
+                lm.setCoordinate(coord);
+            } else {
+                qDebug()<<"polygonvector empty";
+            }
             lm.setName(QString::number(dbId));
         //not necessary for this moment
             QString coords;
@@ -185,7 +204,7 @@ void Controller::polygonReady(int selectedAcl){
 
                 QList<TerrainUser> userList= prepareCustomTerrainUserFromAclList(selectedAcl);
                 DataPreparator *preparator=new DataPreparator();
-                QString data=preparator->prepareData(polygonVector, POLYGON);
+                QString data=preparator->prepareData(polygonVector, QString::number(dbId), POLYGON);
                 emit sendMapObject(data,userList);
                 delete preparator;
 
@@ -209,6 +228,7 @@ void Controller::createMapObjectReference(QVariant paintedObject, QString name, 
     mapObject.setName(name);
     mapObject.setPaintedObject(paintedObject);
     mapObject.setType(type);
+    mapObject.setAclId(dbConnection->getMapObjectAcl(name));
     mapObjectMap->insert(name,mapObject);
 
 }
@@ -245,8 +265,8 @@ void Controller::deselectCurrentObject(){
     qDebug()<<"deselecting";
     QLandmark lm;
     lm.setName("");
-    QGeoCoordinate coord(0,0);
-    lm.setCoordinate(coord);
+  //  QGeoCoordinate coord(0,0);
+  //  lm.setCoordinate(coord);
 
     actualLandmark=lm;
 
@@ -256,13 +276,26 @@ void Controller::deleteCurrentObject(){
 
 
     if(actualLandmark.name()!=""){
-        int result=dbConnection->deleteObject(actualLandmark.name());
+        QString id=actualLandmark.name();
+        MapObject obj=mapObjectMap->value(actualLandmark.name());
+        QString aclId=obj.getAClId();
+        int result=dbConnection->deleteObject(id);
 
         if(result!=-1){
+            dbConnection->deleteNote(actualLandmark.name());
             mapObjectMap->remove(actualLandmark.name());
             landMan->removeLandmark(actualLandmark);
             actualLandmark=pom;
             qDebug()<<"sql point delete succesful";
+
+            QList<TerrainUser> userList= dbConnection->getTerrainUsersFromAcl(aclId);
+
+            emit sendNegativeObject(id, userList);
+
+
+
+
+
         } else {
             qDebug()<<"sql point delete failed";
         }
@@ -358,7 +391,15 @@ void Controller::addLineFromDB(){
             lineVector.append(point);
 
         }
-        lm.setCoordinate(QGeoCoordinate(lineVector.at(0).x(), lineVector.at(1).y()));
+        if(lineVector.size()>0){
+            QPointF point=getSouthestPoint(lineVector);
+            QGeoCoordinate coord(point.x(),point.y());
+            lm.setCoordinate(coord);
+        } else {
+            qDebug()<<"lineVector empty";
+        }
+
+
         landMan->saveLandmark(&lm);
 
 
@@ -380,7 +421,16 @@ void Controller::addPolygonFromDB(){
             polygonVector.append(point);
 
         }
-        lm.setCoordinate(QGeoCoordinate(polygonVector.at(0).x(), polygonVector.at(1).y()));
+
+        if(polygonVector.size()>0){
+            QPointF point=getSouthestPoint(polygonVector);
+            QGeoCoordinate coord(point.x(),point.y());
+            lm.setCoordinate(coord);
+        } else {
+            qDebug()<<"polygonvector empty";
+        }
+
+
         landMan->saveLandmark(&lm);
 
 
@@ -785,7 +835,7 @@ void Controller::makeRosterForUser(QString jid, QString password){
 
 }
 
-void Controller::addNoteTo(QString name, QString text, QString id, int selectedAcl){
+void Controller::addNoteTo(QString name, QString text, QString id){
     QString dbId=dbConnection->insertOrUpdateNote(id, name, text);
 
     if(dbId!="-1"){
@@ -811,12 +861,31 @@ void Controller::addNoteTo(QString name, QString text, QString id, int selectedA
 
     }
 
-    if(selectedAcl!=-1){
+    MapObject obj=mapObjectMap->value(id);
+    QList<TerrainUser> userList= dbConnection->getTerrainUsersFromAcl(obj.getAClId());
+    emit sendNote(Note(name,text,id),userList);
 
-        QList<TerrainUser> userList= prepareCustomTerrainUserFromAclList(selectedAcl);
-        emit sendNote(Note(name,text,id),userList);
 
-    }
 
 
 }
+
+QPointF Controller::getSouthestPoint(QVector<QPointF> vector){
+
+
+    float lat=vector.at(0).x();
+    float lon=vector.at(0).y();
+
+    foreach(QPointF point, vector){
+        if(lat>point.x()){
+            lat=point.x();
+            lon=point.y();
+        }
+    }
+
+    return QPointF(lat,lon);
+
+
+}
+
+
