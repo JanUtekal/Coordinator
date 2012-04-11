@@ -107,7 +107,11 @@ Rectangle {
                         property string note:landmark.phoneNumber
 
                         id: point
-                        coordinate: landmark.coordinate
+                        coordinate: Coordinate{
+                            latitude: point.lat
+                            longitude: point.lon
+                        }
+
                         source: point.type==0 ? "images/pointergreen.png" : point.type==1 ? "images/pointerblue.png" : "images/pointergrey.png"
                         offset.x: -15
                         offset.y: -96
@@ -119,21 +123,16 @@ Rectangle {
                             //  circle.color=pointColor;
                             if(type<10){
 
-                                //  if(type==0){
+                                if(type==1){
 
+                                  note=name;
+                                }
 
-                                //  }
+                               if(type==2){
 
-                                //   if(type==1){
-
-                                //     color="blue";
-                                //   }
-
-                                /*  if(type==2){
-
-                                  color="grey";
-                              }*/
-                                cont.createMapObjectReference(point,point.name,0);
+                                 note=name;
+                               }
+                                cont.createMapObjectReference(point,point.name,0,"");
 
                             } else {
                                 if(type==10){
@@ -295,16 +294,19 @@ Rectangle {
 
 
                             if(type==10){
-                                var num=cont.getLineCoordinatesNum();
+                                cont.createMapObjectReference(line,line.name,1,landmark.description);//to be able to select the object we need to make a reference on it
+
+                                var num=cont.getLineCoordinatesNum(line.name);
                                 for(var i=0; i<num;i++){
                                     var coord = Qt.createQmlObject('import Qt 4.7; import QtMobility.location 1.2; Coordinate{}', map, "coord"+i);
 
-                                    coord.latitude=cont.getLineCoordinateLatAt(i);
-                                    coord.longitude=cont.getLineCoordinateLonAt(i);
+                                    coord.latitude=cont.getLineCoordinateLatAt(line.name,i);
+
+                                    coord.longitude=cont.getLineCoordinateLonAt(line.name,i);
+                                    console.log("ulozil jsem",coord.latitude, coord.longitude)
                                     line.addCoordinate(coord);
                                     visible=true;
                                 }
-                                cont.createMapObjectReference(line,line.name,1);//to be able to select the object we need to make a reference on it
 
                             }
 
@@ -394,20 +396,21 @@ Rectangle {
 
 
                         if(type==20){
+                            cont.createMapObjectReference(polygon,polygon.name,2,landmark.description);//to be able to select the object we need to make a reference on it
+
                             polygon.type=type;
 
-                            var num=cont.getPolygonCoordinatesNum();
+                            var num=cont.getPolygonCoordinatesNum(polygon.name);
                             for(var i=0; i<num;i++){
                                 var coord = Qt.createQmlObject('import Qt 4.7; import QtMobility.location 1.2; Coordinate{}', map, "coord"+i);
 
-                                coord.latitude=cont.getPolygonCoordinateLatAt(i);
-                                coord.longitude=cont.getPolygonCoordinateLonAt(i);
+                                coord.latitude=cont.getPolygonCoordinateLatAt(polygon.name,i);
+                                coord.longitude=cont.getPolygonCoordinateLonAt(polygon.name,i);
                                 polygon.addCoordinate(coord);
                                 //helpLine.addCoordinate(coord)
                                 polygon.visible=true;
                                 // visible=true;
                             }
-                            cont.createMapObjectReference(polygon,polygon.name,2);//to be able to select the object we need to make a reference on it
 
                         }
 
@@ -685,5 +688,25 @@ Rectangle {
 
 
 
+    }
+
+    Connections{
+        target: cont
+        onUpdatePositionForMapUser:{
+
+            if(userPoint){
+                userPoint.lat=lat;
+                userPoint.lon=lon;
+            }
+
+
+        }
+
+        onSetMapUserOffline:{
+            if(userPoint){
+
+                userPoint.type=2;
+            }
+        }
     }
 }

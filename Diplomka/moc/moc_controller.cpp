@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'controller.h'
 **
-** Created: Mon 9. Apr 19:10:54 2012
+** Created: Tue 10. Apr 11:40:42 2012
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.4)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -59,15 +59,15 @@ static const uint qt_meta_data_Controller[] = {
      665,  552,  656,   11, 0x02,
      685,   11,  526,   11, 0x02,
      702,   11,   11,   11, 0x02,
-     715,   11,  526,   11, 0x02,
-     746,  552,  739,   11, 0x02,
-     774,  552,  739,   11, 0x02,
-     802,   11,  526,   11, 0x02,
-     829,  552,  739,   11, 0x02,
-     860,  552,  739,   11, 0x02,
-     915,  891,   11,   11, 0x02,
-     967,  962,  656,   11, 0x02,
-    1006,  998,   11,   11, 0x02,
+     720,  715,  526,   11, 0x02,
+     765,  758,  751,   11, 0x02,
+     801,  758,  751,   11, 0x02,
+     837,  715,  526,   11, 0x02,
+     871,  758,  751,   11, 0x02,
+     910,  758,  751,   11, 0x02,
+     985,  949,   11,   11, 0x02,
+    1040,  715,  656,   11, 0x02,
+    1079, 1071,   11,   11, 0x02,
 
        0        // eod
 };
@@ -91,16 +91,16 @@ static const char qt_meta_stringdata_Controller[] = {
     "getLatForMe()\0getLonForMe()\0v\0"
     "setToVlist(QVariant)\0QVariant\0"
     "getFromVlistAt(int)\0getMapPointNum()\0"
-    "clearVlist()\0getLineCoordinatesNum()\0"
-    "double\0getLineCoordinateLatAt(int)\0"
-    "getLineCoordinateLonAt(int)\0"
-    "getPolygonCoordinatesNum()\0"
-    "getPolygonCoordinateLatAt(int)\0"
-    "getPolygonCoordinateLonAt(int)\0"
-    "paintedObject,name,type\0"
-    "createMapObjectReference(QVariant,QString,int)\0"
-    "name\0getMapObjectReference(QString)\0"
-    "lat,lon\0getObjectUnderCursor(double,double)\0"
+    "clearVlist()\0name\0getLineCoordinatesNum(QString)\0"
+    "double\0name,i\0getLineCoordinateLatAt(QString,int)\0"
+    "getLineCoordinateLonAt(QString,int)\0"
+    "getPolygonCoordinatesNum(QString)\0"
+    "getPolygonCoordinateLatAt(QString,int)\0"
+    "getPolygonCoordinateLonAt(QString,int)\0"
+    "paintedObject,name,type,coordinates\0"
+    "createMapObjectReference(QVariant,QString,int,QString)\0"
+    "getMapObjectReference(QString)\0lat,lon\0"
+    "getObjectUnderCursor(double,double)\0"
 };
 
 const QMetaObject Controller::staticMetaObject = {
@@ -164,19 +164,19 @@ int Controller::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
         case 22: { int _r = getMapPointNum();
             if (_a[0]) *reinterpret_cast< int*>(_a[0]) = _r; }  break;
         case 23: clearVlist(); break;
-        case 24: { int _r = getLineCoordinatesNum();
+        case 24: { int _r = getLineCoordinatesNum((*reinterpret_cast< QString(*)>(_a[1])));
             if (_a[0]) *reinterpret_cast< int*>(_a[0]) = _r; }  break;
-        case 25: { double _r = getLineCoordinateLatAt((*reinterpret_cast< int(*)>(_a[1])));
+        case 25: { double _r = getLineCoordinateLatAt((*reinterpret_cast< QString(*)>(_a[1])),(*reinterpret_cast< int(*)>(_a[2])));
             if (_a[0]) *reinterpret_cast< double*>(_a[0]) = _r; }  break;
-        case 26: { double _r = getLineCoordinateLonAt((*reinterpret_cast< int(*)>(_a[1])));
+        case 26: { double _r = getLineCoordinateLonAt((*reinterpret_cast< QString(*)>(_a[1])),(*reinterpret_cast< int(*)>(_a[2])));
             if (_a[0]) *reinterpret_cast< double*>(_a[0]) = _r; }  break;
-        case 27: { int _r = getPolygonCoordinatesNum();
+        case 27: { int _r = getPolygonCoordinatesNum((*reinterpret_cast< QString(*)>(_a[1])));
             if (_a[0]) *reinterpret_cast< int*>(_a[0]) = _r; }  break;
-        case 28: { double _r = getPolygonCoordinateLatAt((*reinterpret_cast< int(*)>(_a[1])));
+        case 28: { double _r = getPolygonCoordinateLatAt((*reinterpret_cast< QString(*)>(_a[1])),(*reinterpret_cast< int(*)>(_a[2])));
             if (_a[0]) *reinterpret_cast< double*>(_a[0]) = _r; }  break;
-        case 29: { double _r = getPolygonCoordinateLonAt((*reinterpret_cast< int(*)>(_a[1])));
+        case 29: { double _r = getPolygonCoordinateLonAt((*reinterpret_cast< QString(*)>(_a[1])),(*reinterpret_cast< int(*)>(_a[2])));
             if (_a[0]) *reinterpret_cast< double*>(_a[0]) = _r; }  break;
-        case 30: createMapObjectReference((*reinterpret_cast< QVariant(*)>(_a[1])),(*reinterpret_cast< QString(*)>(_a[2])),(*reinterpret_cast< int(*)>(_a[3]))); break;
+        case 30: createMapObjectReference((*reinterpret_cast< QVariant(*)>(_a[1])),(*reinterpret_cast< QString(*)>(_a[2])),(*reinterpret_cast< int(*)>(_a[3])),(*reinterpret_cast< QString(*)>(_a[4]))); break;
         case 31: { QVariant _r = getMapObjectReference((*reinterpret_cast< QString(*)>(_a[1])));
             if (_a[0]) *reinterpret_cast< QVariant*>(_a[0]) = _r; }  break;
         case 32: getObjectUnderCursor((*reinterpret_cast< double(*)>(_a[1])),(*reinterpret_cast< double(*)>(_a[2]))); break;

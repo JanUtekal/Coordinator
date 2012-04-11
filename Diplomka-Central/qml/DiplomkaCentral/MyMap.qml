@@ -97,7 +97,11 @@ Rectangle {
                         property string note:landmark.phoneNumber
 
                         id: point
-                        coordinate: landmark.coordinate
+                        coordinate: Coordinate{
+                            latitude: point.lat
+                            longitude: point.lon
+                        }
+
                         source: point.type==0 ? "images/pointergreen.png" : point.type==1 ? "images/pointerblue.png" : "images/pointergrey.png"
                         offset.x: -15
                         offset.y: -96
@@ -105,7 +109,7 @@ Rectangle {
 
                         Component.onCompleted: {
                             type=landmark.radius
-                            console.log("TYPE", type,landmark.radius)
+                           // console.log("TYPE", type,landmark.radius)
                             //  circle.color=pointColor;
                             if(type<10){
 
@@ -114,16 +118,17 @@ Rectangle {
 
                                 //  }
 
-                                //   if(type==1){
+                                  if(type==1 ){
 
-                                //     color="blue";
-                                //   }
+                                    note=name;
+                                  }
 
-                                /*  if(type==2){
+                                  if(type==2 ){
 
-                                    color="grey";
-                                }*/
-                                cont.createMapObjectReference(point,point.name,0);
+                                    note=name;
+                                  }
+
+                                cont.createMapObjectReference(point,point.name, 0);
 
                             } else {
                                 if(type==10){
@@ -894,6 +899,26 @@ Rectangle {
 
 
 
+    }
+
+    Connections{
+        target: cont
+        onUpdatePositionForMapUser:{
+
+            if(userPoint){
+                userPoint.lat=lat;
+                userPoint.lon=lon;
+                userPoint.type=1;
+
+            }
+        }
+
+        onSetMapUserOffline:{
+            if(userPoint){
+
+                userPoint.type=2;
+            }
+        }
     }
 
 }

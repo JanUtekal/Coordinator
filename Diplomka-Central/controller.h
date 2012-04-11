@@ -21,6 +21,7 @@
 #include "jabberregistrationtool.h"
 #include "xmppclient.h"
 #include "note.h"
+#include <QTimer>
 
 QTM_USE_NAMESPACE
 
@@ -107,6 +108,7 @@ public:
 private:
     QObject *object;
     QVariant selectedMapObject;
+    QTimer *validationTimer;
    // int recentlyAddedLine;//while adding lines from db it is necessary to do it one after another
 
     DbConnection *dbConnection;
@@ -149,6 +151,8 @@ signals:
     void registrationSuccess();
     void disconnectUser();
     void subscribeToLocation(QString jid);
+    void updatePositionForMapUser(QVariant userPoint, double lat, double lon);
+    void setMapUserOffline(QVariant userPoint);
     
 public slots:
     void getAllPoints(QList<QLandmark> *dbLandmarks);
@@ -165,6 +169,8 @@ public slots:
     void getCaptchaRegistrationUrl(QString captcha);
     void getError(QString error);
     void getSuccess();
+
+    void getOutdatedObjects(QStringList mapObjects);
 };
 
 #endif // CONTROLLER_H

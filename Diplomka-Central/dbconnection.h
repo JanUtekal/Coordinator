@@ -11,6 +11,8 @@
 #include <QLandmark>
 #include "acl.h"
 #include "terrainuser.h"
+#include <QDateTime>
+
 
 QTM_USE_NAMESPACE
 
@@ -20,6 +22,8 @@ class DbConnection : public QObject
 public:
     explicit DbConnection(QObject *parent = 0);
     void setDb(QSqlDatabase db);
+    void setMapObjectValidity(int validity);
+    QString generateNowAndUntil();
 
     int insertPoint(double lat, double lon, QString acl);
     int deleteObject(QString id);
@@ -55,14 +59,19 @@ public:
 
 private:
     QSqlDatabase db;
+    long mapObjectValidity;
+    QString lastTimeValidation;
+    void updateCentraluserLastvalidation(QString lastValidation);
+    QString getNow();
 
 signals:
     void sendAllPoints(QList<QLandmark> *dbLandmarks);
     void sendAllLines(QList<QLandmark> *dbLandmarks2);
     void sendAllPolygons(QList<QLandmark> *dbLandmarks3);
+    void sendOutdatedObjects(QStringList mapObjects);
 
 public slots:
-    
+    void validateMapObjects();
 };
 
 #endif // DBCONNECTION_H

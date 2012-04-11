@@ -29,7 +29,7 @@ Rectangle {
 
             Text{
                 id: text1
-                text: "lorem ipsum dolor sit amet loremipsum dolor sit amet loremipsum dolor sit amet loremipsum dolor sit amet loremlorem ipsum dolor sit amet loremipsum dolor sit amet loremipsum dolor sit amet loremipsum dolor sit amet loremlorem ipsum dolor sit amet loremipsum dolor sit amet loremipsum dolor sit amet loremipsum dolor sit amet loremlorem ipsum dolor sit amet loremipsum dolor sit amet loremipsum dolor sit amet loremipsum dolor sit amet loremlorem ipsum dolor sit amet loremipsum dolor sit amet loremipsum dolor sit amet loremipsum dolor sit amet lorem"
+                text: ""
               //  x: 10
              //   y: 10
 

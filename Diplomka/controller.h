@@ -38,15 +38,15 @@ public:
     Q_INVOKABLE int getMapPointNum();//pocet objektu ve vListu
     Q_INVOKABLE void clearVlist();
 
-    Q_INVOKABLE int getLineCoordinatesNum();
-    Q_INVOKABLE double getLineCoordinateLatAt(int i);
-    Q_INVOKABLE double getLineCoordinateLonAt(int i);
+    Q_INVOKABLE int getLineCoordinatesNum(QString name);
+    Q_INVOKABLE double getLineCoordinateLatAt(QString name,int i);
+    Q_INVOKABLE double getLineCoordinateLonAt(QString name,int i);
 
-    Q_INVOKABLE int getPolygonCoordinatesNum();
-    Q_INVOKABLE double getPolygonCoordinateLatAt(int i);
-    Q_INVOKABLE double getPolygonCoordinateLonAt(int i);
+    Q_INVOKABLE int getPolygonCoordinatesNum(QString name);
+    Q_INVOKABLE double getPolygonCoordinateLatAt(QString name,int i);
+    Q_INVOKABLE double getPolygonCoordinateLonAt(QString name,int i);
 
-    Q_INVOKABLE void createMapObjectReference(QVariant paintedObject, QString name, int type);
+    Q_INVOKABLE void createMapObjectReference(QVariant paintedObject, QString name, int type, QString coordinates);
     Q_INVOKABLE QVariant getMapObjectReference(QString name);
 
     Q_INVOKABLE void getObjectUnderCursor(double lat, double lon);
@@ -56,8 +56,7 @@ private:
 
     QLandmarkManager *landMan;
         QLandmark pom;
-    QVector<QPointF> lineVector;
-    QVector<QPointF> polygonVector;
+
     QMap<QString, MapObject>* mapObjectMap;
 
     void fixMapBug();
@@ -69,7 +68,8 @@ signals:
     void changeNoteOf(QString name, QString note);
     void displayNoteText(QVariant mapObject);
     void hideNoteText();
-
+    void updatePositionForMapUser(QVariant userPoint, double lat, double lon);
+    void setMapUserOffline(QVariant userPoint);
 public slots:
     void refreshPoints();
     void updateMyPosition(double lon, double lat);

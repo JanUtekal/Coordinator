@@ -165,3 +165,18 @@ QString MapDataParser::parseNegativeObjectData(QString data){
 
     return docElement.text();
 }
+
+QVector<QPointF> MapDataParser::parseGeometry(QString coords){
+
+    QStringList coordList=coords.split(",");
+    QVector<QPointF> vector;
+
+    foreach(QString coord, coordList){
+        QStringList c=coord.split(" ");
+        QPointF point(c.at(0).toDouble(), c.at(1).toDouble());
+        vector.append(point);
+
+    }
+
+    return vector;
+}

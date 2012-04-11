@@ -7,7 +7,7 @@ LocationWatcher::LocationWatcher(QObject *parent)
 {
     source = QGeoPositionInfoSource::createDefaultSource(this);
     if (source) {
-        source->setUpdateInterval(600000); // time in milliseconds
+        source->setUpdateInterval(6000); // time in milliseconds
         source->setPreferredPositioningMethods(QGeoPositionInfoSource::AllPositioningMethods);
     }
 }

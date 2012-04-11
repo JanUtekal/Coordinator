@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'xmppclient.h'
 **
-** Created: Mon 9. Apr 19:10:52 2012
+** Created: Tue 10. Apr 11:06:56 2012
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.4)
 **
 ** WARNING! All changes made in this file will be lost!

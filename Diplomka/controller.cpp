@@ -13,9 +13,9 @@ Controller::Controller(QObject *parent) :
     myLon=0.0;
     mapObjectMap =new QMap<QString, MapObject>();
     landMan= new QLandmarkManager(this);
-    //prepareMapData();
+  //  prepareMapData();
 
-     landMan->removeLandmarks(landMan->landmarks());
+   //  landMan->removeLandmarks(landMan->landmarks());
 
 
 }
@@ -92,10 +92,7 @@ void Controller::getPointFromCentral(QVector<QPointF> coordList, QString mapObje
     qDebug()<<coordList.at(0).y();
     QGeoCoordinate coord(coordList.at(0).x(),coordList.at(0).y());
     lm.setCoordinate(coord);
-  //  lm.setDescription(data);
 
-  //  qDebug()<<"1";
-    //..
     qDebug()<< landMan->saveLandmark(&lm);
     qDebug()<<landMan->errorString()<<landMan->error();
 
@@ -111,11 +108,21 @@ void Controller::getLineFromCentral(QVector<QPointF> coordList, QString mapObjec
     lm.setName(mapObjectId);
     lm.setRadius(10);
 
-    lineVector=coordList;
-    if(lineVector.size()>0){
-        QPointF point=getSouthestPoint(lineVector);
+    if(coordList.size()>0){
+        QPointF point=getSouthestPoint(coordList);
         QGeoCoordinate coord(point.x(),point.y());
         lm.setCoordinate(coord);
+        QString coords;
+
+        foreach(QPointF p, coordList){
+           coords+=QString::number(p.x());
+           coords+=" ";
+           coords+=QString::number(p.y());
+           coords+=",";
+        }
+        coords.chop(1);
+        lm.setDescription(coords);
+
     } else {
         qDebug()<<"polygonVector empty";
     }
@@ -130,12 +137,23 @@ void Controller::getPolygonFromCentral(QVector<QPointF> coordList, QString mapOb
     //lm.setDescription(line);
     lm.setName(mapObjectId);
     lm.setRadius(20);
-    polygonVector=coordList;
+
  //   lm.setDescription(data.replace("\"","\\\""));
-    if(polygonVector.size()>0){
-        QPointF point=getSouthestPoint(polygonVector);
+    if(coordList.size()>0){
+        QPointF point=getSouthestPoint(coordList);
         QGeoCoordinate coord(point.x(),point.y());
         lm.setCoordinate(coord);
+        QString coords;
+
+        foreach(QPointF p, coordList){
+           coords+=QString::number(p.x());
+           coords+=" ";
+           coords+=QString::number(p.y());
+           coords+=",";
+        }
+        coords.chop(1);
+        lm.setDescription(coords);
+
     } else {
         qDebug()<<"polygonVector empty";
     }
@@ -156,26 +174,32 @@ void Controller::updateUserPosition(QString jid, QGeoCoordinate coordinate){
         lm->setCoordinate(coordinate);
         lm->setRadius(1);
         landMan->saveLandmark(lm);
-    } else {
 
-        fixMapBug();
-        QLandmarkId id=lms.first().landmarkId();
+
+    } else {
+        QLandmark lm=lms.first();
+        lm.setCoordinate(coordinate);
+        qDebug()<< landMan->saveLandmark(&lm);
+        MapObject obj=mapObjectMap->value(jid);
+        emit updatePositionForMapUser(obj.getPaintedObject(),coordinate.latitude(),coordinate.longitude());
+      /*  fixMapBug();
+        // QLandmarkId id=lms.first().landmarkId();
         qDebug()<< landMan->removeLandmark( lms.at(0));
         QLandmark *updatedLm = new QLandmark();
-      // updatedLm->setLandmarkId(id);
+        // updatedLm->setLandmarkId(id);
         updatedLm->setName(jid);
         updatedLm->setRadius(1);
         updatedLm->setCoordinate(coordinate);
         qDebug()<< landMan->saveLandmark(updatedLm);
-
+*/
 
 
     }
 
-    foreach(QLandmark l, landMan->landmarks()){
-        qDebug()<<l.name()<<l.coordinate().latitude()<<l.coordinate().longitude();
+   // foreach(QLandmark l, landMan->landmarks()){
+    //    qDebug()<<l.name()<<l.coordinate().latitude()<<l.coordinate().longitude();
 
-    }
+   // }
 }
 
 void Controller::fixMapBug(){//ted se nepouziva
@@ -206,83 +230,77 @@ void Controller::setUserOffline(QString jid){
 
     } else {
 
-        fixMapBug();
-      //  QLandmarkId id=lms.first().landmarkId();
-        qDebug()<< landMan->removeLandmark( lms.at(0));
-        QLandmark *updatedLm = new QLandmark();
-      // updatedLm->setLandmarkId(id);
-        updatedLm->setName(jid);
-        updatedLm->setRadius(2);
-        updatedLm->setCoordinate(lms.at(0).coordinate());
-        qDebug()<< landMan->saveLandmark(updatedLm);
-
-
+        MapObject obj=mapObjectMap->value(jid);
+        emit setMapUserOffline(obj.getPaintedObject());
 
     }
 }
 
-int Controller::getLineCoordinatesNum(){
-    qDebug()<<"SIZE"<<lineVector.size();
-    return lineVector.size();
+int Controller::getLineCoordinatesNum(QString name){
+
+    MapObject obj=mapObjectMap->value(name);
+
+
+    return obj.getGeometry().size();
 }
 
-double Controller::getLineCoordinateLatAt(int i){
+double Controller::getLineCoordinateLatAt(QString name, int i){
+    MapObject obj=mapObjectMap->value(name);
 
-    return lineVector.at(i).x();
+    return obj.getGeometry().at(i).x();
 
 
 
 }
 
-double Controller::getLineCoordinateLonAt(int i){
-
-    double y=lineVector.at(i).y();
-
-
-    if(i==lineVector.size()-1){
-
-        lineVector.clear();
-        //addLineFromDB();
-    }
+double Controller::getLineCoordinateLonAt(QString name, int i){
+    MapObject obj=mapObjectMap->value(name);
+    double y=obj.getGeometry().at(i).y();
 
     return y;
 
 }
 
-int Controller::getPolygonCoordinatesNum(){
+int Controller::getPolygonCoordinatesNum(QString name){
+    MapObject obj=mapObjectMap->value(name);
 
-    return polygonVector.size();
+    qDebug()<<"SIZE"<<obj.getGeometry().size();
+    return obj.getGeometry().size();
 }
 
-double Controller::getPolygonCoordinateLatAt(int i){
+double Controller::getPolygonCoordinateLatAt(QString name, int i){
 
-    return polygonVector.at(i).x();
+    MapObject obj=mapObjectMap->value(name);
+
+    return obj.getGeometry().at(i).x();
 
 
 
 }
 
-double Controller::getPolygonCoordinateLonAt(int i){
+double Controller::getPolygonCoordinateLonAt(QString name, int i){
 
-    double y=polygonVector.at(i).y();
-
-
-    if(i==polygonVector.size()-1){
-
-        polygonVector.clear();
-        //addLineFromDB();
-    }
+    MapObject obj=mapObjectMap->value(name);
+    double y=obj.getGeometry().at(i).y();
 
     return y;
 
 }
 
-void Controller::createMapObjectReference(QVariant paintedObject, QString name, int type){
+void Controller::createMapObjectReference(QVariant paintedObject, QString name, int type, QString coordinates){
     MapObject mapObject;
     mapObject.setName(name);
     mapObject.setPaintedObject(paintedObject);
     mapObject.setType(type);
+    qDebug()<<"koordinaty"<<coordinates;
+    if(coordinates!=""){
+        MapDataParser *parser=new MapDataParser();
+
+        mapObject.setGeometry(parser->parseGeometry(coordinates));
+        qDebug()<<"GEOMETRY"<<mapObject.getGeometry().size();
+    }
     mapObjectMap->insert(name,mapObject);
+   // delete parser;
 
 }
 
@@ -358,26 +376,18 @@ void Controller::getObjectUnderCursor(double lat, double lon){
 
 void Controller::prepareMapData(){
     QList<QLandmark> lms=landMan->landmarks();
+    qDebug()<<"landmarky"<<lms.length()<<landMan->landmarks().length();
     landMan->removeLandmarks(landMan->landmarks());
-    MapDataParser * parser=new MapDataParser();
-
-
+    qDebug()<<"landmarky2"<<lms.length()<<landMan->landmarks().length();
     foreach(QLandmark lm, lms){
-      //  qDebug()<<lm.description();
+        qDebug()<<lm.description();
 
-        QVector<QPointF> coords;
-        QString name;
+        QLandmark *lm2;
+        lm2->setCoordinate(lm.coordinate());
+      //  lm2->
 
-
-        int type=parser->parseSVGData(lm.description(),name,coords);
-
-        MapObject mapObject;
-        mapObject.setName(name);
-       // mapObject.setPaintedObject(paintedObject);
-        mapObject.setType(type);
-        mapObjectMap->insert(name,mapObject);
-
-        landMan->saveLandmark(&lm);
+        qDebug()<< landMan->saveLandmark(&lm);
+            qDebug()<<landMan->errorString()<<landMan->error();
     }
 }
 

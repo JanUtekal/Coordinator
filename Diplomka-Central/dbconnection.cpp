@@ -1,9 +1,11 @@
 #include "dbconnection.h"
 
+#define CURRENTCENTRALUSER 1
+
 DbConnection::DbConnection(QObject *parent) :
     QObject(parent)
 {
-
+    lastTimeValidation="2004-10-19 10:23:55";
 
 }
 
@@ -16,6 +18,21 @@ void DbConnection::setDb(QSqlDatabase db){
 
 }
 
+void DbConnection::setMapObjectValidity(int validity){
+    this->mapObjectValidity=validity;
+
+
+//2004-10-19 10:23:55'
+
+    qDebug()<<generateNowAndUntil();
+}
+
+QString DbConnection::generateNowAndUntil(){
+    QDateTime dt=QDateTime::currentDateTime();
+    QString outputFormat="yyyy-MM-dd hh:mm:ss";
+    return "'"+dt.toString(outputFormat)+"'"+", "+"'"+dt.addSecs(mapObjectValidity).toString(outputFormat)+"'";
+}
+
 int DbConnection::insertPoint(double lat, double lon, QString acl){
 
     int insertedId=-1;
@@ -25,10 +42,10 @@ int DbConnection::insertPoint(double lat, double lon, QString acl){
     QString q;
 
     if(acl!="-1"){
-        q=QString("INSERT INTO point (coordinates,acl) VALUES (ST_GeographyFromText('SRID=4326;POINT(%1 %2)'), %3) RETURNING id").arg(lon).arg(lat).arg(acl);
+        q=QString("INSERT INTO point (coordinates, acl, insertiontime, validuntil) VALUES (ST_GeographyFromText('SRID=4326;POINT(%1 %2)'), %3, %4) RETURNING id").arg(lon).arg(lat).arg(acl).arg(generateNowAndUntil());
 
     } else {
-        q=QString("INSERT INTO point (coordinates) VALUES (ST_GeographyFromText('SRID=4326;POINT(%1 %2)')) RETURNING id").arg(lon).arg(lat);
+        q=QString("INSERT INTO point (coordinates, insertiontime, validuntil) VALUES (ST_GeographyFromText('SRID=4326;POINT(%1 %2)'), %3) RETURNING id").arg(lon).arg(lat).arg(generateNowAndUntil());
 
     }
 
@@ -78,10 +95,10 @@ int DbConnection::insertLine(QVector<QPointF> lineVector, QString acl){
     QString q;
 
     if(acl!="-1"){
-        q=QString("INSERT INTO line (coordinates, acl) VALUES (ST_GeographyFromText('SRID=4326;LINESTRING(");
+        q=QString("INSERT INTO line (coordinates, acl, insertiontime, validuntil) VALUES (ST_GeographyFromText('SRID=4326;LINESTRING(");
 
     } else {
-        q=QString("INSERT INTO line (coordinates) VALUES (ST_GeographyFromText('SRID=4326;LINESTRING(");
+        q=QString("INSERT INTO line (coordinates, insertiontime, validuntil) VALUES (ST_GeographyFromText('SRID=4326;LINESTRING(");
     }
 
 
@@ -98,9 +115,9 @@ int DbConnection::insertLine(QVector<QPointF> lineVector, QString acl){
     }
 
     if(acl!="-1"){
-        q+=QString(")'), %1) RETURNING id").arg(acl);
+        q+=QString(")'), %1, %2) RETURNING id").arg(acl).arg(generateNowAndUntil());
     } else {
-        q+=QString(")')) RETURNING id");
+        q+=QString(")'), %1) RETURNING id").arg(generateNowAndUntil());
     }
 
     query.prepare(q);
@@ -129,9 +146,9 @@ int DbConnection::insertPolygon(QVector<QPointF> polygonVector, QString acl){
     QString q;
 
     if(acl!="-1"){
-        q=QString("INSERT INTO polygon (coordinates,acl) VALUES (ST_GeographyFromText('SRID=4326;POLYGON((");
+        q=QString("INSERT INTO polygon (coordinates,acl, insertiontime, validuntil) VALUES (ST_GeographyFromText('SRID=4326;POLYGON((");
     } else {
-        q=QString("INSERT INTO polygon (coordinates) VALUES (ST_GeographyFromText('SRID=4326;POLYGON((");
+        q=QString("INSERT INTO polygon (coordinates, insertiontime, validuntil) VALUES (ST_GeographyFromText('SRID=4326;POLYGON((");
     }
 
 
@@ -152,9 +169,9 @@ int DbConnection::insertPolygon(QVector<QPointF> polygonVector, QString acl){
     q+=QString::number(closingPoint.x());
 
     if(acl!="-1"){
-        q+=QString("))'),%1) RETURNING id").arg(acl);
+        q+=QString("))'),%1, %2) RETURNING id").arg(acl).arg(generateNowAndUntil());
     } else {
-        q+=QString("))')) RETURNING id");
+        q+=QString("))'), %1) RETURNING id").arg(generateNowAndUntil());
     }
 
 
@@ -256,7 +273,7 @@ void DbConnection::getObjectsFromDB(){
     QSqlQuery query(db);
 
     //point query
-    QString q=QString("SELECT id,ST_AsText(coordinates::geometry) from point");
+    QString q=QString("SELECT id,ST_AsText(coordinates::geometry) from point WHERE validuntil > '%1'").arg(getNow());
 
     query.prepare(q);
 
@@ -300,8 +317,7 @@ void DbConnection::getObjectsFromDB(){
 
     //line query
     QList<QLandmark> *dbLandmarks2 = new QList<QLandmark>();
-    q=QString("SELECT id,ST_AsText(coordinates::geometry) from line");
-
+    q=QString("SELECT id,ST_AsText(coordinates::geometry) from line WHERE validuntil > '%1'").arg(getNow());
     query.prepare(q);
 
 
@@ -346,7 +362,7 @@ void DbConnection::getObjectsFromDB(){
 
     //line query
     QList<QLandmark> *dbLandmarks3 = new QList<QLandmark>();
-    q=QString("SELECT id,ST_AsText(coordinates::geometry) from polygon");
+    q=QString("SELECT id,ST_AsText(coordinates::geometry) from polygon WHERE validuntil > '%1'").arg(getNow());
 
     query.prepare(q);
 
@@ -826,4 +842,54 @@ QString DbConnection::getMapObjectAcl(QString mapObjectId){
     }
 
     return acl;
+}
+
+void DbConnection::validateMapObjects(){
+
+    QStringList ids;
+
+
+    QString now=getNow();
+    QSqlQuery query(db);
+
+    QString q=QString("SELECT id FROM mapobject WHERE validuntil > (SELECT lastvalidation FROM centraluser WHERE id=%1) AND validuntil < '%2'").arg(CURRENTCENTRALUSER).arg(now);
+
+
+
+    query.prepare(q);
+
+
+    qDebug()<< query.exec()<<query.executedQuery();
+
+
+    while(query.next()){
+        ids.append(query.value(0).toString());
+
+    }
+
+    updateCentraluserLastvalidation(now);
+
+    emit sendOutdatedObjects(ids);
+}
+
+void DbConnection::updateCentraluserLastvalidation(QString lastValidation){
+    QSqlQuery query(db);
+
+    QString q=QString("UPDATE centraluser SET lastvalidation=('%1') WHERE id=%2").arg(lastValidation).arg(CURRENTCENTRALUSER);
+
+
+
+    query.prepare(q);
+
+
+    qDebug()<< query.exec()<<query.executedQuery();
+
+
+
+}
+
+QString DbConnection::getNow(){
+    QDateTime dt=QDateTime::currentDateTime();
+    QString outputFormat="yyyy-MM-dd hh:mm:ss";
+    return dt.toString(outputFormat);
 }

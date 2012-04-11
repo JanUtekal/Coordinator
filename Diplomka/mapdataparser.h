@@ -15,6 +15,7 @@ public:
     int parseSVGData(QString data, QString &mapObjectId, QVector<QPointF> &coordList);
     QString parseNegativeObjectData(QString data);
     Note parseNoteData(QString data);
+    QVector<QPointF> parseGeometry(QString coords);
 
     
 signals:

@@ -2,6 +2,7 @@
 #define POINT 0
 #define LINE  1
 #define POLYGON 2
+#define VALIDATIONINTERVAL 60000
 
 Controller::Controller(QObject *parent) :
     QObject(parent)
@@ -21,6 +22,7 @@ Controller::Controller(QObject *parent) :
     server="jabber.cz";
 
 
+    //
 }
 
 void Controller::getRootObject(QObject *obj){
@@ -229,6 +231,10 @@ void Controller::createMapObjectReference(QVariant paintedObject, QString name, 
     mapObject.setPaintedObject(paintedObject);
     mapObject.setType(type);
     mapObject.setAclId(dbConnection->getMapObjectAcl(name));
+
+
+
+
     mapObjectMap->insert(name,mapObject);
 
 }
@@ -344,10 +350,14 @@ void Controller::createDb(QSqlDatabase db){
     connect(dbConnection,SIGNAL(sendAllPoints(QList<QLandmark>*)),this,SLOT(getAllPoints(QList<QLandmark>*)));
     connect(dbConnection,SIGNAL(sendAllLines(QList<QLandmark>*)),this,SLOT(getAllLines(QList<QLandmark>*)));
     connect(dbConnection,SIGNAL(sendAllPolygons(QList<QLandmark>*)),this,SLOT(getAllPolygons(QList<QLandmark>*)));
+    connect(dbConnection,SIGNAL(sendOutdatedObjects(QStringList)),this,SLOT(getOutdatedObjects(QStringList)));
 
     dbConnection->setDb(db);
-
-
+    dbConnection->setMapObjectValidity(3600);
+    validationTimer=new QTimer(this);
+    connect(validationTimer,SIGNAL(timeout()), dbConnection,SLOT(validateMapObjects()));
+    validationTimer->setInterval(VALIDATIONINTERVAL);
+    validationTimer->start();
 }
 
 
@@ -454,9 +464,15 @@ void Controller::updateUserPosition(QString jid, QGeoCoordinate coordinate){
         lm->setCoordinate(coordinate);
         lm->setRadius(1);
         landMan->saveLandmark(lm);
-    } else {
 
-        fixMapBug();
+
+    } else {
+        QLandmark lm=lms.first();
+        lm.setCoordinate(coordinate);
+        qDebug()<< landMan->saveLandmark(&lm);
+        MapObject obj=mapObjectMap->value(jid);
+        emit updatePositionForMapUser(obj.getPaintedObject(),coordinate.latitude(),coordinate.longitude());
+      /*  fixMapBug();
         // QLandmarkId id=lms.first().landmarkId();
         qDebug()<< landMan->removeLandmark( lms.at(0));
         QLandmark *updatedLm = new QLandmark();
@@ -465,7 +481,7 @@ void Controller::updateUserPosition(QString jid, QGeoCoordinate coordinate){
         updatedLm->setRadius(1);
         updatedLm->setCoordinate(coordinate);
         qDebug()<< landMan->saveLandmark(updatedLm);
-
+*/
 
 
     }
@@ -481,15 +497,9 @@ void Controller::setUserOffline(QString jid){
 
     } else {
 
-        fixMapBug();
-        //  QLandmarkId id=lms.first().landmarkId();
-        qDebug()<< landMan->removeLandmark( lms.at(0));
-        QLandmark *updatedLm = new QLandmark();
-        // updatedLm->setLandmarkId(id);
-        updatedLm->setName(jid);
-        updatedLm->setRadius(2);
-        updatedLm->setCoordinate(lms.at(0).coordinate());
-        qDebug()<< landMan->saveLandmark(updatedLm);
+
+        MapObject obj=mapObjectMap->value(jid);
+        emit setMapUserOffline(obj.getPaintedObject());
 
 
 
@@ -888,4 +898,26 @@ QPointF Controller::getSouthestPoint(QVector<QPointF> vector){
 
 }
 
+void Controller::getOutdatedObjects(QStringList mapObjects){
+
+    qDebug()<<"got invalids"<<mapObjects.length();
+    foreach(QString name, mapObjects){
+        QLandmarkNameFilter filter;
+        filter.setName(name);
+        QList<QLandmark> lms=landMan->landmarks(filter);
+        if(lms.length()>0){
+            qDebug()<< landMan->removeLandmark(lms.at(0));
+            qDebug()<< landMan->error()<<landMan->errorString();
+
+            MapObject obj=mapObjectMap->value(name);
+            QString aclId=obj.getAClId();
+            QList<TerrainUser> userList= dbConnection->getTerrainUsersFromAcl(aclId);
+
+            emit sendNegativeObject(name,userList);
+
+        }
+
+
+    }
+}
 
