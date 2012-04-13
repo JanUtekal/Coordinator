@@ -16,6 +16,7 @@ public:
     QString parseNegativeObjectData(QString data);
     Note parseNoteData(QString data);
     QVector<QPointF> parseGeometry(QString coords);
+    QString parseMessageData(QString data);
 
     
 signals:

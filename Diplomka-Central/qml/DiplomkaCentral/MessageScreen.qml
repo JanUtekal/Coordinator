@@ -92,8 +92,7 @@ Rectangle {
                     label: "Back"
 
                     onButtonClick: {
-                       // messageScreen.visible=false;
-                        userList.pok();
+                        messageScreen.visible=false;
 
                     }
 
@@ -119,7 +118,14 @@ Rectangle {
             if(userManagement.selectedUserMessage===i){
                 messageWindow.setText(messageWindow.input+"\n"+line);
             } else {
+                if(!userList.created){
+                    var number=cont.getTerrainUserNum();
+                    userList.create(number);
+                    userList.highlightRequest=true;
+                }
+
                 userList.highlightItemAt(i);
+                userList.highlightRequest=true;
             }
         }
 

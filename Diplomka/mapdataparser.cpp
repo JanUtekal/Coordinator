@@ -120,8 +120,10 @@ int MapDataParser::getDataType(QString data){
         type=0;
     } else if(docElement.nodeName()=="negativeObject") {
         type=1;
-    } else {
+    } else if(docElement.nodeName()=="mess"){
         type=2;
+    } else {
+        type=3;
     }
     return type;
 }
@@ -179,4 +181,13 @@ QVector<QPointF> MapDataParser::parseGeometry(QString coords){
     }
 
     return vector;
+}
+
+QString MapDataParser::parseMessageData(QString data){
+    QDomDocument doc( "myDocument" );
+    doc.setContent( data );                        // myFile is a QFile
+
+    QDomElement docElement = doc.documentElement();   // docElement now refers to the node "xml"
+
+    return docElement.text();
 }

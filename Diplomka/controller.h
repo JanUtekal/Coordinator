@@ -14,6 +14,7 @@
 #include <QLandmarkProximityFilter>
 #include <QLandmarkIntersectionFilter>
 #include "mapdataparser.h"
+#include "message.h"
 QTM_USE_NAMESPACE
 
 class Controller : public QObject
@@ -21,7 +22,7 @@ class Controller : public QObject
     Q_OBJECT
 public:
     explicit Controller(QObject *parent = 0);
-
+    void setCentralUser(QString centralUser);
     void setClient(XmppClient* client);
     XmppClient* client;
     LocationWatcher watcher;
@@ -50,12 +51,14 @@ public:
     Q_INVOKABLE QVariant getMapObjectReference(QString name);
 
     Q_INVOKABLE void getObjectUnderCursor(double lat, double lon);
+    Q_INVOKABLE void sendMessageToUser(QString message);
+    Q_INVOKABLE QString getCurrentDateTime();
 private:
     float myLat;
     float myLon;
-
+    QString centralUser;
     QLandmarkManager *landMan;
-        QLandmark pom;
+    QLandmark pom;
 
     QMap<QString, MapObject>* mapObjectMap;
 
@@ -70,6 +73,8 @@ signals:
     void hideNoteText();
     void updatePositionForMapUser(QVariant userPoint, double lat, double lon);
     void setMapUserOffline(QVariant userPoint);
+    void sendMessage(QString jid, QString message);
+    void newMessageFromUser(QString line);
 public slots:
     void refreshPoints();
     void updateMyPosition(double lon, double lat);
@@ -82,6 +87,8 @@ public slots:
 
     void updateUserPosition(QString jid, QGeoCoordinate coordinate);
     void setUserOffline(QString jid);
+
+    void getReceivedMessage(Message message);
 
 };
 

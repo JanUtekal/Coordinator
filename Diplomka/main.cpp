@@ -8,7 +8,7 @@
 #include "extension.h"
 
 #define USERNAME "terrainuser2@jabber.cz"
-
+#define CENTRALUSER "centraluser1@jabber.cz"
 #define PASSWORD "asasasd"
 
 
@@ -19,6 +19,7 @@ int main(int argc, char *argv[])
     QScopedPointer<QmlApplicationViewer> viewer(QmlApplicationViewer::create());
 
     Controller cont;
+    cont.setCentralUser(CENTRALUSER);
     XmppClient client;
 
     Extension ex;
@@ -52,8 +53,8 @@ int main(int argc, char *argv[])
 
     QObject::connect(&client,SIGNAL(setUserOffline(QString)),&cont,SLOT(setUserOffline(QString)));
 
-
-
+    QObject::connect(&client,SIGNAL(sendReceivedMessage(Message)),&cont,SLOT(getReceivedMessage(Message)));
+    QObject::connect(&cont, SIGNAL(sendMessage(QString,QString)),&client,SLOT(getMessageToSend(QString,QString)));
 
     QXmppLogger::getLogger()->setLoggingType(QXmppLogger::FileLogging);
 

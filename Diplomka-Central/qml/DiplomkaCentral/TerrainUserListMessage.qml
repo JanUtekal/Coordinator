@@ -4,8 +4,11 @@ import QtQuick 1.1
 
 
 Rectangle {
+    property bool created:false;
+    property bool highlightRequest: false
 
     function highlightItemAt(i){
+        console.log(view.count)
         view.currentIndex=i;
         view.currentItem.highlighted=true;
     }
@@ -13,6 +16,7 @@ Rectangle {
 
 
     function create(n){
+        created=true;
         mod.clear();
         for(var i=0;i<n;i++){
             mod.append({
@@ -145,7 +149,12 @@ Rectangle {
     onVisibleChanged: {
 
         if(visible){
-            cont.prepareTerrainUserList();
+            if(!highlightRequest){//do not refresh when messages are waiting
+                cont.prepareTerrainUserList();
+            } else {
+                highlightRequest=false;
+            }
+
             //  letterReady=0;
         } else {
             //   mod.clear();

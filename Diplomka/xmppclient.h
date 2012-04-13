@@ -34,7 +34,8 @@
 #include <QXmppDiscoveryManager.h>
 #include <QXmppPubSubIq.h>
 #include "mapdataparser.h"
-
+#include "message.h"
+#include <QDateTime>
 
 QTM_USE_NAMESPACE
 
@@ -67,7 +68,7 @@ signals:
 
     void updateUser(QString jid, QGeoCoordinate coordinate);
     void setUserOffline(QString jid);
-
+    void sendReceivedMessage(Message message);
 
 public slots:
     void clientConnected();
@@ -76,7 +77,7 @@ public slots:
     void presenceReceived(const QXmppPresence &presence);
     void getNewCoords(QString jid, QString lat, QString lon, QString acc);
     void subscribeLocation(QString jid);
-
+    void getMessageToSend(QString jid, QString message);
 };
 
 #endif // XMPPCLIENT_H

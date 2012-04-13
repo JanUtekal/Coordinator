@@ -30,6 +30,48 @@ Rectangle {
         onButtonClick: {
             settings.visible=false;
             settingsButton.visible=true;
+            messageButton.visible=true;
         }
+    }
+
+    Column{
+        width: parent.width/3
+        height: parent.height/2
+        anchors.centerIn: parent
+
+        spacing:30
+        TextInputField{
+            id: usernameInput
+            width: parent.width-20
+            height:40
+            anchors.horizontalCenter: parent.horizontalCenter
+            input:"terrainuser5@jabber.cz"
+
+        }
+
+        TextInputField{
+            id: passwordInput
+            width: parent.width-20
+            height: 40
+            anchors.horizontalCenter: parent.horizontalCenter
+            input:"*******"
+
+        }
+
+        Button{
+            id:connect
+            anchors.horizontalCenter: parent.horizontalCenter
+            width: parent.width/2
+            height: parent.height/5
+
+
+            label: "Connect"
+            onButtonClick: {
+
+            }
+        }
+
+
+
     }
 }

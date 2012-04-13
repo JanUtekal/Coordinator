@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'mapdataparser.h'
 **
-** Created: Tue 10. Apr 11:07:01 2012
+** Created: Fri 13. Apr 12:09:05 2012
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.4)
 **
 ** WARNING! All changes made in this file will be lost!

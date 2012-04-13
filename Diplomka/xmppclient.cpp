@@ -126,6 +126,19 @@ void XmppClient::messageRecv(const QXmppMessage& message){
         }
 
         if(dataType==2){
+            QString text=parser->parseMessageData(message.body());
+            QString from=message.from().split("@").at(0);
+
+            QDateTime t=QDateTime::currentDateTime();
+            QString outputFormat="hh:mm:ss";
+            QString time=   t.toString(outputFormat);
+
+            Message m(text,from,time,true);
+
+            emit sendReceivedMessage(m);
+        }
+
+        if(dataType==3){
             QVector<QPointF> coords;
             QString mapObjectId;
 
@@ -285,3 +298,7 @@ void XmppClient::subscribeLocation(QString jid){
 
 }
 
+void XmppClient::getMessageToSend(QString jid, QString message){
+
+    this->sendMessage(jid,message);
+}

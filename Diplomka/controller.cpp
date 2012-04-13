@@ -406,3 +406,30 @@ void Controller::getNegativeObject(QString negativeObject){
 
     }
 }
+
+void Controller::getReceivedMessage(Message message){
+    QString line=message.getTime();
+    line+=" ";
+    line+=message.getFrom().split("@").at(0);
+    line+=": ";
+    line+=message.getText();
+
+    emit newMessageFromUser(line);
+}
+
+void Controller::setCentralUser(QString centralUser){
+    this->centralUser=centralUser;
+}
+
+void Controller::sendMessageToUser(QString message){
+    QString newMessage="<mess>%1</mess>";
+
+    emit sendMessage(centralUser, newMessage.replace("%1",message));
+}
+
+QString Controller::getCurrentDateTime(){
+    QDateTime t=QDateTime::currentDateTime();
+    QString outputFormat="hh:mm:ss";
+    return t.toString(outputFormat);
+
+}

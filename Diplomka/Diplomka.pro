@@ -40,7 +40,8 @@ SOURCES += main.cpp \
     controller.cpp \
     mapdataparser.cpp \
     note.cpp \
-    mapobject.cpp
+    mapobject.cpp \
+    message.cpp
 
 # Please do not modify the following two lines. Required for deployment.
 include(qmlapplicationviewer/qmlapplicationviewer.pri)
@@ -66,7 +67,8 @@ HEADERS += \
     controller.h \
     mapdataparser.h \
     note.h \
-    mapobject.h
+    mapobject.h \
+    message.h
 INCLUDEPATH += $$quote(C:/projects/qxmpp/src)
 LIBS +=-LC:/projects/qxmpp/lib -lqxmpp_d
 

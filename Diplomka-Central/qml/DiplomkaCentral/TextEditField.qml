@@ -52,9 +52,9 @@ Rectangle{
 
 
         //    selectByMouse: true
-            y: flick.visibleArea.yPosition * flick.height
-            height: flick.visibleArea.heightRatio * flick.height
-            onCursorRectangleChanged: flick.ensureVisible(cursorRectangle)
+      //     y: flick.visibleArea.yPosition * flick.height
+           height: flick.visibleArea.heightRatio * flick.height
+   //         onCursorRectangleChanged: flick.ensureVisible(cursorRectangle)
             onTextChanged: {
               // flick.returnToBounds()
             }

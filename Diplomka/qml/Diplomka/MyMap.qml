@@ -637,6 +637,7 @@ Rectangle {
     }
 
     Item {
+        id: keyItem
         anchors.fill: parent
         focus: true
         Keys.onPressed: {
@@ -667,7 +668,7 @@ Rectangle {
         }
     }
 
-    NodeTextDisplay{
+    NoteTextDisplay{
 
         id: nodeTextDisplay
         width: parent.width -10
@@ -686,6 +687,14 @@ Rectangle {
         visible:false
     }
 
+    MessageScreen{
+        id:messageScreen
+        width: 11*parent.width/12
+        height: 11*parent.height/12
+        anchors.centerIn: parent
+        visible:false
+    }
+
     Button{
         id:settingsButton
         width: parent.width/9
@@ -696,6 +705,21 @@ Rectangle {
         onButtonClick: {
             settings.visible=true;
             settingsButton.visible=false;
+            messageButton.visible=false;
+        }
+    }
+
+    Button{
+        id:messageButton
+        width: parent.width/9
+        height: parent.height/9
+        x: parent.width-width-20
+        y: 20
+        label: "Messages"
+        onButtonClick: {
+            messageScreen.visible=true;
+            settingsButton.visible=false;
+            messageButton.visible=false;
         }
     }
 
