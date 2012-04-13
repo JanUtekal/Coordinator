@@ -46,6 +46,7 @@ Rectangle {
 
         delegate:
             Rectangle{
+            id:row
             //z:-1017
 
             width: view.width
@@ -59,15 +60,28 @@ Rectangle {
                 id: label
                 text: cont.getAclNameAt(num)
                 x:20
-
+                width: parent.width
                 anchors.verticalCenter: parent.verticalCenter
 
                 font.family: font1
                 font.pixelSize: 15
+
+                Component.onCompleted: {
+                    var changed=false;
+
+                    while(label.paintedWidth>row.width-60){
+                        label.text=label.text.substr(0,label.text.length-1);
+                        changed=true;
+                    }
+                    if(changed){
+                        label.text+="..."
+                    }
+                }
             }
 
 
             Rectangle{
+                id: ex
                 height: parent.height
                 width:height
                 color:"transparent"

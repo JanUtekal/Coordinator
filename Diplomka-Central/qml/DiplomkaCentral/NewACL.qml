@@ -13,6 +13,7 @@ Rectangle {
         height: parent.height-20
         x:20
         y:20
+        spacing: 20
 
         Column{
             width:parent.width/4
@@ -20,7 +21,16 @@ Rectangle {
             spacing: 20
 
             Text{
-                text: "Název"
+                text: "Name"
+                color: "black"
+                z:1
+                font.pixelSize: 15
+                font.family: font1
+            }
+
+
+            Text{
+                text: "Duration (hours)"
                 color: "black"
                 z:1
                 font.pixelSize: 15
@@ -39,7 +49,57 @@ Rectangle {
                 id: textField1
                 width: parent.width
                 height: 20
+
             }
+
+
+            Row{
+                spacing: 10
+                width: parent.width
+
+                Button{
+                    id: minusButton
+                    width: textField2.width
+                    height: textField2.height
+
+                    z: 2
+                    label: "-"
+
+                    onButtonClick: {
+                        if(textField2.input>0){
+                            textField2.input-=1;
+                        }
+                    }
+
+                }
+
+                TextInputField{
+                    id: textField2
+                    width: parent.width/4
+                    height: 20
+                    onlyRead: true
+                    input: "0"
+
+                }
+
+
+
+                Button{
+                    id: plusButton
+                    width: textField2.width
+                    height: textField2.height
+
+                    z: 2
+                    label: "+"
+
+                    onButtonClick: {
+                        textField2.input=Number(textField2.input*1+1);
+
+                    }
+
+                }
+            }
+
 
 
 
@@ -57,14 +117,22 @@ Rectangle {
         x: 30
         y: parent.height-80
         z: 2
-        label: "Vytvořit"
+        label: "Create"
 
         onButtonClick: {
-            newACL.visible=false;
-            cont.createNewAcl(textField1.input);
+
+            var validity="null";
+            if(textField2.input!="null"){
+                validity=textField2.input;
+            }
+
+            cont.createNewAcl(textField1.input,validity);
             userManagement.color="lightgrey"
             userManagement.selectedAcl=-1;
             cont.prepareAclList();
+
+            keyitem.focus=true;
+            newACL.visible=false;
         }
 
     }
@@ -76,14 +144,22 @@ Rectangle {
         x: parent.width-140
         y: parent.height-80
         z: 2
-        label: "Zpět"
+        label: "Back"
 
         onButtonClick: {
             newACL.visible=false;
-            userManegement.color="lightgrey"
+            userManagement.color="lightgrey"
 
+            keyitem.focus=true;
         }
 
     }
 
+
+    onVisibleChanged: {
+
+        textField1.setText("");
+        textField2.setText("0");
+
+    }
 }

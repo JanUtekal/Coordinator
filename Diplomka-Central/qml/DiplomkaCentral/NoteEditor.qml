@@ -37,10 +37,13 @@ Rectangle {
             onVisibleChanged: {
                 if(visible){
                     if(cont.getSelectedMapObject()){
+                        if(cont.getSelectedMapObject().note!=""){
+                            if( cont.getSelectedMapObject().note.indexOf("////") !==-1){
+                                textInput.setText(cont.getSelectedMapObject().note.split("////")[0]);
 
-                        if( cont.getSelectedMapObject().note.indexOf("////") !==-1){
-                            textInput.setText(cont.getSelectedMapObject().note.split("////")[0]);
-
+                            }
+                        } else {
+                            textInput.setText("");
                         }
                     }
                 }
@@ -65,10 +68,13 @@ Rectangle {
 
                 if(visible){
                     if(cont.getSelectedMapObject()){
+                        if(cont.getSelectedMapObject().note!=""){
+                            if( cont.getSelectedMapObject().note.indexOf("////") !==-1){
+                                textField.setText(cont.getSelectedMapObject().note.split("////")[1]);
 
-                        if( cont.getSelectedMapObject().note.indexOf("////") !==-1){
-                            textField.setText(cont.getSelectedMapObject().note.split("////")[1]);
-
+                            }
+                        } else {
+                            textField.setText("");
                         }
                     }
                 }
@@ -103,7 +109,7 @@ Rectangle {
                     selectingPermited=false;
                     pinchmap.deselect();
 
-
+                    keyitem.focus=true;
 
                 }
 
@@ -121,6 +127,8 @@ Rectangle {
                     noteEditor.visible=false;
                     selectingPermited=false;
                     pinchmap.deselect();
+
+                    keyitem.focus=true;
                 }
             }
 

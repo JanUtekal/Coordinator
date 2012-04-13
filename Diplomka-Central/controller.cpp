@@ -2,7 +2,8 @@
 #define POINT 0
 #define LINE  1
 #define POLYGON 2
-#define VALIDATIONINTERVAL 60000
+#define VALIDATIONINTERVAL 1500000
+
 
 Controller::Controller(QObject *parent) :
     QObject(parent)
@@ -14,12 +15,15 @@ Controller::Controller(QObject *parent) :
     dbPolygonLandmarks =new QList<QLandmark>();
     mapObjectMap =new QMap<QString, MapObject>();
 
+
     registrationTool = new JabberRegistrationTool(this);
     connect(registrationTool, SIGNAL(sendCaptcha(QString)),this,SLOT(getCaptchaRegistrationUrl(QString)));
     connect(registrationTool, SIGNAL(sendError(QString)),this,SLOT(getError(QString)));
     connect(registrationTool, SIGNAL(sendSuccess()),this,SLOT(getSuccess()));
 
     server="jabber.cz";
+
+    noDbMode=false;
 
 
     //
@@ -31,15 +35,28 @@ void Controller::getRootObject(QObject *obj){
 
 }
 
+void Controller::setNoDbMode(){
+    noDbMode=true;
+    dbConnection= new DbConnection(this);
+    qDebug()<<"nodbmode";
+    QTimer::singleShot(1000,this,SLOT(sendNoDbSig()));
+}
+
+void Controller::sendNoDbSig(){
+    emit noDbModeSig();
+}
+
 void Controller::addPoint(double lat, double lon, int selectedAcl){
+
     deselectCurrentObject();
     QString aclId = "-1";
-    if(selectedAcl!=-1){
+    if(selectedAcl!=-1 && !noDbMode){
+
         aclId=((Acl)aclList.at(selectedAcl)).getId();
     }
     int dbId=dbConnection->insertPoint(lat,lon,aclId);
 
-    if(dbId!=-1){
+    if(dbId!=-1 || noDbMode){
 
         QLandmark lm;
 
@@ -50,7 +67,7 @@ void Controller::addPoint(double lat, double lon, int selectedAcl){
         //..
         landMan->saveLandmark(&lm);
 
-
+        qDebug()<<"adding point";
         //  QString aclId=((Acl)aclList.at(selectedAcl)).getId();
         if(selectedAcl!=-1){
 
@@ -58,7 +75,9 @@ void Controller::addPoint(double lat, double lon, int selectedAcl){
             QVector<QPointF> coordList;
             coordList.append(QPointF(lat,lon));
             DataPreparator *preparator=new DataPreparator();
+            qDebug()<<"a";
             QString data=preparator->prepareData(coordList, QString::number(dbId), POINT);
+            qDebug()<<"b";
             emit sendMapObject(data,userList);
             delete preparator;
         } else {
@@ -100,12 +119,12 @@ void Controller::lineReady(int selectedAcl){
     }*/
     if(lineVector.size()>1){
         QString aclId = "-1";
-        if(selectedAcl!=-1){
+        if(selectedAcl!=-1 && !noDbMode){
             aclId=((Acl)aclList.at(selectedAcl)).getId();
         }
         int dbId=dbConnection->insertLine(lineVector, aclId);
 
-        if(dbId!=-1){
+        if(dbId!=-1 || noDbMode){
 
             QLandmark lm;
 
@@ -170,12 +189,12 @@ void Controller::polygonReady(int selectedAcl){
 
     if(polygonVector.size()>2){
         QString aclId = "-1";
-        if(selectedAcl!=-1){
+        if(selectedAcl!=-1 && !noDbMode){
             aclId=((Acl)aclList.at(selectedAcl)).getId();
         }
         int dbId=dbConnection->insertPolygon(polygonVector,aclId);
 
-        if(dbId!=-1){
+        if(dbId!=-1 || noDbMode){
 
             QLandmark lm;
             if(polygonVector.size()>0){
@@ -351,9 +370,9 @@ void Controller::createDb(QSqlDatabase db){
     connect(dbConnection,SIGNAL(sendAllLines(QList<QLandmark>*)),this,SLOT(getAllLines(QList<QLandmark>*)));
     connect(dbConnection,SIGNAL(sendAllPolygons(QList<QLandmark>*)),this,SLOT(getAllPolygons(QList<QLandmark>*)));
     connect(dbConnection,SIGNAL(sendOutdatedObjects(QStringList)),this,SLOT(getOutdatedObjects(QStringList)));
-
+    connect(dbConnection,SIGNAL(userAclUpdated()),this,SLOT(getUserAclUpdated()));
     dbConnection->setDb(db);
-    dbConnection->setMapObjectValidity(3600);
+    prepareTerrainUserList();
     validationTimer=new QTimer(this);
     connect(validationTimer,SIGNAL(timeout()), dbConnection,SLOT(validateMapObjects()));
     validationTimer->setInterval(VALIDATIONINTERVAL);
@@ -472,17 +491,7 @@ void Controller::updateUserPosition(QString jid, QGeoCoordinate coordinate){
         qDebug()<< landMan->saveLandmark(&lm);
         MapObject obj=mapObjectMap->value(jid);
         emit updatePositionForMapUser(obj.getPaintedObject(),coordinate.latitude(),coordinate.longitude());
-      /*  fixMapBug();
-        // QLandmarkId id=lms.first().landmarkId();
-        qDebug()<< landMan->removeLandmark( lms.at(0));
-        QLandmark *updatedLm = new QLandmark();
-        // updatedLm->setLandmarkId(id);
-        updatedLm->setName(jid);
-        updatedLm->setRadius(1);
-        updatedLm->setCoordinate(coordinate);
-        qDebug()<< landMan->saveLandmark(updatedLm);
-*/
-
+        dbConnection->insertUserPosition(jid,coordinate.latitude(),coordinate.longitude());
 
     }
 }
@@ -551,7 +560,7 @@ void Controller::testButtonOperation(){
 
 void Controller::testButtonOperation2(){
     // sendMapObjects();
-    qDebug()<<"test2";
+ /*   qDebug()<<"test2";
     QStringList jidList=dbConnection->getAllJids();
    // emit test();
     QXmppConfiguration config;
@@ -562,7 +571,7 @@ void Controller::testButtonOperation2(){
    // config.setIgnoreAuth(true);
   //  emit disconnectUser();
     cl.connectToServer(config);
-    cl.startSubscribingToUsers(jidList);
+    cl.startSubscribingToUsers(jidList);*/
 
 }
 
@@ -578,15 +587,18 @@ void Controller::createNewTerrainUser(QString id, QString name, QString surname,
 
 }
 
-void Controller::createNewAcl(QString name){
-    // qDebug()<<name;
-    QString currentCentralUser="1";
+void Controller::createNewAcl(QString name, int validity){
 
-    dbConnection->insertAcl(name, currentCentralUser);
+    QString currentCentralUser="1";
+    if(validity==0){
+        validity=999;
+    }
+
+    dbConnection->insertAcl(name, currentCentralUser, validity);
 }
 
 void Controller::prepareAclList(){
-    this->aclList=dbConnection->getAllAcls();
+    this->aclList=dbConnection->getValidAcls();
     qDebug()<<"acls got"<<aclList.length();
 
     emit aclListReady();
@@ -665,10 +677,13 @@ void Controller::removeAcl(int i){
 }
 
 void Controller::removeTerrainUser(int i){
+
+
     QString id=((TerrainUser)terrainUserList.at(i)).getId();
     QString jid=((TerrainUser)terrainUserList.at(i)).getJid();
-    QString password("asasasd");
+    QString password=((TerrainUser)terrainUserList.at(i)).getPassword();
 
+    qDebug()<<"removing user"<<jid;
    // registrationTool->cancelRegistration(jid,"jabber.cz");
     QXmppConfiguration config;
     qDebug()<<jid;
@@ -686,9 +701,16 @@ void Controller::removeTerrainUser(int i){
 
 QList<TerrainUser> Controller::prepareCustomTerrainUserFromAclList(int i){
 
-
-    QString id =((Acl)aclList.at(i)).getId();
-    return dbConnection->getTerrainUsersFromAcl(id);
+    if(!noDbMode){
+        QString id =((Acl)aclList.at(i)).getId();
+        return dbConnection->getTerrainUsersFromAcl(id);
+    } else{
+       QList<TerrainUser> list;
+       TerrainUser t("","","","","","");
+       t.setJid("terrainuser5@jabber.cz");
+       list.append(t);
+       return list;
+    }
 
 }
 /*
@@ -848,7 +870,7 @@ void Controller::makeRosterForUser(QString jid, QString password){
 void Controller::addNoteTo(QString name, QString text, QString id){
     QString dbId=dbConnection->insertOrUpdateNote(id, name, text);
 
-    if(dbId!="-1"){
+    if(dbId!="-1" || noDbMode){
 
         QLandmarkNameFilter filter;
         filter.setName(id);
@@ -900,6 +922,9 @@ QPointF Controller::getSouthestPoint(QVector<QPointF> vector){
 
 void Controller::getOutdatedObjects(QStringList mapObjects){
 
+
+    prepareAclList();
+
     qDebug()<<"got invalids"<<mapObjects.length();
     foreach(QString name, mapObjects){
         QLandmarkNameFilter filter;
@@ -919,5 +944,120 @@ void Controller::getOutdatedObjects(QStringList mapObjects){
 
 
     }
+
+
 }
 
+void Controller::setZoomRatio(int zoom){
+    dbConnection->setZoomRatio(zoom);
+}
+
+QString Controller::getAclNameForUserAt(int i){
+    QString id=((TerrainUser)terrainUserList.at(i)).getId();
+
+    return dbConnection->getAclNameForUser(id);
+}
+
+void Controller::getUserAclUpdated(){
+    emit userAclUpdated();
+}
+
+void Controller::sendMessageToUserAt(QString message, int i){
+
+    if(i!=-1){
+        QString jid=((TerrainUser)terrainUserList.at(i)).getJid();
+
+        DataPreparator *preparator=new DataPreparator(this);
+        QString newMessage=preparator->prepareMessage(message);
+        delete preparator;
+
+        emit sendMessage(newMessage,jid);
+
+
+
+
+
+    }
+}
+
+void Controller::setCurrentUser(QString currentUser){
+    this->currentUser=currentUser;
+}
+
+QString Controller::getCurrentDateTime(){
+    QDateTime t=QDateTime::currentDateTime();
+    QString outputFormat="hh:mm:ss";
+    return t.toString(outputFormat);
+
+}
+
+void Controller::getReceivedMessage(QString message, QString jid){
+    dbConnection->saveReceivedMessage(message,jid,currentUser);
+    int i=0;
+    int j=-1;
+    foreach(TerrainUser u, terrainUserList){
+        if(u.getJid()==jid){
+            j=i;
+            break;
+        }
+
+        i++;
+    }
+
+
+    if(j!=-1){
+
+
+        QString line=getCurrentDateTime();
+        line+=" ";
+        line+=jid.split("@").at(0);
+        line+=": ";
+        line+=message;
+
+        emit newMessageFromUserAt(j, line);
+    }
+
+}
+
+void Controller::setSentMessage(QString message, int i){
+    if(i!=-1){
+        QString jid=((TerrainUser)terrainUserList.at(i)).getJid();
+        dbConnection->saveSentMessage(message,jid,currentUser);
+    }
+}
+
+
+void Controller::prepareMessageList(int i){
+    messageList.clear();
+
+    QString id=((TerrainUser)terrainUserList.at(i)).getId();
+    QString username=((TerrainUser)terrainUserList.at(i)).getUsername();
+    QList<Message> messList=dbConnection->getMessagesFor(id,currentUser);
+    foreach(Message m,messList){
+
+        QString line=m.getTime().split("T").at(1);
+        line+=" ";
+
+        if(m.getReceived()){
+            line+=username;//the message was received
+            line+=": ";
+        } else {
+            line+="Me: ";//the message was sent
+        }
+
+        line+=m.getText();
+
+       this->messageList.append(line);
+    }
+
+
+    emit messagesReady();
+}
+
+int Controller::getMessagesNum(){
+    return messageList.length();
+}
+
+QString Controller::getMessageLineAt(int i){
+    return messageList.at(i);
+}

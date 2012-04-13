@@ -7,6 +7,7 @@ Rectangle {
     property int selectedAclUser:-1
     property int selectedAcl:-1
     property int selectedMapAcl:-1
+    property int selectedUserMessage:-1
 
     width: 800
     height: 500
@@ -22,7 +23,7 @@ Rectangle {
         x: parent.width-150
         y: parent.height-80
         z: 2
-        label: "Zpět"
+        label: "Back"
 
         onButtonClick: {
             userManagement.visible=false;
@@ -38,7 +39,7 @@ Rectangle {
         x: 30
         y: parent.height-80
         z: 2
-        label: "Vytvořit nového uživatele v terénu"
+        label: "New Terrain User"
 
         onButtonClick: {
             cont.prepareRegistration();
@@ -56,7 +57,7 @@ Rectangle {
         x: 180
         y: parent.height-80
         z: 2
-        label: "Vytvořit nový ACL"
+        label: "New Event"
 
         onButtonClick: {
             newACL.visible=true;
@@ -78,16 +79,35 @@ Rectangle {
         Row{
             spacing: 20
 
-            TerrainUserList{
+
+            Column{
+                spacing: 10
                 width: parent.parent.width/4
                 height: 5*parent.parent.height/7
-                //color: userManagement.color
+
+                Text{
+
+                    text:"All users"
+                    font.pointSize: 12
+                    anchors.horizontalCenter: parent.horizontalCenter
+
+                }
+
+                TerrainUserList{
+                    width:parent.width
+                    height: parent.height
+                    //color: userManagement.color
+                }
+
             }
 
             Column{
                 y: 3*(terrainUserFromAclList.y + terrainUserFromAclList.height)/7
 
                 spacing: 30
+
+
+
 
                 Button{
                     id: userRightButton
@@ -103,6 +123,7 @@ Rectangle {
                             cont.setTerrainUserAcl(userManagement.selectedUser,userManagement.selectedAcl);
                             cont.prepareTerrainUserFromAclList(userManagement.selectedAcl);
                             userManagement.selectedAclUser=-1
+                            cont.prepareTerrainUserList();
                         }
 
                     }
@@ -124,6 +145,7 @@ Rectangle {
                             cont.unsetTerrainUserAcl(userManagement.selectedAclUser);
                             cont.prepareTerrainUserFromAclList(userManagement.selectedAcl);
                             userManagement.selectedAclUser=-1;
+                            cont.prepareTerrainUserList();
                         }
 
                     }
@@ -133,19 +155,48 @@ Rectangle {
 
         }
 
-        TerrainUserFromAclList{
-            id: terrainUserFromAclList
+        Column{
+            spacing: 40
             width: parent.width/5
             height: 4*parent.height/7
-            y:parent.height/10
-         //   color: userManagement.color
+
+            Text{
+
+                text:"Users from event"
+                font.pointSize: 12
+                anchors.horizontalCenter: parent.horizontalCenter
+
+            }
+
+            TerrainUserFromAclList{
+                id: terrainUserFromAclList
+                width:parent.width
+                height: parent.height
+                y:parent.height/10
+             //   color: userManagement.color
+            }
+
         }
 
-        AclList{
+        Column{
+            spacing: 10
             width: parent.width/4
             height: 5*parent.height/7
-        }
 
+            Text{
+
+                text:"Events"
+                font.pointSize: 12
+                anchors.horizontalCenter: parent.horizontalCenter
+
+            }
+
+            AclList{
+                width:parent.width
+                height: parent.height
+            }
+
+        }
 
 
     }
@@ -168,6 +219,21 @@ Rectangle {
         width: 400
         height: 300
         z:2
+    }
+
+
+    Connections{
+        target:cont
+
+        onUserAclUpdated:{
+            console.log("TTTTTTTTTTT")
+
+            cont.prepareTerrainUserList();
+
+            userManagement.selectedAcl=-1;
+            userManagement.selectedAclUser=-1
+            terrainUserFromAclList.create(0);
+        }
     }
 
 }

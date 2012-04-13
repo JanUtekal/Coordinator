@@ -125,7 +125,11 @@ void XmppClient::presenceChanged(const QString& bareJid,
 
 void XmppClient::messageRecv(const QXmppMessage& message){
     //todo
- //   qDebug()<<"msgget"<<message.body()<<message.from()<<message.extensions().length();
+    if(message.body().contains("<mess>")){
+        QString content=message.body().split("<mess>").at(1).split("</mess>").at(0);
+        emit sendReceivedMessage(content,message.from().split("/").at(0));
+    }
+   // qDebug()<<"msgget"<<message.body()<<message.from()<<message.extensions().length();
   //getGeoLoc();
 }
 
@@ -670,4 +674,9 @@ void XmppClient::publishFirstLocation(){
     //   mess.setType(QXmppMessage::Normal);
     // sendMessage("asasasd@jabber.cz","bla");
     sendPacket(iq);
+}
+
+void XmppClient::getMessageToSendFor(QString message, QString jid){
+
+    this->sendMessage(jid,message);
 }

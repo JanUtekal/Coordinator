@@ -3,11 +3,14 @@ import QtQuick 1.1
 
 Rectangle{
     property string input: inputText.text
+    property bool onlyRead:false
 
     color: "white"
     radius: 5
     border.width: 1
     border.color: "black"
+
+
 
     function setText(textt){
         inputText.text=textt;
@@ -15,7 +18,7 @@ Rectangle{
 
     TextInput {
         id: inputText
-        width:parent.width
+        width:parent.width-15
         height: parent.height
 
         x: 10
@@ -23,11 +26,16 @@ Rectangle{
         font.pixelSize: 15
         font.family: font1
         text: ""
+        readOnly: onlyRead
+        selectByMouse: true
 
-        onVisibleChanged: {
-            //console.log("focus"+inputText.activeFocus)
-            inputText.focus=false;
 
-        }
+
+
+    }
+    onInputChanged: {
+
+        inputText.text=input;
+
     }
 }

@@ -7,7 +7,7 @@
 //#include "QXmppPubSubManager.h"
 #include "extension.h"
 
-#define USERNAME "terrainuser4@jabber.cz"
+#define USERNAME "terrainuser2@jabber.cz"
 
 #define PASSWORD "asasasd"
 

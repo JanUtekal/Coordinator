@@ -3,6 +3,7 @@
 DataPreparator::DataPreparator(QObject *parent) :
     QObject(parent)
 {
+
 }
 
 QString DataPreparator::prepareData(QVector<QPointF> coordList, QString id, int type){
@@ -92,4 +93,11 @@ QString DataPreparator::prepareData(QVector<QPointF> coordList, QString id, int 
         qDebug()<<content;
 
         return QString(content);
+}
+
+QString DataPreparator::prepareMessage(QString message){
+
+    QString newMessage="<mess>%1</mess>";
+    return newMessage.replace("%1",message);
+
 }

@@ -23,10 +23,13 @@ Rectangle {
     property color lineColor: "red"
     property color polygonBorderColor:  "blue"
     property color polygonColor:  Qt.rgba(0, 1, 1, 0.1)
+    property color highlightedButtonColor:  Qt.rgba(1, 1, 0, 0.8)
 
     property int textSize:15
 
     property bool selectingPermited:false
+
+
     // property bool deleteButtonClicked: false
 
     // property variant array:[]
@@ -172,6 +175,7 @@ Rectangle {
                         coordinate: landmark.coordinate
                         text:""
                         font.pointSize: textSize
+                        offset.y: 10
                         z: 1
         /*                Component.onCompleted: {
                             if(point.type<10){
@@ -196,7 +200,7 @@ Rectangle {
                         color: pointColor
                         font.pointSize: textSize
                         z: 0
-
+                        offset.y: 10
                         function makeBackGround(length) {
 
                             if(point.type<10){
@@ -534,12 +538,14 @@ Rectangle {
             }
 
             onClicked: {
-                console.log(map.toCoordinate(Qt.point(mouse.x,mouse.y)).latitude, map.toCoordinate(Qt.point(mouse.x,mouse.y)).longitude)
 
+                console.log(map.toCoordinate(Qt.point(mouse.x,mouse.y)).latitude, map.toCoordinate(Qt.point(mouse.x,mouse.y)).longitude)
+                console.log(pointButtonClicked,lineButtonClicked,polygonButtonClicked,selectingPermited)
                 if(pointButtonClicked){
 
                     cont.addPoint(map.toCoordinate(Qt.point(mouse.x,mouse.y)).latitude, map.toCoordinate(Qt.point(mouse.x,mouse.y)).longitude, userManagement.selectedMapAcl);
                     pointButtonClicked=false;
+                    pointButton.alwaysPressed(false);
                 } else if(lineButtonClicked) {
 
 
@@ -578,9 +584,13 @@ Rectangle {
 
 
 
+
+
                         console.log("hh",tmpLine.path.length)
                         lineButtonClicked=false;
                         lostLineCoordinate =true;
+
+                        lineButton.alwaysPressed(false);
 
 
                     }
@@ -604,6 +614,7 @@ Rectangle {
                             lostLineCoordinate=false;
                         } else {
                             tmpLine.visible=true;
+
                         }
 
 
@@ -627,10 +638,11 @@ Rectangle {
                         polygonButtonClicked=false;
                         lostLineCoordinate =true;
 
-
+                        polygonButton.alwaysPressed(false);
                     }
                 } else {
                     if(!selectingPermited){
+                        console.log("tryyyy")
                         var paintedObject=cont.findObjectUnderCursor(map.toCoordinate(Qt.point(mouse.x,mouse.y)).latitude, map.toCoordinate(Qt.point(mouse.x,mouse.y)).longitude);
                         if(paintedObject){
                             deselect();
@@ -676,12 +688,15 @@ Rectangle {
             height: 50
 
             z: 2
-            label: "Přidat bod"
+            label: "Add Point"
 
             onButtonClick: {
                 pointButtonClicked=true;
                 lineButtonClicked=false;
                 polygonButtonClicked=false;
+                pointButton.alwaysPressed(true);
+                polygonButton.alwaysPressed(false);
+                lineButton.alwaysPressed(false);
             }
 
         }
@@ -692,13 +707,16 @@ Rectangle {
             height: 50
 
             z: 2
-            label: "Přidat trasu"
+            label: "Add Route"
 
             onButtonClick: {
                 lineButtonClicked=true;
                 pointButtonClicked=false;
                 polygonButtonClicked=false;
                 //cont.testButtonOperation();
+                lineButton.alwaysPressed(true);
+                polygonButton.alwaysPressed(false);
+                pointButton.alwaysPressed(false);
 
             }
 
@@ -710,14 +728,16 @@ Rectangle {
             height: 50
 
             z: 2
-            label: "Přidat oblast"
+            label: "Add Area"
 
             onButtonClick: {
                 polygonButtonClicked=true;
                 pointButtonClicked=false;
                 lineButtonClicked=false;
                 //cont.testButtonOperation();
-
+                polygonButton.alwaysPressed(true);
+                lineButton.alwaysPressed(false);
+                pointButton.alwaysPressed(false);
             }
 
         }
@@ -728,19 +748,19 @@ Rectangle {
             height: 50
 
             z: 2
-            label: "Přidat poznámku"
+            label: "Add Note"
 
             onButtonClick: {
-                console.log("a")
+
                 if(objectEverSelected && cont.getSelectedMapObject() ){
-                    console.log("b")
-                    console.log(cont.getSelectedMapObject().name);
-                    console.log("c")
+
+                   // console.log(cont.getSelectedMapObject().name);
+
                     noteEditor.visible=true;
-                    console.log("d")
+
                     selectingPermited=true;
                 }
-                console.log("e")
+
 
             }
 
@@ -761,7 +781,7 @@ Rectangle {
             width: 120
             height: 50
 
-            label: "Spravovat uživatele"
+            label: "User Management"
 
             onButtonClick: {
                 userManagement.visible=true;
@@ -774,15 +794,16 @@ Rectangle {
         }
 
         Button{
-            id: testButton
+            id: messageButton
             width: 120
             height: 50
 
             z: 2
-            label: "test"
+            label: "Messages"
 
             onButtonClick: {
-                cont.testButtonOperation();
+                messageScreen.visible=true;
+                messageButton.highlighted=false;
 
             }
 
@@ -805,6 +826,7 @@ Rectangle {
     }
 
     AclListMap{
+        id: aclListMap
         width: 150
         height: 350
         //   color: userManagement.color
@@ -823,6 +845,7 @@ Rectangle {
 
 
     Item {
+        id: keyitem
         anchors.fill: parent
         focus: true
         Keys.onPressed: {
@@ -834,6 +857,7 @@ Rectangle {
                 if(map.zoomLevel<map.maximumZoomLevel){
                     map.zoomLevel += 0.5
                     textSize+=1
+                    cont.setZoomRatio(map.zoomLevel);
                 }
 
             }
@@ -843,7 +867,9 @@ Rectangle {
                 if(map.zoomLevel>map.minimumZoomLevel){
                     map.zoomLevel -= 1.5
                     textSize-=1
+                    cont.setZoomRatio(map.zoomLevel);
                 }
+
             }
 
             if (event.key == Qt.Key_Delete) {
@@ -852,7 +878,13 @@ Rectangle {
                 cont.deleteCurrentObject();
                 objectEverSelected=false;
                 deselect();
+
+
             }
+        }
+
+        onFocusChanged: {
+
         }
 
     }
@@ -889,6 +921,13 @@ Rectangle {
         visible:false
     }
 
+    MessageScreen{
+        id: messageScreen
+        anchors.centerIn: parent
+        z:2
+        visible: false
+    }
+
 
     Component.onCompleted: {
 
@@ -899,6 +938,26 @@ Rectangle {
 
 
 
+    }
+
+    Rectangle{
+        id:nodb
+        width:parent.width/2
+        height: nodbText.paintedHeight
+        y: 50
+        anchors.horizontalCenter: parent.horizontalCenter
+        color:"white"
+        radius: 5
+        visible:false
+
+        Text{
+            id:nodbText
+            width:parent.width
+            text: "The program is running without database. The funcionality is strongly limited. Testing purposes only."
+            font.pointSize: 15
+            wrapMode: Text.WordWrap
+            color:"red"
+        }
     }
 
     Connections{
@@ -919,6 +978,19 @@ Rectangle {
                 userPoint.type=2;
             }
         }
+
+        onNoDbModeSig:{
+
+            userManagement.selectedMapAcl=1;
+            nodb.visible=true;
+        }
+
+        onNewMessageFromUserAt:{
+            if(!messageScreen.visible){
+                messageButton.highlighted=true;
+            }
+        }
     }
+
 
 }

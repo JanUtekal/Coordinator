@@ -678,6 +678,27 @@ Rectangle {
 
     }
 
+    Settings{
+        id:settings
+        width: 11*parent.width/12
+        height: 11*parent.height/12
+        anchors.centerIn: parent
+        visible:false
+    }
+
+    Button{
+        id:settingsButton
+        width: parent.width/9
+        height: parent.height/9
+        x: 20
+        y: 20
+        label: "Settings"
+        onButtonClick: {
+            settings.visible=true;
+            settingsButton.visible=false;
+        }
+    }
+
 
     Component.onCompleted: {
 
@@ -709,4 +730,6 @@ Rectangle {
             }
         }
     }
+
+
 }

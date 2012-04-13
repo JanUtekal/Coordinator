@@ -22,6 +22,8 @@
 #include "xmppclient.h"
 #include "note.h"
 #include <QTimer>
+#include <QDateTime>
+#include "message.h"
 
 QTM_USE_NAMESPACE
 
@@ -32,6 +34,8 @@ public:
     explicit Controller(QObject *parent = 0);
     void getRootObject(QObject *obj);
     void createDb(QSqlDatabase db);
+    void setNoDbMode();
+    void setCurrentUser(QString currentUser);
 
     QLandmarkManager *landMan;
     QLandmark actualLandmark;
@@ -57,7 +61,7 @@ public:
     Q_INVOKABLE void testButtonOperation();
     Q_INVOKABLE void testButtonOperation2();
     Q_INVOKABLE void createNewTerrainUser(QString id, QString name, QString surname, QString jid, QString password);
-    Q_INVOKABLE void createNewAcl(QString name);
+    Q_INVOKABLE void createNewAcl(QString name, int validity);
 
 
     //aclList methods
@@ -81,6 +85,13 @@ public:
     Q_INVOKABLE void setTerrainUserAcl(int i, int j);
     Q_INVOKABLE void unsetTerrainUserAcl(int i);
 
+    //messages methods
+    Q_INVOKABLE void prepareMessageList(int i);
+    Q_INVOKABLE int getMessagesNum();
+    Q_INVOKABLE QString getMessageLineAt(int i);
+
+
+
     Q_INVOKABLE QString getCaptchaUrl();
 
 
@@ -101,8 +112,14 @@ public:
     Q_INVOKABLE QString getErrorMessage();
     Q_INVOKABLE void stopRegistration();
 
+    Q_INVOKABLE void setZoomRatio(int zoom);
 
+    Q_INVOKABLE QString getAclNameForUserAt(int i);
 
+    Q_INVOKABLE void sendMessageToUserAt(QString message, int i);
+
+    Q_INVOKABLE QString getCurrentDateTime();
+    Q_INVOKABLE void setSentMessage(QString message, int i);
 
 
 private:
@@ -120,9 +137,12 @@ private:
     QList<QLandmark> *dbLineLandmarks;
     QList<QLandmark> *dbPolygonLandmarks;
     QMap<QString, MapObject>* mapObjectMap;
+    QStringList *conversationList;
     QString captcha;
     QString errorMessage;
     QString server;
+    bool noDbMode;
+    QStringList messageList;
 
     void deselectCurrentObject();
     void fixMapBug();
@@ -134,6 +154,7 @@ private:
     //QString prepareSvg(QVector<QPointF> coordList, int type);
 
     JabberRegistrationTool *registrationTool;
+    QString currentUser;
 
     XmppClient cl;
 signals:
@@ -153,6 +174,13 @@ signals:
     void subscribeToLocation(QString jid);
     void updatePositionForMapUser(QVariant userPoint, double lat, double lon);
     void setMapUserOffline(QVariant userPoint);
+
+    void noDbModeSig();
+    void userAclUpdated();
+
+    void sendMessage(QString message, QString jid);
+    void newMessageFromUserAt(int i, QString line);
+    void messagesReady();
     
 public slots:
     void getAllPoints(QList<QLandmark> *dbLandmarks);
@@ -171,6 +199,11 @@ public slots:
     void getSuccess();
 
     void getOutdatedObjects(QStringList mapObjects);
+
+    void sendNoDbSig();
+    void getUserAclUpdated();
+    void getReceivedMessage(QString message, QString jid);
+
 };
 
 #endif // CONTROLLER_H

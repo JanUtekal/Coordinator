@@ -68,6 +68,7 @@ signals:
     void refresh(QList<QLandmark> *landmarkList);
     void updateUser(QString jid, QGeoCoordinate coordinate);
     void setUserOffline(QString jid);
+    void sendReceivedMessage(QString message, QString jid);
 
 public slots:
 
@@ -91,6 +92,8 @@ public slots:
   //  void userStateChanged(QXmppClient::State state);
 
     void sendMess();
+
+    void getMessageToSendFor(QString message, QString jid);
 
 
 };

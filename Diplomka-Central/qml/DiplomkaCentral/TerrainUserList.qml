@@ -47,23 +47,63 @@ Rectangle {
         delegate:
             Rectangle{
             //z:-1017
-
+            id: row
             width: view.width
-            height:  30
+            height:  40
             border.color: "black"
             border.width: 1
-            color: num==userManagement.selectedUser ? "grey" : "transparent"
+            color: num===userManagement.selectedUser ? "grey" : "transparent"
 
-
-            Text{
-                id: label
-                text: cont.getTerrainUserNameAt(num) + " " + cont.getTerrainUserSurnameAt(num)
-                x:20
-
+            Column{
+                spacing:2
                 anchors.verticalCenter: parent.verticalCenter
+                Text{
+                    id: label
+                    text: cont.getTerrainUserNameAt(num) + " " + cont.getTerrainUserSurnameAt(num)
+                    x:20
 
-                font.family: font1
-                font.pixelSize: 15
+
+
+                    font.family: font1
+                    font.pixelSize: 15
+
+                    Component.onCompleted: {
+                        var changed=false;
+
+                        while(label.paintedWidth>row.width-60){
+                            label.text=label.text.substr(0,label.text.length-1);
+                            changed=true;
+                        }
+                        if(changed){
+                            label.text+="..."
+                        }
+                    }
+                }
+
+                Text{
+                    id: acl
+                    text: cont.getAclNameForUserAt(num)
+                    x:30
+                    color:"blue"
+
+
+
+                    font.family: font1
+                    font.pixelSize: 13
+
+                    Component.onCompleted: {
+                        var changed=false;
+
+                        while(label.paintedWidth>row.width-60){
+                            label.text=label.text.substr(0,label.text.length-1);
+                            changed=true;
+                        }
+                        if(changed){
+                            label.text+="..."
+                        }
+                    }
+                }
+
             }
 
             Rectangle{
@@ -121,8 +161,8 @@ Rectangle {
 
 
             Component.onCompleted: {
-               // console.log(num,y)
-          /*      if(num==-1 || num>=cont.getTerrainUserNum()){
+                // console.log(num,y)
+                /*      if(num==-1 || num>=cont.getTerrainUserNum()){
                     height=1;
                     visible=false;
 

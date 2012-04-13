@@ -12,7 +12,7 @@
 #include "acl.h"
 #include "terrainuser.h"
 #include <QDateTime>
-
+#include "message.h"
 
 QTM_USE_NAMESPACE
 
@@ -22,8 +22,8 @@ class DbConnection : public QObject
 public:
     explicit DbConnection(QObject *parent = 0);
     void setDb(QSqlDatabase db);
-    void setMapObjectValidity(int validity);
-    QString generateNowAndUntil();
+
+    QString generateNowAndUntil(int validity);
 
     int insertPoint(double lat, double lon, QString acl);
     int deleteObject(QString id);
@@ -40,8 +40,9 @@ public:
     QList<QLandmark> getMapObjectsNotSentFor(QString jid);
     void updateTerrainUserLastObject(QString jid, QString id);
     void insertTerrainUser(QString id, QString name, QString surname, QString jid, QString password);
-    void insertAcl(QString name, QString currentCentralUser);
+    void insertAcl(QString name, QString currentCentralUser, int validity);
     QList<Acl> getAllAcls();
+    QList<Acl> getValidAcls();
     QList<TerrainUser> getAllTerrainUsers();
     QList<TerrainUser> getTerrainUsersFromAcl(QString id);
     void updateTerrainUserAcl(QString idUser, QString idAcl);
@@ -54,24 +55,36 @@ public:
     QStringList getAllJids();
     QPair<QString, QString> getNoteForMapObject(QString id);
     QString getMapObjectAcl(QString mapObjectId);
-
+    void insertUserPosition(QString jid, double lat, double lon);
+    void validateAcls();
+    void setZoomRatio(int zoom);
+    QString getAclNameForUser(QString id);
+    int saveReceivedMessage(QString message, QString jid, QString currentUserJid);
+    int saveSentMessage(QString message, QString jid, QString currentUserJid);
+    QList<Message> getMessagesFor(QString terrainUSerId, QString centralUserName);
 
 
 private:
     QSqlDatabase db;
-    long mapObjectValidity;
-    QString lastTimeValidation;
-    void updateCentraluserLastvalidation(QString lastValidation);
+
+    void updateCentraluserLastValidation(QString lastValidation);
+    QStringList getInvalidAcls();
     QString getNow();
+    void updateUserAcls();
+    void removeUserPositionsForAcl(QString id);//temporary
+    void removeUserPositionsForUser(QString id);//temporary
+    float zoomRadius;
 
 signals:
     void sendAllPoints(QList<QLandmark> *dbLandmarks);
     void sendAllLines(QList<QLandmark> *dbLandmarks2);
     void sendAllPolygons(QList<QLandmark> *dbLandmarks3);
     void sendOutdatedObjects(QStringList mapObjects);
+    void userAclUpdated();
 
 public slots:
     void validateMapObjects();
+
 };
 
 #endif // DBCONNECTION_H

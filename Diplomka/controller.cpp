@@ -15,7 +15,7 @@ Controller::Controller(QObject *parent) :
     landMan= new QLandmarkManager(this);
   //  prepareMapData();
 
-   //  landMan->removeLandmarks(landMan->landmarks());
+     landMan->removeLandmarks(landMan->landmarks());
 
 
 }

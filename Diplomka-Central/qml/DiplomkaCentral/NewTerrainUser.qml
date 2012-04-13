@@ -67,7 +67,7 @@ Rectangle {
 
 
             Text{
-                text: "Text z obrázku"
+                text: "Captcha"
                 color: "black"
                 z:1
                 font.pixelSize: 15
@@ -129,15 +129,19 @@ Rectangle {
 
 
                 }
-                Rectangle{
-                    width:40
+
+                Button{
+                    width:60
                     height: 40
-                    MouseArea{
-                        anchors.fill:parent
-                        onClicked: {
-                            cont.prepareRegistration();
-                        }
+
+
+                    label: "Refresh"
+
+                    onButtonClick: {
+
+                        cont.prepareRegistration();
                     }
+
                 }
             }
 
@@ -162,13 +166,13 @@ Rectangle {
         x: 30
         y: parent.height-80
         z: 2
-        label: "Vytvořit"
+        label: "Create"
 
         onButtonClick: {
 
 
             cont.registerUser(textField3.input, textField4.input, textField5.input)
-
+            keyitem.focus=true;
 
         }
 
@@ -181,13 +185,14 @@ Rectangle {
         x: parent.width-140
         y: parent.height-80
         z: 2
-        label: "Zpět"
+        label: "Back"
 
         onButtonClick: {
             newTerrainUser.visible=false;
             userManagement.color="lightgrey"
             cont.stopRegistration();
 
+            keyitem.focus=true;
         }
 
     }
@@ -207,11 +212,20 @@ Rectangle {
         }
 
         onRegistrationSuccess:{
-            newTerrainUser.visible=false;
+
             cont.createNewTerrainUser(textField0.input, textField1.input, textField2.input, textField3.input, textField4.input);
             userManagement.color="lightgrey"
             userManagement.selectedUser=-1;
             cont.prepareTerrainUserList();
+            newTerrainUser.visible=false;
         }
+    }
+
+    onVisibleChanged: {
+        textField0.setText("");
+        textField1.setText("");
+        textField2.setText("");
+        textField3.setText("");
+        textField4.setText("");
     }
 }

@@ -41,7 +41,8 @@ SOURCES += main.cpp \
     datapreparator.cpp \
     mapobject.cpp \
     jabberregistrationtool.cpp \
-    note.cpp
+    note.cpp \
+    message.cpp
 
 # Please do not modify the following two lines. Required for deployment.
 include(qmlapplicationviewer/qmlapplicationviewer.pri)
@@ -61,7 +62,8 @@ HEADERS += \
     datapreparator.h \
     mapobject.h \
     jabberregistrationtool.h \
-    note.h
+    note.h \
+    message.h
 
 QT+=sql core network xml svg
 

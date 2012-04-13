@@ -57,9 +57,11 @@ int main(int argc, char *argv[])
     QScopedPointer<QApplication> app(createApplication(argc, argv));
 
     Controller cont;
+    cont.setCurrentUser(USERNAME);
 
     if (!createConnection(&cont)){
-        return 1;
+        cont.setNoDbMode();
+        qDebug()<<"nodbmode";
     }
 
     QmlApplicationViewer viewer;
@@ -75,6 +77,7 @@ int main(int argc, char *argv[])
 
 
     XmppClient client;
+
     Extension ex;
     client.addExtension(&ex);
     QObject::connect(&ex, SIGNAL(sendCoords(QString,QString,QString,QString)),&client,SLOT(getNewCoords(QString, QString, QString, QString)));
@@ -94,6 +97,8 @@ int main(int argc, char *argv[])
     QObject::connect(&client,SIGNAL(refresh(QList<QLandmark>*)),&cont,SLOT(getConnectedUsers(QList<QLandmark>*)));
     QObject::connect(&client,SIGNAL(updateUser(QString,QGeoCoordinate)),&cont,SLOT(updateUserPosition(QString,QGeoCoordinate)));
     QObject::connect(&client,SIGNAL(setUserOffline(QString)),&cont,SLOT(setUserOffline(QString)));
+    QObject::connect(&client,SIGNAL(sendReceivedMessage(QString,QString)),&cont,SLOT(getReceivedMessage(QString,QString)));
+
 
 
 
@@ -109,6 +114,7 @@ int main(int argc, char *argv[])
     QObject::connect(&cont,SIGNAL(sendNote(Note,QList<TerrainUser>)),&client,SLOT(sendNoteToUsers(Note,QList<TerrainUser>)));
     QObject::connect(&cont,SIGNAL(sendNegativeObject(QString,QList<TerrainUser>)),&client,SLOT(sendNegativeObjectToUsers(QString,QList<TerrainUser>)));
 
+    QObject::connect(&cont,SIGNAL(sendMessage(QString,QString)),&client,SLOT(getMessageToSendFor(QString,QString)));
 
     QXmppLogger::getLogger()->setLoggingType(QXmppLogger::FileLogging);
     QXmppLogger::getLogger()->setMessageTypes(QXmppLogger::AnyMessage);

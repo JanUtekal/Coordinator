@@ -45,11 +45,13 @@ Rectangle {
     Connections{
         target: cont
         onDisplayNoteText: {
-            var text=mapObject.note.split("////")[1];
-            if(text!==""){
-                nodeTextDisplay.visible=true;
+            if(mapObject.note!=""){
+                var text=mapObject.note.split("////")[1];
+                if(text!=""){
+                    nodeTextDisplay.visible=true;
 
-                text1.text=text
+                    text1.text=text
+                }
             }
         }
 

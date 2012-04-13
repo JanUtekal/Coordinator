@@ -7,12 +7,14 @@
 #include <QDebug>
 #include <QFile>
 #include <QStaticText>
+
 class DataPreparator : public QObject
 {
     Q_OBJECT
 public:
     explicit DataPreparator(QObject *parent = 0);
     QString prepareData(QVector<QPointF> coordList, QString id, int type);
+    QString prepareMessage(QString message);
     
 signals:
     
