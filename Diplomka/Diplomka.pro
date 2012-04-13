@@ -57,7 +57,8 @@ OTHER_FILES += \
     qtc_packaging/debian_harmattan/changelog
 
 CONFIG += mobility
-MOBILITY += location
+MOBILITY += location \
+            systeminfo
 
 HEADERS += \
     xmppclient.h \
@@ -85,8 +86,5 @@ contains(MEEGO_EDITION,harmattan) {
 #    LIBS +=-LC:/projects/qxmpp2/lib -lqxmpp_d
 
 #}
-
-
-
 
 

@@ -433,3 +433,7 @@ QString Controller::getCurrentDateTime(){
     return t.toString(outputFormat);
 
 }
+
+void Controller::reconnectMe(QString username, QString password){
+    emit reconnect(username, password);
+}

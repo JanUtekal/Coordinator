@@ -33,7 +33,7 @@ Rectangle {
               //  x: 10
              //   y: 10
 
-                font.pointSize: 12
+                font.pointSize: 6
                 width: parent.width
                 wrapMode: Text.WordWrap
 

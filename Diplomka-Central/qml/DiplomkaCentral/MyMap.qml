@@ -5,8 +5,9 @@ import Qt 4.7
 Rectangle {
     id: pinchmap
 
-    property double defaultLatitude:  49.1969
-    property double defaultLongitude: 16.6017
+
+    property double defaultLatitude:  49.2166
+    property double defaultLongitude: 17.7611
     property int  defaultZoomLevel: 14
 
     property alias mapType: map.mapType
@@ -808,7 +809,7 @@ Rectangle {
             }
 
         }
-        Button{
+  /*      Button{
             id: testButton2
             width: 120
             height: 50
@@ -821,7 +822,7 @@ Rectangle {
 
             }
 
-        }
+        }*/
 
     }
 

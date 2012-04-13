@@ -7,7 +7,7 @@
 //#include "QXmppPubSubManager.h"
 #include "extension.h"
 
-#define USERNAME "terrainuser2@jabber.cz"
+#define USERNAME "terrainuser5@jabber.cz"
 #define CENTRALUSER "centraluser1@jabber.cz"
 #define PASSWORD "asasasd"
 
@@ -55,6 +55,7 @@ int main(int argc, char *argv[])
 
     QObject::connect(&client,SIGNAL(sendReceivedMessage(Message)),&cont,SLOT(getReceivedMessage(Message)));
     QObject::connect(&cont, SIGNAL(sendMessage(QString,QString)),&client,SLOT(getMessageToSend(QString,QString)));
+    QObject::connect(&cont, SIGNAL(reconnect(QString,QString)),&client,SLOT(reconnectGet(QString,QString)));
 
     QXmppLogger::getLogger()->setLoggingType(QXmppLogger::FileLogging);
 

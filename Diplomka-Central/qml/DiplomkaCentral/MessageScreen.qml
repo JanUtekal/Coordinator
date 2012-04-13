@@ -93,7 +93,7 @@ Rectangle {
 
                     onButtonClick: {
                         messageScreen.visible=false;
-
+                        keyitem.focus=true;
                     }
 
 

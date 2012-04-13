@@ -53,6 +53,8 @@ public:
     Q_INVOKABLE void getObjectUnderCursor(double lat, double lon);
     Q_INVOKABLE void sendMessageToUser(QString message);
     Q_INVOKABLE QString getCurrentDateTime();
+
+    Q_INVOKABLE void reconnectMe(QString username, QString password);
 private:
     float myLat;
     float myLon;
@@ -75,6 +77,7 @@ signals:
     void setMapUserOffline(QVariant userPoint);
     void sendMessage(QString jid, QString message);
     void newMessageFromUser(QString line);
+    void reconnect(QString username, QString password);
 public slots:
     void refreshPoints();
     void updateMyPosition(double lon, double lat);

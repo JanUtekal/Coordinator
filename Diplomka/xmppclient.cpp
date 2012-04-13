@@ -302,3 +302,20 @@ void XmppClient::getMessageToSend(QString jid, QString message){
 
     this->sendMessage(jid,message);
 }
+
+void XmppClient::reconnectGet(QString username, QString password){
+    this->disconnectFromServer();
+    QXmppConfiguration config;
+    config.setJid(username);
+    config.setPassword(password);
+    config.setAutoAcceptSubscriptions(true);
+    config.setIgnoreSslErrors(true);
+
+   // QXmppPresence pr;
+   // pr.setCapabilityNode("http://jabber.org/protocol/geoloc");
+   // client.addProperCapability(pr);
+  //  QXmppDiscoveryManager d;
+   // d.setClientCapabilitiesNode("http://jabber.org/protocol/geoloc");
+
+    this->connectToServer(config);
+}

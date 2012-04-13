@@ -5,8 +5,8 @@ import QtMobility.location 1.2
 Rectangle {
     id: pinchmap
 
-    property double defaultLatitude:  49.1969
-    property double defaultLongitude: 16.6017
+    property double defaultLatitude:  49.2166
+    property double defaultLongitude: 17.7611
     property int  defaultZoomLevel: 14
 
     property alias mapType: map.mapType
@@ -18,7 +18,7 @@ Rectangle {
     property color polygonColor:  Qt.rgba(0, 1, 1, 0.1)
 
 
-    property int textSize:17
+    property int textSize:8
 
     // property variant array:[]
 
@@ -164,9 +164,11 @@ Rectangle {
                                 mapT.text=name;
 
                                 var text=point.note.split("////")[1];
-                                if(text!==""){
-                                   mapT.font.underline=true;
-                                   mapT.color="blue";
+                                if(text && text!==""){
+
+                                        mapT.font.underline=true;
+                                        mapT.color="blue";
+
                                 }
 
                             }

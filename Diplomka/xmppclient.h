@@ -78,6 +78,7 @@ public slots:
     void getNewCoords(QString jid, QString lat, QString lon, QString acc);
     void subscribeLocation(QString jid);
     void getMessageToSend(QString jid, QString message);
+    void reconnectGet(QString username, QString password);
 };
 
 #endif // XMPPCLIENT_H

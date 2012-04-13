@@ -47,7 +47,7 @@ Rectangle{
         //anchors.centerIn: parent
         font.family: font1
         wrapMode: Text.WordWrap
-        font.pointSize: 10
+        font.pointSize: 6
         font.bold: true
     }
 

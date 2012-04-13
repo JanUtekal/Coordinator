@@ -45,7 +45,7 @@ Rectangle {
             width: parent.width-20
             height:40
             anchors.horizontalCenter: parent.horizontalCenter
-            input:"terrainuser5@jabber.cz"
+            input:"terrainuser2@jabber.cz"
 
         }
 
@@ -54,7 +54,7 @@ Rectangle {
             width: parent.width-20
             height: 40
             anchors.horizontalCenter: parent.horizontalCenter
-            input:"*******"
+            input:"asasasd"
 
         }
 
@@ -67,7 +67,7 @@ Rectangle {
 
             label: "Connect"
             onButtonClick: {
-
+                cont.reconnectMe(usernameInput.input,passwordInput.input);
             }
         }
 
