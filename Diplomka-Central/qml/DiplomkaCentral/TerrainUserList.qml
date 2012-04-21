@@ -190,6 +190,7 @@ Rectangle {
         onTerrainUserListReady:{
             console.log("tvorim list",cont.getTerrainUserNum());
             create(cont.getTerrainUserNum());
+
         }
 
     }

@@ -62,7 +62,7 @@ public:
     int saveReceivedMessage(QString message, QString jid, QString currentUserJid);
     int saveSentMessage(QString message, QString jid, QString currentUserJid);
     QList<Message> getMessagesFor(QString terrainUSerId, QString centralUserName);
-    void invalidateAcls();
+
 
 
 private:
@@ -74,6 +74,9 @@ private:
     void updateUserAcls();
     void removeUserPositionsForAcl(QString id);//temporary
     void removeUserPositionsForUser(QString id);//temporary
+    void invalidateAcls();
+    void invalidateTerrainUserAcl(QString aclid);
+    void deleteTerrainUserAcl(QString terrainuserId, QString aclId);
     float zoomRadius;
 
 signals:

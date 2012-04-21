@@ -371,6 +371,7 @@ void Controller::createDb(QSqlDatabase db){
     connect(dbConnection,SIGNAL(sendAllPolygons(QList<QLandmark>*)),this,SLOT(getAllPolygons(QList<QLandmark>*)));
     connect(dbConnection,SIGNAL(sendOutdatedObjects(QStringList)),this,SLOT(getOutdatedObjects(QStringList)));
     connect(dbConnection,SIGNAL(userAclUpdated()),this,SLOT(getUserAclUpdated()));
+
     dbConnection->setDb(db);
     prepareTerrainUserList();
     validationTimer=new QTimer(this);

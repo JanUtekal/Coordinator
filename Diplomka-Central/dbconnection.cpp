@@ -628,7 +628,7 @@ QList<TerrainUser> DbConnection::getTerrainUsersFromAcl(QString id){
 
     QSqlQuery query(db);
 
-    QString q=QString("SELECT id, name, surname, password, jid FROM terrainuser WHERE acl=%1").arg(id);
+    QString q=QString("SELECT id, name, surname, password, jid FROM terrainuser WHERE id IN (SELECT terrainuserid FROM terrainuseracl WHERE aclid=%1 AND validity=true)").arg(id);
 
     query.prepare(q);
 
@@ -656,22 +656,52 @@ QList<TerrainUser> DbConnection::getTerrainUsersFromAcl(QString id){
 }
 
 void DbConnection::updateTerrainUserAcl(QString idUser, QString idAcl){
+    QString updatedAclId;
 
     QSqlQuery query(db);
 
-    QString q=QString("UPDATE terrainuser SET acl=%1 WHERE id=%2").arg(idAcl).arg(idUser);
 
+    QString q=QString("SELECT id FROM acl WHERE id=(SELECT aclid FROM terrainuseracl WHERE terrainuserid=%1 AND validity=true)").arg(idUser);
     query.prepare(q);
 
-
-
     qDebug()<< query.exec()<<query.executedQuery();
+
+    bool hasValidAcl=false;
+
+    if(query.next()){
+        hasValidAcl=true;
+        updatedAclId=query.value(0).toString();
+    }
+
+    if(hasValidAcl){
+        QSqlQuery query(db);
+
+        QString q=QString("UPDATE terrainuseracl SET aclid=%1 WHERE terrainuserid=%2 AND aclid=%3").arg(idAcl).arg(idUser).arg(updatedAclId);
+
+        query.prepare(q);
+
+        qDebug()<< query.exec()<<query.executedQuery();
+    } else {
+        QSqlQuery query(db);
+
+        QString q=QString("INSERT INTO terrainuseracl (terrainuserid, aclid) VALUES (%1, %2)").arg(idUser).arg(idAcl);
+
+        query.prepare(q);
+
+        qDebug()<< query.exec()<<query.executedQuery();
+    }
+
+
+
+
 
 
 }
 
 void DbConnection::deleteAcl(QString id){
     this->removeUserPositionsForAcl(id);
+
+    this->deleteTerrainUserAcl("",id);
 
     QList<TerrainUser> terrainUserList=this->getTerrainUsersFromAcl(id);
 
@@ -694,9 +724,33 @@ void DbConnection::deleteAcl(QString id){
 void DbConnection::deleteTerrainUser(QString id){
 
     this->removeUserPositionsForUser(id);
+
+    this->deleteTerrainUserAcl(id,"");
+
     QSqlQuery query(db);
 
     QString q=QString("DELETE FROM terrainuser WHERE id=%1").arg(id);
+
+    query.prepare(q);
+
+
+
+    qDebug()<< query.exec()<<query.executedQuery();
+}
+
+void DbConnection::deleteTerrainUserAcl(QString terrainuserId, QString aclId){
+
+    QSqlQuery query(db);
+
+    QString q;
+
+    if(terrainuserId.length()>0){
+        q=QString("DELETE FROM terrainuseracl WHERE terrainuserid=%1").arg(terrainuserId);
+    }
+
+    if(aclId.length()>0){
+        q=QString("DELETE FROM terrainuseracl WHERE aclid=%1").arg(aclId);
+    }
 
     query.prepare(q);
 
@@ -952,7 +1006,7 @@ QString DbConnection::getAclNameForUser(QString id){
 
     QSqlQuery query(db);
 
-    QString q=QString("SELECT name FROM acl AS a WHERE a.id=(SELECT acl FROM terrainuser WHERE id=%1)").arg(id);
+    QString q=QString("SELECT name FROM acl AS a WHERE a.id=(SELECT aclid FROM terrainuseracl WHERE terrainuserid=%1 AND validity=true)").arg(id);
 
 
 
@@ -978,7 +1032,7 @@ QStringList DbConnection::getInvalidAcls(){
     QString now=getNow();
     QSqlQuery query(db);
 
-    QString q=QString("SELECT id FROM acl WHERE id IN (SELECT id FROM acl WHERE validuntil > (SELECT lastvalidation FROM centraluser WHERE id=%1) AND validity=false)").arg(CURRENTCENTRALUSER).arg(getNow());
+    QString q=QString("SELECT id FROM acl WHERE id IN (SELECT id FROM acl WHERE validuntil > (SELECT lastvalidation FROM centraluser WHERE id=%1) AND validity=false)").arg(CURRENTCENTRALUSER);
 
 
 
@@ -1144,5 +1198,24 @@ void DbConnection::invalidateAcls(){
 
         qDebug()<< query.exec()<<query.executedQuery();
 
+        this->invalidateTerrainUserAcl(id);
+
     }
+
+    if(slist.length()>0){
+        emit userAclUpdated();
+    }
+}
+
+void DbConnection::invalidateTerrainUserAcl(QString aclid){
+    QString q=QString("UPDATE terrainuseracl SET validity=false WHERE aclid=%1").arg(aclid);
+
+
+    QSqlQuery query(db);//
+    query.prepare(q);
+
+
+    qDebug()<< query.exec()<<query.executedQuery();
+
+
 }

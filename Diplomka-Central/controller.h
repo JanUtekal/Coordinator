@@ -181,6 +181,7 @@ signals:
     void sendMessage(QString message, QString jid);
     void newMessageFromUserAt(int i, QString line);
     void messagesReady();
+    void refreshTerrainuserList();
     
 public slots:
     void getAllPoints(QList<QLandmark> *dbLandmarks);
@@ -203,6 +204,7 @@ public slots:
     void sendNoDbSig();
     void getUserAclUpdated();
     void getReceivedMessage(QString message, QString jid);
+
 
 };
 
