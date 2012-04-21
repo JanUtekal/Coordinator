@@ -1,7 +1,16 @@
+/*
+  Multiuser mapping application for mobile device
+  Autor: Jan Utekal
+  VUT FIT 2012
+
+ */
+
 #include <QDebug>
 
 #include "locationwatcher.h"
 
+
+//this class gets users geolocation data and transmits them to controller
 LocationWatcher::LocationWatcher(QObject *parent)
     : QObject(parent)
 {
@@ -12,6 +21,7 @@ LocationWatcher::LocationWatcher(QObject *parent)
     }
 }
 
+//sets getting geolocation enabled
 void LocationWatcher::enable()
 {
     if (source) {
@@ -21,6 +31,7 @@ void LocationWatcher::enable()
     }
 }
 
+//sets getting geolocation disabled
 void LocationWatcher::disable()
 {
     if (source) {
@@ -30,6 +41,7 @@ void LocationWatcher::disable()
     }
 }
 
+//slot getting update of the geo position
 void LocationWatcher::positionUpdated(const QGeoPositionInfo &info)
 {
    //qDebug()<<"update";

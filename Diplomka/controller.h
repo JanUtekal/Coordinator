@@ -22,22 +22,22 @@ class Controller : public QObject
     Q_OBJECT
 public:
     explicit Controller(QObject *parent = 0);
-    void setCentralUser(QString centralUser);
-    void setClient(XmppClient* client);
+    void setCentralUser(QString centralUser); // get jid of current central user
+    void setClient(XmppClient* client); // sets reference to xmppclient object
     XmppClient* client;
-    LocationWatcher watcher;
+    LocationWatcher watcher; // object getting users gps coordinates
     QVariantList vList;
 
-    Q_INVOKABLE int getPointNum();
-    Q_INVOKABLE QString getJidFor(int i);
-    Q_INVOKABLE float getLatFor(int i);
-    Q_INVOKABLE float getLonFor(int i);
-    Q_INVOKABLE float getLatForMe();
-    Q_INVOKABLE float getLonForMe();
+    Q_INVOKABLE int getPointNum(); // get number of points stored
+    Q_INVOKABLE QString getJidFor(int i); // gets jid of user on map
+    Q_INVOKABLE float getLatFor(int i); // gets latitude of user on map
+    Q_INVOKABLE float getLonFor(int i); // gets longitude of user on map
+    Q_INVOKABLE float getLatForMe(); // gets lat of current user
+    Q_INVOKABLE float getLonForMe(); // gets lon of current user
     Q_INVOKABLE void setToVlist(QVariant v);
     Q_INVOKABLE QVariant getFromVlistAt(int i);
-    Q_INVOKABLE int getMapPointNum();//pocet objektu ve vListu
-    Q_INVOKABLE void clearVlist();
+    Q_INVOKABLE int getMapPointNum();//number of points in vList
+    Q_INVOKABLE void clearVlist(); //erases the vlist
 
     Q_INVOKABLE int getLineCoordinatesNum(QString name);
     Q_INVOKABLE double getLineCoordinateLatAt(QString name,int i);
@@ -56,28 +56,28 @@ public:
 
     Q_INVOKABLE void reconnectMe(QString username, QString password);
 private:
-    float myLat;
-    float myLon;
-    QString centralUser;
-    QLandmarkManager *landMan;
+    float myLat; // latitude coordinate of current user
+    float myLon; // longitude coordinate of current user
+    QString centralUser; // jid of current central user
+    QLandmarkManager *landMan; // instance of landmark manager which is handling map objects represented as landmarks
     QLandmark pom;
 
-    QMap<QString, MapObject>* mapObjectMap;
+    QMap<QString, MapObject>* mapObjectMap; // map of currently painted objects on map. Stores some additional information and provides a way to get to the actual points, lines and polys
 
-    void fixMapBug();
-    QPointF getSouthestPoint(QVector<QPointF> vector);
+    void fixMapBug(); //
+    QPointF getSouthestPoint(QVector<QPointF> vector); //calculates the southest point of some map object for setting the note
     void prepareMapData();
 signals:
-    void refresh();
-    void refreshMyPosition();
-    void changeNoteOf(QString name, QString note);
-    void displayNoteText(QVariant mapObject);
-    void hideNoteText();
-    void updatePositionForMapUser(QVariant userPoint, double lat, double lon);
-    void setMapUserOffline(QVariant userPoint);
-    void sendMessage(QString jid, QString message);
-    void newMessageFromUser(QString line);
-    void reconnect(QString username, QString password);
+    void refresh(); //
+    void refreshMyPosition(); // updates position of current user on map
+    void changeNoteOf(QString name, QString note); // updates note name and text for some map object
+    void displayNoteText(QVariant mapObject); // makes the appearance of a text for some note
+    void hideNoteText(); // hides the text
+    void updatePositionForMapUser(QVariant userPoint, double lat, double lon); // when new coordinate of some user is received, this makes his point to update
+    void setMapUserOffline(QVariant userPoint); // when user goes offline this makes his point turn grey
+    void sendMessage(QString jid, QString message); // provides received message to ui
+    void newMessageFromUser(QString line); //
+    void reconnect(QString username, QString password); // reconnects to xmpp server with other jid
 public slots:
     void refreshPoints();
     void updateMyPosition(double lon, double lat);

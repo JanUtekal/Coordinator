@@ -1,5 +1,6 @@
 import QtQuick 1.0
 
+//represents generic button used within application
 Rectangle{
     id: button
     signal buttonClick()

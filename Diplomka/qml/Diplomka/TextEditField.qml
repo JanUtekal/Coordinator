@@ -1,6 +1,7 @@
 // import QtQuick 1.0 // to target S60 5th Edition or Maemo 5
 import QtQuick 1.1
 
+//multi line field of text
 Rectangle{
     property string input: inputText.text
     property bool onlyRead:false

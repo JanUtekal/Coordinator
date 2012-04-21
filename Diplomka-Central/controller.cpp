@@ -2,7 +2,7 @@
 #define POINT 0
 #define LINE  1
 #define POLYGON 2
-#define VALIDATIONINTERVAL 1500000
+#define VALIDATIONINTERVAL 15000
 
 
 Controller::Controller(QObject *parent) :

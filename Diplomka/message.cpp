@@ -1,5 +1,14 @@
+/*
+  Multiuser mapping application for mobile device
+  Autor: Jan Utekal
+  VUT FIT 2012
+
+ */
+
 #include "message.h"
 
+
+//this class represents message
 Message::Message(QString text, QString from, QString time, bool received)
 {
     this->text=text;

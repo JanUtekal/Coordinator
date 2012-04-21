@@ -1,3 +1,10 @@
+/*
+  Multiuser mapping application for mobile device
+  Autor: Jan Utekal
+  VUT FIT 2012
+
+ */
+
 #include "contact.h"
 
 Contact::Contact()

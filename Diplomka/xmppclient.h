@@ -59,16 +59,16 @@ private:
 
 
 signals:
-    void refresh();
-    void sendPointFromCentral(QVector<QPointF> coordList, QString mapObjectId, QString data);
-    void sendLineFromCentral(QVector<QPointF> coordList, QString mapObjectId, QString data);
-    void sendPolygonFromCentral(QVector<QPointF> coordList, QString mapObjectId, QString data);
-    void sendNote(Note note);
-    void sendNegativeObject(QString negativeObject);
+    void refresh();//
+    void sendPointFromCentral(QVector<QPointF> coordList, QString mapObjectId, QString data); // sends revceived point data to Controller
+    void sendLineFromCentral(QVector<QPointF> coordList, QString mapObjectId, QString data); // sends revceived line data to Controller
+    void sendPolygonFromCentral(QVector<QPointF> coordList, QString mapObjectId, QString data); // sends revceived poly data to Controller
+    void sendNote(Note note); //sends revceived note data to Controller
+    void sendNegativeObject(QString negativeObject); // sends revceived negative object data to Controller
 
-    void updateUser(QString jid, QGeoCoordinate coordinate);
-    void setUserOffline(QString jid);
-    void sendReceivedMessage(Message message);
+    void updateUser(QString jid, QGeoCoordinate coordinate); // sends new coordinates for jid
+    void setUserOffline(QString jid); // makes user appear offline in ui
+    void sendReceivedMessage(Message message); //provides received message data to controller
 
 public slots:
     void clientConnected();

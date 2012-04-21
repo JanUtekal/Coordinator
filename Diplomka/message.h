@@ -18,10 +18,10 @@ public:
 
 
 private:
-    QString text;
-    QString time;
-    QString from;
-    bool received;
+    QString text; //text of a message
+    QString time; // time the message was received
+    QString from; // jid of sender
+    bool received; // true if the message was received, false ifit was send
 
 };
 

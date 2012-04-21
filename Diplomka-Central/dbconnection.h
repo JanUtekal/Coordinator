@@ -62,6 +62,7 @@ public:
     int saveReceivedMessage(QString message, QString jid, QString currentUserJid);
     int saveSentMessage(QString message, QString jid, QString currentUserJid);
     QList<Message> getMessagesFor(QString terrainUSerId, QString centralUserName);
+    void invalidateAcls();
 
 
 private:

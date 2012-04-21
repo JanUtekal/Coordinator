@@ -18,9 +18,9 @@ public:
     void setId(QString id);
 
 private:
-    QString name;
-    QString text;
-    QString id;
+    QString name; // name of the note
+    QString text; // text of the note
+    QString id; // id from central db of mapobject the note belongs to
 
 };
 

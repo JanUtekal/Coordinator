@@ -1,10 +1,20 @@
+/*
+  Multiuser mapping application for mobile device
+  Autor: Jan Utekal
+  VUT FIT 2012
+
+ */
+
 #include "mapdataparser.h"
 
+//class used for parsing xml data received via xmpp protocol from central
 MapDataParser::MapDataParser(QObject *parent) :
     QObject(parent)
 {
 }
 
+//parses svg data received from central. Returns type of data eg. point/line/poly
+//data represents SVG encoded graphics data, mapobject id is returned id of mapobject from central database, coordlist is returned list of mapobject coordinates
 int MapDataParser::parseSVGData(QString data, QString &mapObjectId, QVector<QPointF> &coordList){
 
     int type=-1;
@@ -108,6 +118,8 @@ int MapDataParser::parseSVGData(QString data, QString &mapObjectId, QVector<QPoi
     return type;
 }
 
+
+// returns type of data - note, negobject, message, mapobject
 int MapDataParser::getDataType(QString data){
     int type=-1;
 
@@ -128,6 +140,7 @@ int MapDataParser::getDataType(QString data){
     return type;
 }
 
+//parses note data and returns corresponding note object
 Note MapDataParser::parseNoteData(QString data){
 
     QDomDocument doc( "myDocument" );
@@ -159,6 +172,7 @@ Note MapDataParser::parseNoteData(QString data){
     return note;
 }
 
+//returns id of object which was deleted or invalidated at central
 QString MapDataParser::parseNegativeObjectData(QString data){
     QDomDocument doc( "myDocument" );
     doc.setContent( data );                        // myFile is a QFile
@@ -183,6 +197,7 @@ QVector<QPointF> MapDataParser::parseGeometry(QString coords){
     return vector;
 }
 
+//returns parsed message text
 QString MapDataParser::parseMessageData(QString data){
     QDomDocument doc( "myDocument" );
     doc.setContent( data );                        // myFile is a QFile

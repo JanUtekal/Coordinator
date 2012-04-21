@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'xmppclient.h'
 **
-** Created: Fri 13. Apr 12:09:00 2012
+** Created: Sat 14. Apr 13:30:40 2012
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.4)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -23,7 +23,7 @@ static const uint qt_meta_data_XmppClient[] = {
        5,       // revision
        0,       // classname
        0,    0, // classinfo
-      16,   14, // methods
+      17,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -49,6 +49,7 @@ static const uint qt_meta_data_XmppClient[] = {
      544,  528,   11,   11, 0x0a,
      590,  328,   11,   11, 0x0a,
      629,  617,   11,   11, 0x0a,
+     681,  663,   11,   11, 0x0a,
 
        0        // eod
 };
@@ -70,6 +71,7 @@ static const char qt_meta_stringdata_XmppClient[] = {
     "getNewCoords(QString,QString,QString,QString)\0"
     "subscribeLocation(QString)\0jid,message\0"
     "getMessageToSend(QString,QString)\0"
+    "username,password\0reconnectGet(QString,QString)\0"
 };
 
 const QMetaObject XmppClient::staticMetaObject = {
@@ -117,9 +119,10 @@ int XmppClient::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
         case 13: getNewCoords((*reinterpret_cast< QString(*)>(_a[1])),(*reinterpret_cast< QString(*)>(_a[2])),(*reinterpret_cast< QString(*)>(_a[3])),(*reinterpret_cast< QString(*)>(_a[4]))); break;
         case 14: subscribeLocation((*reinterpret_cast< QString(*)>(_a[1]))); break;
         case 15: getMessageToSend((*reinterpret_cast< QString(*)>(_a[1])),(*reinterpret_cast< QString(*)>(_a[2]))); break;
+        case 16: reconnectGet((*reinterpret_cast< QString(*)>(_a[1])),(*reinterpret_cast< QString(*)>(_a[2]))); break;
         default: ;
         }
-        _id -= 16;
+        _id -= 17;
     }
     return _id;
 }

@@ -1,6 +1,15 @@
+/*
+  Multiuser mapping application for mobile device
+  Autor: Jan Utekal
+  VUT FIT 2012
+
+ */
+
 #include "extension.h"
 #include <QDebug>
 #include <QDomElement>
+
+//handles xep 0080 stanza with geolocation and provides coordinates to Controller
 bool Extension::handleStanza (const QDomElement& stanza)
 {
     QDomElement docElement =stanza;   // docElement now refers to the node "xml"
@@ -97,6 +106,8 @@ bool Extension::handleStanza (const QDomElement& stanza)
 
     return false;
 }
+
+//ads features to xmpp client
 QStringList Extension::discoveryFeatures () const
 {
     QStringList result;

@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'controller.h'
 **
-** Created: Fri 13. Apr 12:09:02 2012
+** Created: Sat 14. Apr 13:30:44 2012
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.4)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -23,12 +23,12 @@ static const uint qt_meta_data_Controller[] = {
        5,       // revision
        0,       // classname
        0,    0, // classinfo
-      40,   14, // methods
+      42,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
        0,       // flags
-       9,       // signalCount
+      10,       // signalCount
 
  // signals: signature, parameters, type, tag, flags
       12,   11,   11,   11, 0x05,
@@ -40,41 +40,43 @@ static const uint qt_meta_data_Controller[] = {
      210,  200,   11,   11, 0x05,
      250,  238,   11,   11, 0x05,
      284,  279,   11,   11, 0x05,
+     330,  312,   11,   11, 0x05,
 
  // slots: signature, parameters, type, tag, flags
-     312,   11,   11,   11, 0x0a,
-     336,  328,   11,   11, 0x0a,
-     395,  368,   11,   11, 0x0a,
-     449,  368,   11,   11, 0x0a,
-     502,  368,   11,   11, 0x0a,
-     563,  558,   11,   11, 0x0a,
-     592,  577,   11,   11, 0x0a,
-     634,  619,   11,   11, 0x0a,
-     681,  677,   11,   11, 0x0a,
-     713,  705,   11,   11, 0x0a,
+     357,   11,   11,   11, 0x0a,
+     381,  373,   11,   11, 0x0a,
+     440,  413,   11,   11, 0x0a,
+     494,  413,   11,   11, 0x0a,
+     547,  413,   11,   11, 0x0a,
+     608,  603,   11,   11, 0x0a,
+     637,  622,   11,   11, 0x0a,
+     679,  664,   11,   11, 0x0a,
+     726,  722,   11,   11, 0x0a,
+     758,  750,   11,   11, 0x0a,
 
  // methods: signature, parameters, type, tag, flags
-     745,   11,  741,   11, 0x02,
-     769,  767,  759,   11, 0x02,
-     790,  767,  784,   11, 0x02,
-     805,  767,  784,   11, 0x02,
-     820,   11,  784,   11, 0x02,
-     834,   11,  784,   11, 0x02,
-     850,  848,   11,   11, 0x02,
-     880,  767,  871,   11, 0x02,
-     900,   11,  741,   11, 0x02,
-     917,   11,   11,   11, 0x02,
-     935,  930,  741,   11, 0x02,
-     980,  973,  966,   11, 0x02,
-    1016,  973,  966,   11, 0x02,
-    1052,  930,  741,   11, 0x02,
-    1086,  973,  966,   11, 0x02,
-    1125,  973,  966,   11, 0x02,
-    1200, 1164,   11,   11, 0x02,
-    1255,  930,  871,   11, 0x02,
-    1294, 1286,   11,   11, 0x02,
-    1330,  705,   11,   11, 0x02,
-    1357,   11,  759,   11, 0x02,
+     790,   11,  786,   11, 0x02,
+     814,  812,  804,   11, 0x02,
+     835,  812,  829,   11, 0x02,
+     850,  812,  829,   11, 0x02,
+     865,   11,  829,   11, 0x02,
+     879,   11,  829,   11, 0x02,
+     895,  893,   11,   11, 0x02,
+     925,  812,  916,   11, 0x02,
+     945,   11,  786,   11, 0x02,
+     962,   11,   11,   11, 0x02,
+     980,  975,  786,   11, 0x02,
+    1025, 1018, 1011,   11, 0x02,
+    1061, 1018, 1011,   11, 0x02,
+    1097,  975,  786,   11, 0x02,
+    1131, 1018, 1011,   11, 0x02,
+    1170, 1018, 1011,   11, 0x02,
+    1245, 1209,   11,   11, 0x02,
+    1300,  975,  916,   11, 0x02,
+    1339, 1331,   11,   11, 0x02,
+    1375,  750,   11,   11, 0x02,
+    1402,   11,  804,   11, 0x02,
+    1423,  312,   11,   11, 0x02,
 
        0        // eod
 };
@@ -88,6 +90,7 @@ static const char qt_meta_stringdata_Controller[] = {
     "userPoint\0setMapUserOffline(QVariant)\0"
     "jid,message\0sendMessage(QString,QString)\0"
     "line\0newMessageFromUser(QString)\0"
+    "username,password\0reconnect(QString,QString)\0"
     "refreshPoints()\0lon,lat\0"
     "updateMyPosition(double,double)\0"
     "coordList,mapObjectId,data\0"
@@ -115,7 +118,7 @@ static const char qt_meta_stringdata_Controller[] = {
     "getMapObjectReference(QString)\0lat,lon\0"
     "getObjectUnderCursor(double,double)\0"
     "sendMessageToUser(QString)\0"
-    "getCurrentDateTime()\0"
+    "getCurrentDateTime()\0reconnectMe(QString,QString)\0"
 };
 
 const QMetaObject Controller::staticMetaObject = {
@@ -156,56 +159,58 @@ int Controller::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
         case 6: setMapUserOffline((*reinterpret_cast< QVariant(*)>(_a[1]))); break;
         case 7: sendMessage((*reinterpret_cast< QString(*)>(_a[1])),(*reinterpret_cast< QString(*)>(_a[2]))); break;
         case 8: newMessageFromUser((*reinterpret_cast< QString(*)>(_a[1]))); break;
-        case 9: refreshPoints(); break;
-        case 10: updateMyPosition((*reinterpret_cast< double(*)>(_a[1])),(*reinterpret_cast< double(*)>(_a[2]))); break;
-        case 11: getPointFromCentral((*reinterpret_cast< QVector<QPointF>(*)>(_a[1])),(*reinterpret_cast< QString(*)>(_a[2])),(*reinterpret_cast< QString(*)>(_a[3]))); break;
-        case 12: getLineFromCentral((*reinterpret_cast< QVector<QPointF>(*)>(_a[1])),(*reinterpret_cast< QString(*)>(_a[2])),(*reinterpret_cast< QString(*)>(_a[3]))); break;
-        case 13: getPolygonFromCentral((*reinterpret_cast< QVector<QPointF>(*)>(_a[1])),(*reinterpret_cast< QString(*)>(_a[2])),(*reinterpret_cast< QString(*)>(_a[3]))); break;
-        case 14: getNote((*reinterpret_cast< Note(*)>(_a[1]))); break;
-        case 15: getNegativeObject((*reinterpret_cast< QString(*)>(_a[1]))); break;
-        case 16: updateUserPosition((*reinterpret_cast< QString(*)>(_a[1])),(*reinterpret_cast< QGeoCoordinate(*)>(_a[2]))); break;
-        case 17: setUserOffline((*reinterpret_cast< QString(*)>(_a[1]))); break;
-        case 18: getReceivedMessage((*reinterpret_cast< Message(*)>(_a[1]))); break;
-        case 19: { int _r = getPointNum();
+        case 9: reconnect((*reinterpret_cast< QString(*)>(_a[1])),(*reinterpret_cast< QString(*)>(_a[2]))); break;
+        case 10: refreshPoints(); break;
+        case 11: updateMyPosition((*reinterpret_cast< double(*)>(_a[1])),(*reinterpret_cast< double(*)>(_a[2]))); break;
+        case 12: getPointFromCentral((*reinterpret_cast< QVector<QPointF>(*)>(_a[1])),(*reinterpret_cast< QString(*)>(_a[2])),(*reinterpret_cast< QString(*)>(_a[3]))); break;
+        case 13: getLineFromCentral((*reinterpret_cast< QVector<QPointF>(*)>(_a[1])),(*reinterpret_cast< QString(*)>(_a[2])),(*reinterpret_cast< QString(*)>(_a[3]))); break;
+        case 14: getPolygonFromCentral((*reinterpret_cast< QVector<QPointF>(*)>(_a[1])),(*reinterpret_cast< QString(*)>(_a[2])),(*reinterpret_cast< QString(*)>(_a[3]))); break;
+        case 15: getNote((*reinterpret_cast< Note(*)>(_a[1]))); break;
+        case 16: getNegativeObject((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 17: updateUserPosition((*reinterpret_cast< QString(*)>(_a[1])),(*reinterpret_cast< QGeoCoordinate(*)>(_a[2]))); break;
+        case 18: setUserOffline((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 19: getReceivedMessage((*reinterpret_cast< Message(*)>(_a[1]))); break;
+        case 20: { int _r = getPointNum();
             if (_a[0]) *reinterpret_cast< int*>(_a[0]) = _r; }  break;
-        case 20: { QString _r = getJidFor((*reinterpret_cast< int(*)>(_a[1])));
+        case 21: { QString _r = getJidFor((*reinterpret_cast< int(*)>(_a[1])));
             if (_a[0]) *reinterpret_cast< QString*>(_a[0]) = _r; }  break;
-        case 21: { float _r = getLatFor((*reinterpret_cast< int(*)>(_a[1])));
+        case 22: { float _r = getLatFor((*reinterpret_cast< int(*)>(_a[1])));
             if (_a[0]) *reinterpret_cast< float*>(_a[0]) = _r; }  break;
-        case 22: { float _r = getLonFor((*reinterpret_cast< int(*)>(_a[1])));
+        case 23: { float _r = getLonFor((*reinterpret_cast< int(*)>(_a[1])));
             if (_a[0]) *reinterpret_cast< float*>(_a[0]) = _r; }  break;
-        case 23: { float _r = getLatForMe();
+        case 24: { float _r = getLatForMe();
             if (_a[0]) *reinterpret_cast< float*>(_a[0]) = _r; }  break;
-        case 24: { float _r = getLonForMe();
+        case 25: { float _r = getLonForMe();
             if (_a[0]) *reinterpret_cast< float*>(_a[0]) = _r; }  break;
-        case 25: setToVlist((*reinterpret_cast< QVariant(*)>(_a[1]))); break;
-        case 26: { QVariant _r = getFromVlistAt((*reinterpret_cast< int(*)>(_a[1])));
+        case 26: setToVlist((*reinterpret_cast< QVariant(*)>(_a[1]))); break;
+        case 27: { QVariant _r = getFromVlistAt((*reinterpret_cast< int(*)>(_a[1])));
             if (_a[0]) *reinterpret_cast< QVariant*>(_a[0]) = _r; }  break;
-        case 27: { int _r = getMapPointNum();
+        case 28: { int _r = getMapPointNum();
             if (_a[0]) *reinterpret_cast< int*>(_a[0]) = _r; }  break;
-        case 28: clearVlist(); break;
-        case 29: { int _r = getLineCoordinatesNum((*reinterpret_cast< QString(*)>(_a[1])));
+        case 29: clearVlist(); break;
+        case 30: { int _r = getLineCoordinatesNum((*reinterpret_cast< QString(*)>(_a[1])));
             if (_a[0]) *reinterpret_cast< int*>(_a[0]) = _r; }  break;
-        case 30: { double _r = getLineCoordinateLatAt((*reinterpret_cast< QString(*)>(_a[1])),(*reinterpret_cast< int(*)>(_a[2])));
+        case 31: { double _r = getLineCoordinateLatAt((*reinterpret_cast< QString(*)>(_a[1])),(*reinterpret_cast< int(*)>(_a[2])));
             if (_a[0]) *reinterpret_cast< double*>(_a[0]) = _r; }  break;
-        case 31: { double _r = getLineCoordinateLonAt((*reinterpret_cast< QString(*)>(_a[1])),(*reinterpret_cast< int(*)>(_a[2])));
+        case 32: { double _r = getLineCoordinateLonAt((*reinterpret_cast< QString(*)>(_a[1])),(*reinterpret_cast< int(*)>(_a[2])));
             if (_a[0]) *reinterpret_cast< double*>(_a[0]) = _r; }  break;
-        case 32: { int _r = getPolygonCoordinatesNum((*reinterpret_cast< QString(*)>(_a[1])));
+        case 33: { int _r = getPolygonCoordinatesNum((*reinterpret_cast< QString(*)>(_a[1])));
             if (_a[0]) *reinterpret_cast< int*>(_a[0]) = _r; }  break;
-        case 33: { double _r = getPolygonCoordinateLatAt((*reinterpret_cast< QString(*)>(_a[1])),(*reinterpret_cast< int(*)>(_a[2])));
+        case 34: { double _r = getPolygonCoordinateLatAt((*reinterpret_cast< QString(*)>(_a[1])),(*reinterpret_cast< int(*)>(_a[2])));
             if (_a[0]) *reinterpret_cast< double*>(_a[0]) = _r; }  break;
-        case 34: { double _r = getPolygonCoordinateLonAt((*reinterpret_cast< QString(*)>(_a[1])),(*reinterpret_cast< int(*)>(_a[2])));
+        case 35: { double _r = getPolygonCoordinateLonAt((*reinterpret_cast< QString(*)>(_a[1])),(*reinterpret_cast< int(*)>(_a[2])));
             if (_a[0]) *reinterpret_cast< double*>(_a[0]) = _r; }  break;
-        case 35: createMapObjectReference((*reinterpret_cast< QVariant(*)>(_a[1])),(*reinterpret_cast< QString(*)>(_a[2])),(*reinterpret_cast< int(*)>(_a[3])),(*reinterpret_cast< QString(*)>(_a[4]))); break;
-        case 36: { QVariant _r = getMapObjectReference((*reinterpret_cast< QString(*)>(_a[1])));
+        case 36: createMapObjectReference((*reinterpret_cast< QVariant(*)>(_a[1])),(*reinterpret_cast< QString(*)>(_a[2])),(*reinterpret_cast< int(*)>(_a[3])),(*reinterpret_cast< QString(*)>(_a[4]))); break;
+        case 37: { QVariant _r = getMapObjectReference((*reinterpret_cast< QString(*)>(_a[1])));
             if (_a[0]) *reinterpret_cast< QVariant*>(_a[0]) = _r; }  break;
-        case 37: getObjectUnderCursor((*reinterpret_cast< double(*)>(_a[1])),(*reinterpret_cast< double(*)>(_a[2]))); break;
-        case 38: sendMessageToUser((*reinterpret_cast< QString(*)>(_a[1]))); break;
-        case 39: { QString _r = getCurrentDateTime();
+        case 38: getObjectUnderCursor((*reinterpret_cast< double(*)>(_a[1])),(*reinterpret_cast< double(*)>(_a[2]))); break;
+        case 39: sendMessageToUser((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 40: { QString _r = getCurrentDateTime();
             if (_a[0]) *reinterpret_cast< QString*>(_a[0]) = _r; }  break;
+        case 41: reconnectMe((*reinterpret_cast< QString(*)>(_a[1])),(*reinterpret_cast< QString(*)>(_a[2]))); break;
         default: ;
         }
-        _id -= 40;
+        _id -= 42;
     }
     return _id;
 }
@@ -268,5 +273,12 @@ void Controller::newMessageFromUser(QString _t1)
 {
     void *_a[] = { 0, const_cast<void*>(reinterpret_cast<const void*>(&_t1)) };
     QMetaObject::activate(this, &staticMetaObject, 8, _a);
+}
+
+// SIGNAL 9
+void Controller::reconnect(QString _t1, QString _t2)
+{
+    void *_a[] = { 0, const_cast<void*>(reinterpret_cast<const void*>(&_t1)), const_cast<void*>(reinterpret_cast<const void*>(&_t2)) };
+    QMetaObject::activate(this, &staticMetaObject, 9, _a);
 }
 QT_END_MOC_NAMESPACE

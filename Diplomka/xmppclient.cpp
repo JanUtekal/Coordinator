@@ -1,4 +1,13 @@
 /*
+  Multiuser mapping application for mobile device
+  Autor: Jan Utekal
+  VUT FIT 2012
+
+
+ */
+
+
+/*  
  * Copyright (C) 2008-2011 The QXmpp developers
  *
  * Author:
@@ -35,7 +44,7 @@
 //#define PASSWORD "asasasd"
 
 
-
+//this class handles connection via xmpp protocol
 XmppClient::XmppClient(QObject *parent)
     : QXmppClient(parent)
 {
@@ -83,13 +92,15 @@ XmppClient::~XmppClient()
 
 }
 
+
+
 void XmppClient::clientConnected()
 {
     std::cout<<"CONNECTED"<<std::endl;
 }
 
 
-//zmena presence
+//handles change of presence for some user
 void XmppClient::presenceChanged(const QString& bareJid,
                                  const QString& resource)
 {
@@ -101,7 +112,8 @@ void XmppClient::presenceChanged(const QString& bareJid,
 
 }
 
-//obsluha prijmu zpravy
+//handles received message from some user
+//parses the content of the message with mapdataparser and acts accordingly
 void XmppClient::messageRecv(const QXmppMessage& message){
       //  qDebug()<<message.body();
 
@@ -173,7 +185,7 @@ void XmppClient::messageRecv(const QXmppMessage& message){
     }*/
 }
 
-
+//handles received presence
 void XmppClient::presenceReceived(const QXmppPresence &presence){
     qDebug()<<"presence rcvd"<<presence.from()<<presence.type();
     if(presence.type()==4){//subscribed
@@ -264,7 +276,7 @@ void XmppClient::eraseFile(){
     file.close();
 }
 
-//slot prijimajici signal z extension s novou lokaci uzivatele
+//gets new coordinates of some user received via extension
 void XmppClient::getNewCoords(QString jid, QString lat, QString lon, QString acc){
   qDebug()<<jid<<lat<<lon<<acc;
 
@@ -273,7 +285,7 @@ void XmppClient::getNewCoords(QString jid, QString lat, QString lon, QString acc
     emit updateUser(jid,coordinate);
 }
 
-//projde roster a na vsechny vyzada prijem geoloc
+//subscribes to all users to receive their geolocation
 void XmppClient::subscribeLocation(QString jid){
 
     QStringList l=this->rosterManager().getRosterBareJids();
@@ -298,11 +310,13 @@ void XmppClient::subscribeLocation(QString jid){
 
 }
 
+//send message from current user to central user
 void XmppClient::getMessageToSend(QString jid, QString message){
 
     this->sendMessage(jid,message);
 }
 
+//reconnects with provided username and password
 void XmppClient::reconnectGet(QString username, QString password){
     this->disconnectFromServer();
     QXmppConfiguration config;

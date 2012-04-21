@@ -1,5 +1,14 @@
+/*
+  Multiuser mapping application for mobile device
+  Autor: Jan Utekal
+  VUT FIT 2012
+
+ */
+
 #include "mapobject.h"
 #include <QDebug>
+
+//this class represents object to be saved into landmarks and displayed on map
 MapObject::MapObject(){
 }
 

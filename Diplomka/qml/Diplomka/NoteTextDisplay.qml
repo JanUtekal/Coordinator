@@ -1,6 +1,7 @@
 // import QtQuick 1.0 // to target S60 5th Edition or Maemo 5
 import QtQuick 1.1
 
+//screen of note text displayed when clicked at the note
 Rectangle {
     property color noteTextColor: Qt.rgba(1, 1, 1, 0.8)
 

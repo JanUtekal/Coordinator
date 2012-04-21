@@ -2,6 +2,7 @@ import QtQuick 1.1
 
 import QtMobility.location 1.2
 
+//provides map, displays mapobjects and contains all gui elements
 Rectangle {
     id: pinchmap
 

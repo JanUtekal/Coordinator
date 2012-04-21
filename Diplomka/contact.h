@@ -20,10 +20,10 @@ public:
   //  void setPresence(bool presence);
 
 private:
-    QString jid;
-    QString lat;
-    QString lon;
-    QString stamp;
+    QString jid; //user name for user used by xmpp protocol
+    QString lat; // latitude coordinate of a user
+    QString lon; // longitude coordinate of a user
+    QString stamp; // timestamp of last time received coordinate
   //  bool isPresent;
 
 
