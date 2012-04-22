@@ -5,8 +5,10 @@ Rectangle {
 
     property int selectedUser:-1
     property int selectedAclUser:-1
+    property int selectedAclHistoryUser:-1
     property int selectedAcl:-1
     property int selectedMapAcl:-1
+    property int selectedHistoryAcl:-1
     property int selectedUserMessage:-1
 
     width: 800

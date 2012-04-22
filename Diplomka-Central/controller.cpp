@@ -2,7 +2,7 @@
 #define POINT 0
 #define LINE  1
 #define POLYGON 2
-#define VALIDATIONINTERVAL 15000
+#define VALIDATIONINTERVAL 150000
 
 
 Controller::Controller(QObject *parent) :
@@ -11,8 +11,7 @@ Controller::Controller(QObject *parent) :
     landMan= new QLandmarkManager(this);
     landMan->removeLandmarks(landMan->landmarks());
 
-    dbLineLandmarks =new QList<QLandmark>();
-    dbPolygonLandmarks =new QList<QLandmark>();
+
     mapObjectMap =new QMap<QString, MapObject>();
 
 
@@ -20,6 +19,9 @@ Controller::Controller(QObject *parent) :
     connect(registrationTool, SIGNAL(sendCaptcha(QString)),this,SLOT(getCaptchaRegistrationUrl(QString)));
     connect(registrationTool, SIGNAL(sendError(QString)),this,SLOT(getError(QString)));
     connect(registrationTool, SIGNAL(sendSuccess()),this,SLOT(getSuccess()));
+
+    connect(this,SIGNAL(addDBLine(QLandmark)),this,SLOT(addLineFromDB(QLandmark)));
+    connect(this,SIGNAL(addDBPolygon(QLandmark)),this,SLOT(addPolygonFromDB(QLandmark)));
 
     server="jabber.cz";
 
@@ -141,9 +143,9 @@ void Controller::lineReady(int selectedAcl){
             QString coords;
 
             foreach(QPointF p, lineVector){
-               coords+=QString::number(p.x());
-               coords+=" ";
                coords+=QString::number(p.y());
+               coords+=" ";
+               coords+=QString::number(p.x());
                coords+=",";
             }
             coords.chop(1);
@@ -168,7 +170,7 @@ void Controller::lineReady(int selectedAcl){
         }
 
 
-        //lineVector.clear();
+        lineVector.clear();
 
     }
 
@@ -209,9 +211,9 @@ void Controller::polygonReady(int selectedAcl){
             QString coords;
 
             foreach(QPointF p, polygonVector){
-               coords+=QString::number(p.x());
-               coords+=" ";
                coords+=QString::number(p.y());
+               coords+=" ";
+               coords+=QString::number(p.x());
                coords+=",";
             }
             coords.chop(1);
@@ -244,17 +246,43 @@ void Controller::polygonReady(int selectedAcl){
 
 }
 
-void Controller::createMapObjectReference(QVariant paintedObject, QString name, int type){
-    MapObject mapObject;
-    mapObject.setName(name);
-    mapObject.setPaintedObject(paintedObject);
-    mapObject.setType(type);
-    mapObject.setAclId(dbConnection->getMapObjectAcl(name));
+void Controller::createMapObjectReference(QVariant paintedObject, QString name, int type, QString coordinates){
+
+    if(!mapObjectMap->contains(name)){
+        MapObject mapObject;
+        mapObject.setName(name);
+        mapObject.setPaintedObject(paintedObject);
+        mapObject.setType(type);
+        mapObject.setAclId(dbConnection->getMapObjectAcl(name));
 
 
+        if(coordinates!=""){
+            QStringList coordList=coordinates.split(",");
+            QVector<QPointF> vector;
+
+            foreach(QString coord, coordList){
+                QStringList c=coord.split(" ");
+                QPointF point(c.at(1).toDouble(), c.at(0).toDouble());
+                vector.append(point);
+
+            }
 
 
-    mapObjectMap->insert(name,mapObject);
+            mapObject.setGeometry(vector);
+            qDebug()<<"GEOMETRY"<<mapObject.getGeometry().size();
+        }
+
+        mapObjectMap->insert(name,mapObject);
+
+    } else {
+        MapObject mapObject;
+        mapObject=mapObjectMap->value(name);
+        mapObject.setPaintedObject(paintedObject);
+        mapObject.setAclId(dbConnection->getMapObjectAcl(name));
+        mapObjectMap->insert(name,mapObject);
+
+
+    }
 
 }
 
@@ -389,8 +417,16 @@ void Controller::getAllPoints(QList<QLandmark> *dbLandmarks){
 void Controller::getAllLines(QList<QLandmark> *dbLandmarks){
 
   //  qDebug()<<"got LINES";
+    QList<QLandmark> *dbLineLandmarks;
+    dbLineLandmarks =new QList<QLandmark>();
+
     dbLineLandmarks=dbLandmarks;
-    addLineFromDB();
+
+    for(int i=0;i<dbLineLandmarks->length();i++){
+        QLandmark lm=dbLineLandmarks->at(i);
+        emit addDBLine(lm);
+       // addLineFromDB(lm);
+    }
 
 
 
@@ -398,19 +434,25 @@ void Controller::getAllLines(QList<QLandmark> *dbLandmarks){
 
 void Controller::getAllPolygons(QList<QLandmark> *dbLandmarks){
 
-    qDebug()<<"got LINES";
+    QList<QLandmark> *dbPolygonLandmarks;
+    dbPolygonLandmarks =new QList<QLandmark>();
     dbPolygonLandmarks=dbLandmarks;
     qDebug()<<"got polys";
-    addPolygonFromDB();
+    qDebug()<<"lms now"<<landMan->landmarks().length();
 
+    for(int i=0;i<dbPolygonLandmarks->length();i++){
+        QLandmark lm=dbPolygonLandmarks->at(i);
+        emit addDBPolygon(lm);
+       // addPolygonFromDB(lm);
+    }
 
-
+    emit allowMoving();
 }
 
-void Controller::addLineFromDB(){
-    if(dbLineLandmarks->length()>0){
-        QLandmark lm=dbLineLandmarks->takeFirst();
-        QString coords=lm.description();
+void Controller::addLineFromDB(QLandmark line){
+        QVector<QPointF> lineVector;
+
+        QString coords=line.description();
 
         QStringList coordList=coords.split(",");
 
@@ -424,23 +466,26 @@ void Controller::addLineFromDB(){
         if(lineVector.size()>0){
             QPointF point=getSouthestPoint(lineVector);
             QGeoCoordinate coord(point.x(),point.y());
-            lm.setCoordinate(coord);
+            line.setCoordinate(coord);
         } else {
             qDebug()<<"lineVector empty";
         }
 
+        MapObject obj;
+        obj.setGeometry(lineVector);
+        obj.setName(line.name());
+        obj.setType(1);
+        mapObjectMap->insert(line.name(),obj);
+        landMan->saveLandmark(&line);
 
-        landMan->saveLandmark(&lm);
 
 
-    }
 
 }
 
-void Controller::addPolygonFromDB(){
-    if(dbPolygonLandmarks->length()>0){
-        QLandmark lm=dbPolygonLandmarks->takeFirst();
-        QString coords=lm.description();
+void Controller::addPolygonFromDB(QLandmark polygon){
+        QVector<QPointF> polygonVector;
+        QString coords=polygon.description();
 //qDebug()<<coords;
         QStringList coordList=coords.split(",");
 
@@ -455,16 +500,18 @@ void Controller::addPolygonFromDB(){
         if(polygonVector.size()>0){
             QPointF point=getSouthestPoint(polygonVector);
             QGeoCoordinate coord(point.x(),point.y());
-            lm.setCoordinate(coord);
+            polygon.setCoordinate(coord);
         } else {
             qDebug()<<"polygonvector empty";
         }
 
+        MapObject obj;
+        obj.setGeometry(polygonVector);
+        obj.setName(polygon.name());
+        obj.setType(2);
+        mapObjectMap->insert(polygon.name(),obj);
+        landMan->saveLandmark(&polygon);
 
-        landMan->saveLandmark(&lm);
-
-
-    }
 
 }
 
@@ -741,58 +788,65 @@ qDebug()<<"2";
         return coordinates;
 }
 */
+//returns number of points that a line consists of
+//name represents the id from central database
+int Controller::getLineCoordinatesNum(QString name){
 
-int Controller::getLineCoordinatesNum(){
-    qDebug()<<"SIZE"<<lineVector.size();
-    return lineVector.size();
+    MapObject obj=mapObjectMap->value(name);
+
+
+    return obj.getGeometry().size();
 }
 
-double Controller::getLineCoordinateLatAt(int i){
+//returns latitude coordinate for ith point of line geometry
+//name represents the id from central database
+double Controller::getLineCoordinateLatAt(QString name, int i){
+    MapObject obj=mapObjectMap->value(name);
 
-    return lineVector.at(i).x();
+    return obj.getGeometry().at(i).x();
 
 
 
 }
 
-double Controller::getLineCoordinateLonAt(int i){
-
-    double y=lineVector.at(i).y();
-
-
-    if(i==lineVector.size()-1){
-
-        lineVector.clear();
-        addLineFromDB();
-    }
+//returns longitude coordinate for ith point of line geometry
+//name represents the id from central database
+double Controller::getLineCoordinateLonAt(QString name, int i){
+    MapObject obj=mapObjectMap->value(name);
+    double y=obj.getGeometry().at(i).y();
 
     return y;
 
 }
 
-int Controller::getPolygonCoordinatesNum(){
-    qDebug()<<"poly SIZE"<<polygonVector.size();
-    return polygonVector.size();
+//returns number of points that a polygon consists of
+//name represents the id from central database
+int Controller::getPolygonCoordinatesNum(QString name){
+    MapObject obj=mapObjectMap->value(name);
+
+    qDebug()<<"SIZE"<<obj.getGeometry().size();
+    return obj.getGeometry().size();
 }
 
-double Controller::getPolygonCoordinateLatAt(int i){
+//returns latitude coordinate for ith point of polygon geometry
+//name represents the id from central database
 
-    return polygonVector.at(i).x();
+double Controller::getPolygonCoordinateLatAt(QString name, int i){
+
+    MapObject obj=mapObjectMap->value(name);
+
+    return obj.getGeometry().at(i).x();
 
 
 
 }
 
-double Controller::getPolygonCoordinateLonAt(int i){
+//returns latitude coordinate for ith point of polygon geometry
+//name represents the id from central database
+double Controller::getPolygonCoordinateLonAt(QString name, int i){
 
-    double y=polygonVector.at(i).y();
-
-
-    if(i==polygonVector.size()-1){
-
-        polygonVector.clear();
-        addPolygonFromDB();
-    }
+    MapObject obj=mapObjectMap->value(name);
+    double y=obj.getGeometry().at(i).y();
 
     return y;
 
@@ -1061,4 +1115,112 @@ int Controller::getMessagesNum(){
 
 QString Controller::getMessageLineAt(int i){
     return messageList.at(i);
+}
+
+void Controller::prepareAclHistoryList(){
+    QDateTime from(QDate(2010,04,21), QTime(20,01,01));
+    QDateTime to(QDate(2014,04,21), QTime(20,01,01));
+    this->aclHistoryList=dbConnection->getAclsBetweenDates(from,to);
+    qDebug()<<"acls hist got"<<aclHistoryList.length();
+
+    emit aclHistoryListReady();
+}
+
+int Controller::getAclHistoryNum(){
+    return this->aclHistoryList.length();
+}
+
+QString Controller::getAclHistoryNameAt(int i){
+    return ((Acl)aclHistoryList.at(i)).getName();
+}
+
+void Controller::prepareTerrainUserFromAclHistoryList(int i){
+
+    if(i==-1){
+        this->terrainUserFromAclHistoryList.clear();
+
+    } else {
+        QString id =((Acl)aclHistoryList.at(i)).getId();
+        this->terrainUserFromAclHistoryList=dbConnection->getTerrainUsersFromAcl(id);
+    }
+    emit terrainUserFromAclHistoryListReady();
+}
+
+int Controller::getTerrainUserFromAclHistoryNum(){
+    return this->terrainUserFromAclHistoryList.length();
+}
+
+QString Controller::getTerrainUserFromAclHistoryNameAt(int i){
+    return ((TerrainUser)terrainUserFromAclHistoryList.at(i)).getName();
+}
+
+QString Controller::getTerrainUserFromAclHistorySurnameAt(int i){
+    return ((TerrainUser)terrainUserFromAclHistoryList.at(i)).getSurname();
+}
+
+void Controller::prepareMessageHistoryList(int i, int j){
+    messageHistoryList.clear();
+
+    QString id=((TerrainUser)terrainUserFromAclHistoryList.at(i)).getId();
+    QString aclId=((Acl)aclHistoryList.at(j)).getId();
+    QString username=((TerrainUser)terrainUserFromAclHistoryList.at(i)).getUsername();
+    QList<Message> messList=dbConnection->getMessagesForBetweenDates(id, aclId);
+    foreach(Message m,messList){
+
+        QString line=m.getTime().replace("T","  ");
+        line+="\n";
+
+        if(m.getReceived()){
+            line+=username;//the message was received
+            line+=": ";
+        } else {
+            line+=m.getCentralUser().split("@").at(0);
+            line+=": ";//the message was sent
+        }
+
+        line+=m.getText();
+        line+="\n";
+
+       this->messageHistoryList.append(line);
+    }
+
+
+    emit messagesHistoryReady();
+}
+
+int Controller::getMessagesHistoryNum(){
+    return messageHistoryList.length();
+}
+
+QString Controller::getMessageHistoryLineAt(int i){
+    return messageHistoryList.at(i);
+}
+
+void Controller::getMapObjectsForAcl(int i){
+    landMan->removeLandmarks(landMan->landmarks());
+    mapObjectMap->clear();
+
+    aclHistoryId=((Acl)aclHistoryList.at(i)).getId();
+    QTimer::singleShot(100,this,SLOT(continueGettingObjectsForAcl()));
+
+}
+
+void Controller::continueGettingObjectsForAcl(){
+        dbConnection->getObjectsFromDBForAcl(aclHistoryId);
+}
+
+void Controller::getAllMapObjects(){
+    landMan->removeLandmarks(landMan->landmarks());
+    mapObjectMap->clear();
+    QTimer::singleShot(100,this,SLOT(continueGettingObjects()));
+}
+void Controller::continueGettingObjects(){
+
+    dbConnection->getObjectsFromDB();
+}
+
+
+void Controller::clearMapObjects(){
+    landMan->removeLandmarks(landMan->landmarks());
+    mapObjectMap->clear();
 }

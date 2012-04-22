@@ -35,3 +35,12 @@ void MapObject::setAclId(QString aclId){
 QString MapObject::getAClId(){
     return this->aclId;
 }
+
+void MapObject::setGeometry(QVector<QPointF> geometry){
+    this->geometry=geometry;
+}
+
+QVector<QPointF> MapObject::getGeometry(){
+    return this->geometry;
+}
+

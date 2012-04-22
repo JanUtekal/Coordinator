@@ -182,6 +182,7 @@ QString MapDataParser::parseNegativeObjectData(QString data){
     return docElement.text();
 }
 
+//parses geometry data from string representation
 QVector<QPointF> MapDataParser::parseGeometry(QString coords){
 
     QStringList coordList=coords.split(",");

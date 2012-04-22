@@ -628,7 +628,7 @@ QList<TerrainUser> DbConnection::getTerrainUsersFromAcl(QString id){
 
     QSqlQuery query(db);
 
-    QString q=QString("SELECT id, name, surname, password, jid FROM terrainuser WHERE id IN (SELECT terrainuserid FROM terrainuseracl WHERE aclid=%1 AND validity=true)").arg(id);
+    QString q=QString("SELECT id, name, surname, password, jid FROM terrainuser WHERE id IN (SELECT terrainuserid FROM terrainuseracl WHERE aclid=%1)").arg(id);
 
     query.prepare(q);
 
@@ -1216,6 +1216,219 @@ void DbConnection::invalidateTerrainUserAcl(QString aclid){
 
 
     qDebug()<< query.exec()<<query.executedQuery();
+
+
+}
+
+QList<Acl> DbConnection::getAclsBetweenDates(QDateTime from, QDateTime to){
+
+
+    QList<Acl> aclList;
+
+    QSqlQuery query(db);
+
+    QString q=QString("SELECT id, name, insertiontime, validuntil FROM acl WHERE insertiontime > '%1' AND validuntil < '%2' ORDER BY insertiontime").arg(getDate(from)).arg(getDate(to));
+
+    query.prepare(q);
+
+
+
+    qDebug()<< query.exec()<<query.executedQuery();
+
+    while (query.next()) {
+        QString id = query.value(0).toString();
+        QString name= query.value(1).toString();
+
+        Acl acl(id,name);
+
+        acl.setFrom(query.value(2).toString());
+        acl.setTo(query.value(3).toString());
+
+        aclList.append(acl);
+
+    }
+    qDebug()<<"acl list length"<<aclList.length();
+    return aclList;
+
+}
+
+QString DbConnection::getDate(QDateTime date){
+
+    QString outputFormat="yyyy-MM-dd hh:mm:ss";
+    return date.toString(outputFormat);
+}
+
+QList<Message> DbConnection::getMessagesForBetweenDates(QString terrainUserIdo, QString aclId){
+    QList<Message> messages;
+
+    QSqlQuery query(db);
+
+    QString q=QString("SELECT text, time, received, (SELECT jid from centraluser WHERE id=message.centraluser) FROM message WHERE terrainuser=%1 AND time > (SELECT insertiontime FROM acl WHERE id =%2) AND time < (SELECT validuntil FROM acl WHERE id =%2) ORDER BY time").arg(terrainUserIdo).arg(aclId);
+
+
+
+    query.prepare(q);
+
+
+    qDebug()<< query.exec()<<query.executedQuery();
+
+
+
+    while(query.next()){
+        QString text=query.value(0).toString();
+        QString time=query.value(1).toString();
+        bool recv=query.value(2).toBool();
+        QString centralUser=query.value(3).toString();
+        Message mess(text,time,recv);
+        mess.setCentralUser(centralUser);
+        messages.append(mess);
+    }
+
+    return messages;
+}
+
+void DbConnection::getObjectsFromDBForAcl(QString id){
+
+    QList<QLandmark> *dbLandmarks = new QList<QLandmark>();
+
+    QSqlQuery query(db);
+
+    //point query
+    QString q=QString("SELECT id,ST_AsText(coordinates::geometry) FROM point WHERE acl=%1").arg(id);
+
+    query.prepare(q);
+
+
+    qDebug()<< query.exec()<<query.executedQuery();
+
+    while (query.next()) {
+        QString id = query.value(0).toString();
+        QString location= query.value(1).toString();
+
+        qDebug()<<id<<location;
+
+        QLandmark lm;
+        lm.setName(id);
+
+        if(location.contains("POINT")){
+
+            double lon=location.split(" ").at(0).split("(").at(1).toDouble();
+            double lat=location.split(" ").at(1).split(")").at(0).toDouble();
+
+
+            QGeoCoordinate coordinate(lat,lon);
+
+            QPair<QString, QString> note=getNoteForMapObject(id);
+            lm.setPhoneNumber(note.first+"////"+note.second);
+
+            //qDebug()<<lat<< lon<<coordinate.latitude();
+
+            lm.setCoordinate(coordinate);
+        }
+
+
+
+        dbLandmarks->append(lm);
+
+    }
+
+    emit sendAllPoints(dbLandmarks);
+
+
+
+    //line query
+    QList<QLandmark> *dbLandmarks2 = new QList<QLandmark>();
+    q=QString("SELECT id,ST_AsText(coordinates::geometry) FROM line WHERE acl=%1").arg(id);
+
+    query.prepare(q);
+
+
+    qDebug()<< query.exec()<<query.executedQuery();
+
+    while (query.next()) {
+        QString id = query.value(0).toString();
+        QString location= query.value(1).toString();
+
+        //qDebug()<<id<<location;
+
+        QLandmark lm;
+        lm.setName(id);
+
+        if(location.contains("LINESTRING")){
+
+            QString coords=location.remove(0,11);//=location.split("LINESTRING(").
+            coords.chop(1);
+
+    //  qDebug()<<coords;
+            lm.setDescription(coords);
+            lm.setRadius(10);
+            //QGeoCoordinate coordinate(lat,lon);
+
+            QPair<QString, QString> note=getNoteForMapObject(id);
+            lm.setPhoneNumber(note.first+"////"+note.second);
+
+
+          //  lm.setCoordinate(coordinate);
+        }
+
+        dbLandmarks2->append(lm);
+
+    }
+
+
+    qDebug()<<"sending";
+
+    emit sendAllLines(dbLandmarks2);
+
+
+
+    //line query
+    QList<QLandmark> *dbLandmarks3 = new QList<QLandmark>();
+    q=QString("SELECT id,ST_AsText(coordinates::geometry) FROM polygon WHERE acl=%1").arg(id);
+
+    query.prepare(q);
+
+
+    qDebug()<< query.exec()<<query.executedQuery();
+
+    while (query.next()) {
+        QString id = query.value(0).toString();
+        QString location= query.value(1).toString();
+
+        //qDebug()<<id<<location;
+
+        QLandmark lm;
+        lm.setName(id);
+
+        if(location.contains("POLYGON")){
+
+            QString coords=location.remove(0,9);//=location.split("LINESTRING(").
+            coords.chop(2);
+
+    //  qDebug()<<coords;
+            lm.setDescription(coords);
+            lm.setRadius(20);
+            //QGeoCoordinate coordinate(lat,lon);
+
+            QPair<QString, QString> note=getNoteForMapObject(id);
+            lm.setPhoneNumber(note.first+"////"+note.second);
+
+
+          //  lm.setCoordinate(coordinate);
+        }
+
+        dbLandmarks3->append(lm);
+
+    }
+
+
+    qDebug()<<"sending polys"<<dbLandmarks3->length();
+
+    emit sendAllPolygons(dbLandmarks3);
+
+
+
+
 
 
 }

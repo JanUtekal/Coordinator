@@ -45,6 +45,7 @@ public:
     QList<Acl> getValidAcls();
     QList<TerrainUser> getAllTerrainUsers();
     QList<TerrainUser> getTerrainUsersFromAcl(QString id);
+
     void updateTerrainUserAcl(QString idUser, QString idAcl);
     void deleteAcl(QString id);
     void deleteTerrainUser(QString id);
@@ -63,7 +64,10 @@ public:
     int saveSentMessage(QString message, QString jid, QString currentUserJid);
     QList<Message> getMessagesFor(QString terrainUSerId, QString centralUserName);
 
+    QList<Acl> getAclsBetweenDates(QDateTime from, QDateTime to);
+    QList<Message> getMessagesForBetweenDates(QString terrainUserId, QString aclId);
 
+    void getObjectsFromDBForAcl(QString id);
 
 private:
     QSqlDatabase db;
@@ -71,6 +75,7 @@ private:
     void updateCentraluserLastValidation(QString lastValidation);
     QStringList getInvalidAcls();
     QString getNow();
+    QString getDate(QDateTime date);
     void updateUserAcls();
     void removeUserPositionsForAcl(QString id);//temporary
     void removeUserPositionsForUser(QString id);//temporary
@@ -88,6 +93,7 @@ signals:
 
 public slots:
     void validateMapObjects();
+
 
 };
 

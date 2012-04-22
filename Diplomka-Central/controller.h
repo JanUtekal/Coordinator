@@ -45,7 +45,7 @@ public:
     Q_INVOKABLE void lineReady(int selectedAcl);
     Q_INVOKABLE void addPolygonPoint(double lat, double lon);
     Q_INVOKABLE void polygonReady(int selectedAcl);
-    Q_INVOKABLE void createMapObjectReference(QVariant paintedObject, QString name, int type);
+    Q_INVOKABLE void createMapObjectReference(QVariant paintedObject, QString name, int type, QString coordinates);
 
     Q_INVOKABLE void addNoteTo(QString name, QString text, QString id);
 
@@ -70,6 +70,12 @@ public:
     Q_INVOKABLE QString getAclNameAt(int i);
     Q_INVOKABLE void removeAcl(int i);
 
+    //aclHistoryList methods
+    Q_INVOKABLE void prepareAclHistoryList();
+    Q_INVOKABLE int getAclHistoryNum();
+    Q_INVOKABLE QString getAclHistoryNameAt(int i);
+
+
     //terrainuserList methods
     Q_INVOKABLE void prepareTerrainUserList();
     Q_INVOKABLE int getTerrainUserNum();
@@ -85,10 +91,22 @@ public:
     Q_INVOKABLE void setTerrainUserAcl(int i, int j);
     Q_INVOKABLE void unsetTerrainUserAcl(int i);
 
+    //terrainuserFromAclHistoryList methods
+    Q_INVOKABLE void prepareTerrainUserFromAclHistoryList(int i);
+    Q_INVOKABLE int getTerrainUserFromAclHistoryNum();
+    Q_INVOKABLE QString getTerrainUserFromAclHistoryNameAt(int i);
+    Q_INVOKABLE QString getTerrainUserFromAclHistorySurnameAt(int i);
+
+
     //messages methods
     Q_INVOKABLE void prepareMessageList(int i);
     Q_INVOKABLE int getMessagesNum();
     Q_INVOKABLE QString getMessageLineAt(int i);
+
+    //messagesHistory methods
+    Q_INVOKABLE void prepareMessageHistoryList(int i, int j);
+    Q_INVOKABLE int getMessagesHistoryNum();
+    Q_INVOKABLE QString getMessageHistoryLineAt(int i);
 
 
 
@@ -98,13 +116,13 @@ public:
 
   //  Q_INVOKABLE QList<QGeoCoordinate *> getLineGeometry(QString textGeometry);
 
-    Q_INVOKABLE int getLineCoordinatesNum();
-    Q_INVOKABLE double getLineCoordinateLatAt(int i);
-    Q_INVOKABLE double getLineCoordinateLonAt(int i);
+    Q_INVOKABLE int getLineCoordinatesNum(QString name);
+    Q_INVOKABLE double getLineCoordinateLatAt(QString name,int i);
+    Q_INVOKABLE double getLineCoordinateLonAt(QString name,int i);
 
-    Q_INVOKABLE int getPolygonCoordinatesNum();
-    Q_INVOKABLE double getPolygonCoordinateLatAt(int i);
-    Q_INVOKABLE double getPolygonCoordinateLonAt(int i);
+    Q_INVOKABLE int getPolygonCoordinatesNum(QString name);
+    Q_INVOKABLE double getPolygonCoordinateLatAt(QString name,int i);
+    Q_INVOKABLE double getPolygonCoordinateLonAt(QString name,int i);
 
     Q_INVOKABLE QVariant findObjectUnderCursor(double lat, double lon);
     Q_INVOKABLE void prepareRegistration();
@@ -121,6 +139,10 @@ public:
     Q_INVOKABLE QString getCurrentDateTime();
     Q_INVOKABLE void setSentMessage(QString message, int i);
 
+    Q_INVOKABLE void getAllMapObjects();
+    Q_INVOKABLE void getMapObjectsForAcl(int i);
+
+    Q_INVOKABLE void clearMapObjects();
 
 private:
     QObject *object;
@@ -130,12 +152,13 @@ private:
 
     DbConnection *dbConnection;
     QList<Acl> aclList;
+    QList<Acl> aclHistoryList;
     QList<TerrainUser> terrainUserList;
     QList<TerrainUser> terrainUserFromAclList;
+    QList<TerrainUser> terrainUserFromAclHistoryList;
     QVector<QPointF> lineVector;
     QVector<QPointF> polygonVector;
-    QList<QLandmark> *dbLineLandmarks;
-    QList<QLandmark> *dbPolygonLandmarks;
+
     QMap<QString, MapObject>* mapObjectMap;
     QStringList *conversationList;
     QString captcha;
@@ -143,6 +166,9 @@ private:
     QString server;
     bool noDbMode;
     QStringList messageList;
+    QStringList messageHistoryList;
+
+    QString aclHistoryId;
 
     void deselectCurrentObject();
     void fixMapBug();
@@ -163,6 +189,7 @@ signals:
     void sendNote(Note note, QList<TerrainUser> userList);
     void sendNegativeObject(QString id, QList<TerrainUser> userList);
     void aclListReady();
+    void aclHistoryListReady();
     void terrainUserListReady();
     void terrainUserFromAclListReady();
     void subscribeToUser(QString userJid);
@@ -181,8 +208,14 @@ signals:
     void sendMessage(QString message, QString jid);
     void newMessageFromUserAt(int i, QString line);
     void messagesReady();
+    void messagesHistoryReady();
     void refreshTerrainuserList();
-    
+    void terrainUserFromAclHistoryListReady();
+
+    void addDBLine(QLandmark line);
+    void addDBPolygon(QLandmark polygon);
+
+    void allowMoving();
 public slots:
     void getAllPoints(QList<QLandmark> *dbLandmarks);
     void getAllLines(QList<QLandmark> *dbLandmarks);
@@ -192,8 +225,8 @@ public slots:
     void updateUserPosition(QString jid, QGeoCoordinate coordinate);
     void setUserOffline(QString jid);
 
-    void addLineFromDB();
-    void addPolygonFromDB();
+    void addLineFromDB(QLandmark line);
+    void addPolygonFromDB(QLandmark polygon);
 
     void getCaptchaRegistrationUrl(QString captcha);
     void getError(QString error);
@@ -205,6 +238,8 @@ public slots:
     void getUserAclUpdated();
     void getReceivedMessage(QString message, QString jid);
 
+    void continueGettingObjects();
+    void continueGettingObjectsForAcl();
 
 };
 

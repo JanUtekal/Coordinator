@@ -29,6 +29,7 @@ Rectangle {
     property int textSize:15
 
     property bool selectingPermited:false
+    property bool movingPermitted:false
 
 
     // property bool deleteButtonClicked: false
@@ -132,7 +133,7 @@ Rectangle {
                                     note=name;
                                   }
 
-                                cont.createMapObjectReference(point,point.name, 0);
+                                  cont.createMapObjectReference(point,point.name, 0, "");
 
                             } else {
                                 if(type==10){
@@ -287,17 +288,23 @@ Rectangle {
 
 
                             if(type==10){
-                                var num=cont.getLineCoordinatesNum();
+
+                                cont.createMapObjectReference(line,line.name,1, landmark.description);//to be able to select the object we need to make a reference on it
+                                var num=cont.getLineCoordinatesNum(line.name);
+
+
+                                console.log("LINECOORDNUM", num)
+
                                 for(var i=0; i<num;i++){
                                     var coord = Qt.createQmlObject('import Qt 4.7; import QtMobility.location 1.2; Coordinate{}', map, "coord"+i);
 
-                                    coord.latitude=cont.getLineCoordinateLatAt(i);
-                                    coord.longitude=cont.getLineCoordinateLonAt(i);
+                                    coord.latitude=cont.getLineCoordinateLatAt(line.name,i);
+
+                                    coord.longitude=cont.getLineCoordinateLonAt(line.name,i);
+                                    console.log("ulozil jsem",coord.latitude, coord.longitude)
                                     line.addCoordinate(coord);
                                     visible=true;
                                 }
-                                cont.createMapObjectReference(line,line.name,1);//to be able to select the object we need to make a reference on it
-
                             }
 
 
@@ -382,19 +389,19 @@ Rectangle {
                         if(type==20){
                             polygon.type=type;
 
-                            var num=cont.getPolygonCoordinatesNum();
+                            cont.createMapObjectReference(polygon,polygon.name,2, landmark.description);//to be able to select the object we need to make a reference on it
+
+                            var num=cont.getPolygonCoordinatesNum(polygon.name);
                             for(var i=0; i<num;i++){
                                 var coord = Qt.createQmlObject('import Qt 4.7; import QtMobility.location 1.2; Coordinate{}', map, "coord"+i);
 
-                                coord.latitude=cont.getPolygonCoordinateLatAt(i);
-                                coord.longitude=cont.getPolygonCoordinateLonAt(i);
+                                coord.latitude=cont.getPolygonCoordinateLatAt(polygon.name,i);
+                                coord.longitude=cont.getPolygonCoordinateLonAt(polygon.name,i);
                                 polygon.addCoordinate(coord);
                                 //helpLine.addCoordinate(coord)
                                 polygon.visible=true;
                                 // visible=true;
                             }
-                            cont.createMapObjectReference(polygon,polygon.name,2);//to be able to select the object we need to make a reference on it
-
                         }
 
 
@@ -516,26 +523,38 @@ Rectangle {
             anchors.fill : parent
 
             onPressed: {
-                __isPanning = true
-                __lastX = mouse.x
-                __lastY = mouse.y
+                if(!movingPermitted){
+
+                    __isPanning = true
+                    __lastX = mouse.x
+                    __lastY = mouse.y
+                }
             }
 
             onReleased: {
-                __isPanning = false
 
+                if(!movingPermitted){
+
+                    __isPanning = false
+                }
                 //            console.log(map.toCoordinate(Qt.point(mouse.x,mouse.y)).latitude, map.toCoordinate(Qt.point(mouse.x,mouse.y)).longitude);
 
             }
 
             onPositionChanged: {
-                if (__isPanning) {
-                    var dx = mouse.x - __lastX
-                    var dy = mouse.y - __lastY
-                    map.pan(-dx, -dy)
-                    __lastX = mouse.x
-                    __lastY = mouse.y
+
+                if(!movingPermitted){
+
+                    if (__isPanning) {
+                        var dx = mouse.x - __lastX
+                        var dy = mouse.y - __lastY
+                        map.pan(-dx, -dy)
+                        __lastX = mouse.x
+                        __lastY = mouse.y
+                    }
                 }
+
+
             }
 
             onClicked: {
@@ -683,6 +702,7 @@ Rectangle {
         x: 20
         y: 20
         spacing: 20
+        id:leftButtons
         Button{
             id: pointButton
             width: 120
@@ -809,20 +829,22 @@ Rectangle {
             }
 
         }
-  /*      Button{
-            id: testButton2
+        Button{
+            id: historyButton
             width: 120
             height: 50
 
             z: 2
-            label: "test"
+            label: "History"
 
             onButtonClick: {
-                cont.testButtonOperation2();
+                history.visible=true;
+                cont.prepareAclHistoryList();
+            //    cont.prepareTerrainUserList();
 
             }
 
-        }*/
+        }
 
     }
 
@@ -842,6 +864,65 @@ Rectangle {
         }
     }
 
+    AclListHistory{
+        id: aclListHistoryMap
+        width: 150
+        height: 350
+        //   color: userManagement.color
+
+        x: parent.width-170
+        y: parent.height-450
+        z: 1
+
+        visible:false
+
+
+
+    }
+
+
+
+    Button{
+        id: closeHistoryButton
+        width: 140
+        height: 50
+
+        x: 20
+        y: 20
+        z: 2
+        label: "Close history view"
+        visible:false
+
+        onButtonClick: {
+            //history.visible=false;
+            cont.getAllMapObjects();
+            terrainUserFromAclHistoryListMap.visible=false;
+            aclListHistoryMap.visible=false;
+            aclListMap.visible=true;
+            leftButtons.visible=true;
+            closeHistoryButton.visible=false;
+            pinchmap.selectingPermited=false;
+        }
+
+    }
+
+
+
+    TerrainUserFromAclHistoryList {
+        id: terrainUserFromAclHistoryListMap
+        width: 150
+        height: 350
+        //   color: userManagement.color
+
+        x: 20
+        y: parent.height-450
+        z: 1
+
+        visible:false
+
+
+
+    }
 
 
 
@@ -906,6 +987,15 @@ Rectangle {
 
     UserManagement{
         id: userManagement
+        anchors.centerIn: parent
+        z:2
+        visible: false
+
+
+    }
+
+    History{
+        id: history
         anchors.centerIn: parent
         z:2
         visible: false
@@ -990,6 +1080,10 @@ Rectangle {
             if(!messageScreen.visible){
                 messageButton.highlighted=true;
             }
+        }
+
+        onAllowMoving:{
+            pinchmap.movingPermitted=false;
         }
     }
 

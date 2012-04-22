@@ -19,6 +19,10 @@ bool Message::getReceived(){
     return this->received;
 }
 
+QString Message::getCentralUser(){
+    return this->centralUser;
+}
+
 void Message::setReceived(bool received){
     this->received=received;
 }
@@ -29,4 +33,8 @@ void Message::setText(QString text){
 
 void Message::setTime(QString time){
     this->time=time;
+}
+
+void Message::setCentralUser(QString centralUser){
+    this->centralUser=centralUser;
 }

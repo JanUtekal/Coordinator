@@ -3,7 +3,8 @@
 
 #include <QObject>
 #include <QVariant>
-
+#include <QVector>
+#include <QPointF>
 class MapObject
 {
 
@@ -20,11 +21,16 @@ public:
     QString getName();
     QString getAClId();
 
+    void setGeometry(QVector<QPointF> geometry);
+
+    QVector<QPointF> getGeometry();
+
 private:
     QVariant paintedObject;
     int type;
     QString name;
     QString aclId;
+    QVector<QPointF> geometry;
     
 signals:
     

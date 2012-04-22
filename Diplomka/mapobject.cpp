@@ -7,7 +7,8 @@
 
 #include "mapobject.h"
 #include <QDebug>
-
+#include <QVector>
+#include <QPointF>
 //this class represents object to be saved into landmarks and displayed on map
 MapObject::MapObject(){
 }
