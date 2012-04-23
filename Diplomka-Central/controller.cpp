@@ -27,6 +27,7 @@ Controller::Controller(QObject *parent) :
 
     noDbMode=false;
 
+    lastTrajectoryPos=QPair<int,int>(-1,-1);
 
     //
 }
@@ -238,7 +239,7 @@ void Controller::polygonReady(int selectedAcl){
         }
 
 
-        //lineVector.clear();
+        polygonVector.clear();
 
     }
 
@@ -1117,9 +1118,9 @@ QString Controller::getMessageLineAt(int i){
     return messageList.at(i);
 }
 
-void Controller::prepareAclHistoryList(){
-    QDateTime from(QDate(2010,04,21), QTime(20,01,01));
-    QDateTime to(QDate(2014,04,21), QTime(20,01,01));
+void Controller::prepareAclHistoryList(int yearf, int monthf, int dayf, int yeart, int montht, int dayt){
+    QDateTime from(QDate(yearf,monthf,dayf), QTime(00,00,01));
+    QDateTime to(QDate(yeart,montht,dayt), QTime(23,59,59));
     this->aclHistoryList=dbConnection->getAclsBetweenDates(from,to);
     qDebug()<<"acls hist got"<<aclHistoryList.length();
 
@@ -1205,6 +1206,15 @@ void Controller::getMapObjectsForAcl(int i){
 
 }
 
+void Controller::getMapObjectsForAclNormal(int i){
+    landMan->removeLandmarks(landMan->landmarks());
+    mapObjectMap->clear();
+
+    aclHistoryId=((Acl)aclList.at(i)).getId();
+    QTimer::singleShot(100,this,SLOT(continueGettingObjectsForAcl()));
+
+}
+
 void Controller::continueGettingObjectsForAcl(){
         dbConnection->getObjectsFromDBForAcl(aclHistoryId);
 }
@@ -1226,12 +1236,57 @@ void Controller::clearMapObjects(){
 }
 
 void Controller::prepareUserTrajectory(int i, int j){
+    lastTrajectoryPos=QPair<int,int>(i,j);
+
+    QTimer::singleShot(100,this,SLOT(prepareUserTrajectorySlot()));
+}
+
+
+void Controller::prepareUserTrajectorySlot(){
+
+    int i=lastTrajectoryPos.first;
+    int j=lastTrajectoryPos.second;
+
     QString id=((TerrainUser)terrainUserFromAclHistoryList.at(i)).getId();
     QString aclId=((Acl)aclHistoryList.at(j)).getId();
 
     QLandmark lm=dbConnection->getTrajectoryForUserInAcl(id,aclId);
 
     if(lm.description()!=""){
+        lastTrajectoryList.append(lm);
         addLineFromDB(lm);
+
     }
+}
+
+
+
+void Controller::invalidateAcl(int i){
+    QString aclId=((Acl)aclList.at(i)).getId();
+    dbConnection->invalidateAcl(aclId);
+}
+
+void Controller::prepareTrajectories(int j){
+    for(int i=0;i<terrainUserFromAclHistoryList.length();i++){
+        lastTrajectoryPos=QPair<int,int>(i,j);
+
+        prepareUserTrajectorySlot();
+
+    }
+}
+
+void Controller::removeLastTrajectory(){
+    foreach(QLandmark l,lastTrajectoryList){
+        QLandmarkNameFilter filter;
+        filter.setName(l.name());
+        QList<QLandmark> lms=landMan->landmarks(filter);
+        if(lms.length()>0){
+
+         //   mapObjectMap->remove(l.name());
+                    qDebug()<<l.name();
+            qDebug()<< landMan->removeLandmark(lms.first());
+        }
+    }
+
+    lastTrajectoryList.clear();
 }

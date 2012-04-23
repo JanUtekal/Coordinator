@@ -32,6 +32,8 @@ Rectangle {
     property bool selectingPermited:false
     property bool movingPermitted:false
 
+    property bool firstTimeHistory: true;
+
 
     // property bool deleteButtonClicked: false
 
@@ -302,7 +304,7 @@ Rectangle {
                                     coord.latitude=cont.getLineCoordinateLatAt(line.name,i);
 
                                     coord.longitude=cont.getLineCoordinateLonAt(line.name,i);
-                                    console.log("ulozil jsem",coord.latitude, coord.longitude)
+                                    //console.log("ulozil jsem",coord.latitude, coord.longitude)
                                     line.addCoordinate(coord);
                                     visible=true;
                                 }
@@ -840,7 +842,11 @@ Rectangle {
 
             onButtonClick: {
                 history.visible=true;
-                cont.prepareAclHistoryList();
+
+                if(firstTimeHistory){
+                    cont.prepareAclHistoryList(2010,01,01,2099,01,01);
+                    firstTimeHistory=false;
+                }
             //    cont.prepareTerrainUserList();
 
             }
@@ -872,8 +878,9 @@ Rectangle {
         //   color: userManagement.color
 
         x: parent.width-170
-        y: parent.height-450
+        y: parent.height-480
         z: 1
+        onMap: true
 
         visible:false
 
@@ -918,7 +925,7 @@ Rectangle {
         x: 20
         y: parent.height-450
         z: 1
-
+        onMap: true
         visible:false
 
 

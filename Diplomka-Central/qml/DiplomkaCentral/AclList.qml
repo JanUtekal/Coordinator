@@ -55,11 +55,55 @@ Rectangle {
             border.width: 1
             color: num==userManagement.selectedAcl ? "grey" : "transparent"
 
+            Rectangle{
+                id: check
+                height: parent.height
+                width:height
+                color:"transparent"
+
+                border.width:1
+                border.color: "black"
+                z:2
+
+                Text{
+
+                    text: "o"
+
+
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.horizontalCenter: parent.horizontalCenter
+
+                    font.family: font1
+                    font.pixelSize: 15
+                    color:"green"
+                }
+
+
+
+                MouseArea{
+                    id: checkMouseArea
+                    anchors.fill: parent
+                    onClicked: {
+
+                        cont.invalidateAcl(num);
+                        userManagement.selectedAcl=-1;
+                        cont.prepareAclList();
+
+
+
+                    }
+
+                    hoverEnabled: true
+
+                }
+
+            }
+
 
             Text{
                 id: label
                 text: cont.getAclNameAt(num)
-                x:20
+                x:check.width+20
                 width: parent.width
                 anchors.verticalCenter: parent.verticalCenter
 
@@ -69,7 +113,7 @@ Rectangle {
                 Component.onCompleted: {
                     var changed=false;
 
-                    while(label.paintedWidth>row.width-60){
+                    while(label.paintedWidth>row.width-100){
                         label.text=label.text.substr(0,label.text.length-1);
                         changed=true;
                     }

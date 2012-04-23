@@ -30,6 +30,105 @@ Rectangle {
     }
 
 
+    Rectangle{
+        id: all
+        //z:-1017
+        y:-30
+        width: view.width
+        height:  30
+        border.color: "black"
+        border.width: 2
+        color: Qt.rgba(0.8, 0.8, 0.8, 0.8)//num==userManagement.selectedMapAcl ? "grey" : "transparent"
+
+
+        Text{
+            id: labelAll
+            text: "Všechny akce"
+
+            x:20
+
+            anchors.verticalCenter: parent.verticalCenter
+
+            font.family: font1
+            font.pixelSize: 14
+            font.bold: true
+            Component.onCompleted: {
+
+            }
+        }
+
+        Rectangle{
+            id: displayAll
+            height: parent.height
+            width:height
+            color:"transparent"
+            x:parent.width-width-1
+            border.width:1
+            border.color: "black"
+            z:2
+
+            Text{
+
+                text: "o"
+
+
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.horizontalCenter: parent.horizontalCenter
+
+                font.family: font1
+                font.pixelSize: 15
+
+                color:"blue"
+
+
+
+            }
+
+
+
+            MouseArea{
+                id: displayMouseAreaAll
+                anchors.fill: parent
+                onClicked: {
+
+                    cont.getAllMapObjects();
+
+
+
+                }
+
+                hoverEnabled: true
+
+            }
+
+        }
+
+
+        MouseArea{
+            id: aclMouseAreaAll
+            anchors.fill: parent
+            onClicked: {
+
+            }
+
+            hoverEnabled: true
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+    }
+
+
     ListView {
         id: view
 
@@ -71,7 +170,7 @@ Rectangle {
                 Component.onCompleted: {
                     var changed=false;
 
-                    while(label.paintedWidth>row.width-30){
+                    while(label.paintedWidth>row.width-70){
                         label.text=label.text.substr(0,label.text.length-1);
                         changed=true;
                     }
@@ -80,6 +179,54 @@ Rectangle {
                     }
                 }
             }
+
+            Rectangle{
+                id: display
+                height: parent.height
+                width:height
+                color:"transparent"
+                x:parent.width-width
+                border.width:1
+                border.color: "black"
+                z:2
+
+                Text{
+
+                    text: "o"
+
+
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.horizontalCenter: parent.horizontalCenter
+
+                    font.family: font1
+                    font.pixelSize: 15
+                    color:"blue"
+
+
+
+                }
+
+
+
+                MouseArea{
+                    id: displayMouseArea
+                    anchors.fill: parent
+                    onClicked: {
+                        userManagement.selectedMapAcl=num;
+                        cont.getMapObjectsForAclNormal(userManagement.selectedMapAcl);
+
+                        pinchmap.movingPermitted=true;
+
+
+
+                    }
+
+                    hoverEnabled: true
+
+                }
+
+            }
+
 
             MouseArea{
                 id: aclMouseArea
@@ -100,7 +247,7 @@ Rectangle {
 
             Component.onCompleted: {
                 //console.log(num,y)
-              /*  if(num==-1 || num>=cont.getAclNum()){
+                /*  if(num==-1 || num>=cont.getAclNum()){
                     height=1;
                     visible=false;
 

@@ -6,7 +6,7 @@ import QtQuick 1.1
 Rectangle {
 
     // color: "white"
-
+    property bool onMap:false
 
     function create(n){
         mod.clear();
@@ -20,10 +20,10 @@ Rectangle {
 
         }
     }
-    color: Qt.rgba(1, 1, 1, 0.8)
+    color: onMap ? Qt.rgba(1, 1, 1, 0.8) : "white"
 
     border.color: "black"
-    border.width: 2
+    border.width: onMap ? 2 : 1
     ListModel {
         id:mod
 
@@ -35,7 +35,7 @@ Rectangle {
 
         width: parent.width
         height: parent.height
-        y:-1
+        y:onMap ? -1 : 0
         //    anchors.fill:parent
         //    x:5
         // highlightRangeMode:ListView.StrictlyEnforceRange
@@ -50,7 +50,7 @@ Rectangle {
             id: row
             //z:-1017
 
-            width: view.width-1
+            width: view.width
             height:  30
             border.color: "black"
             border.width: 1
@@ -89,10 +89,11 @@ Rectangle {
                     cont.prepareTerrainUserFromAclHistoryList(num);
                     userManagement.selectedHistoryAcl=num;
                     userManagement.selectedAclHistoryUser=-1;
+                    if(onMap){
+                        cont.getMapObjectsForAcl(userManagement.selectedHistoryAcl);
 
-                    cont.getMapObjectsForAcl(userManagement.selectedHistoryAcl);
-
-                    pinchmap.movingPermitted=true;
+                        pinchmap.movingPermitted=true;
+                    }
                 }
 
                 hoverEnabled: true

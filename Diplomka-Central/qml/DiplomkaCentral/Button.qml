@@ -35,6 +35,7 @@ Rectangle{
    // border.width:1
     gradient: highlighted ? yellow : buttonMouseArea.pressed ? grey : lightgrey
     radius:8
+    smooth:true
 
     function alwaysPressed(pressed){
         if(pressed){

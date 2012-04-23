@@ -76,7 +76,7 @@ Rectangle {
         x:50
         y:20
 
-        spacing: 40
+        spacing: 20
 
         Row{
             spacing: 20
@@ -162,6 +162,7 @@ Rectangle {
             width: parent.width/5
             height: 4*parent.height/7
 
+
             Text{
 
                 text:"Users from event"
@@ -182,7 +183,7 @@ Rectangle {
 
         Column{
             spacing: 10
-            width: parent.width/4
+            width: 3*parent.width/10
             height: 5*parent.height/7
 
             Text{

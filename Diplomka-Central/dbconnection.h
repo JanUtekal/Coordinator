@@ -70,6 +70,8 @@ public:
     void getObjectsFromDBForAcl(QString id);
 
     QLandmark getTrajectoryForUserInAcl(QString userId, QString aclId);
+
+    void invalidateAcl(QString id);
 private:
     QSqlDatabase db;
 

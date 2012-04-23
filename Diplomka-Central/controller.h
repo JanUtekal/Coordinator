@@ -71,7 +71,7 @@ public:
     Q_INVOKABLE void removeAcl(int i);
 
     //aclHistoryList methods
-    Q_INVOKABLE void prepareAclHistoryList();
+    Q_INVOKABLE void prepareAclHistoryList(int yearf, int monthf, int dayf, int yeart, int montht, int dayt);
     Q_INVOKABLE int getAclHistoryNum();
     Q_INVOKABLE QString getAclHistoryNameAt(int i);
 
@@ -141,10 +141,16 @@ public:
 
     Q_INVOKABLE void getAllMapObjects();
     Q_INVOKABLE void getMapObjectsForAcl(int i);
+    Q_INVOKABLE void getMapObjectsForAclNormal(int i);
 
     Q_INVOKABLE void clearMapObjects();
 
     Q_INVOKABLE void prepareUserTrajectory(int i, int j);
+
+    Q_INVOKABLE void invalidateAcl(int i);
+
+    Q_INVOKABLE void prepareTrajectories(int j);
+    Q_INVOKABLE void removeLastTrajectory();
 
 private:
     QObject *object;
@@ -183,6 +189,8 @@ private:
 
     JabberRegistrationTool *registrationTool;
     QString currentUser;
+    QList<QLandmark> lastTrajectoryList;
+    QPair<int,int> lastTrajectoryPos;
 
     XmppClient cl;
 signals:
@@ -242,6 +250,8 @@ public slots:
 
     void continueGettingObjects();
     void continueGettingObjectsForAcl();
+
+    void prepareUserTrajectorySlot();
 
 };
 

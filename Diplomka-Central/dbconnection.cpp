@@ -16,6 +16,7 @@ void DbConnection::setDb(QSqlDatabase db){
 
     getObjectsFromDB();
 
+
 }
 
 
@@ -1478,4 +1479,20 @@ qDebug()<<coordinates;
 
 
    return lm;
+}
+
+void DbConnection::invalidateAcl(QString id){
+
+
+    QSqlQuery query(db);
+
+    QString q=QString("UPDATE acl SET validity=false WHERE id=%1").arg(id);
+
+    query.prepare(q);
+
+
+
+    qDebug()<< query.exec()<<query.executedQuery();
+
+
 }

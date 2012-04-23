@@ -6,7 +6,7 @@ import QtQuick 1.1
 Rectangle {
 
     // color: "white"
-
+    property bool onMap:false
 
     function create(n){
         mod.clear();
@@ -27,6 +27,66 @@ Rectangle {
         id:mod
 
     }
+
+    Rectangle{
+        property bool selected: false
+
+        id: all
+        //z:-1017
+        y:-30
+        width: view.width
+        height:  30
+        border.color: "black"
+        border.width: 2
+        color: selected ? Qt.rgba(0.5 , 0.5, 0.5, 0.8):Qt.rgba(0.8, 0.8, 0.8, 0.8)
+        visible: onMap
+
+        Text{
+            id: labelAll
+            text: "Všechny jednotky"
+
+            x:15
+
+            anchors.verticalCenter: parent.verticalCenter
+
+            font.family: font1
+            font.pixelSize: 14
+            font.bold: true
+            Component.onCompleted: {
+
+            }
+        }
+
+        MouseArea{
+            id: mouseAreaAll
+            anchors.fill: parent
+            onClicked: {
+
+                userManagement.selectedAclHistoryUser=-1;
+                if(userManagement.selectedHistoryAcl!=-1){
+                    all.selected=true;
+             //       cont.removeLastTrajectory();
+                    cont.prepareTrajectories(userManagement.selectedHistoryAcl);
+                }
+            }
+
+            hoverEnabled: true
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+    }
+
 
 
     ListView {
@@ -70,10 +130,15 @@ Rectangle {
                 id: letterMouseArea
                 anchors.fill: parent
                 onClicked: {
-                    console.log("click")
+                   // console.log("click")
+                    all.selected=false;
                     userManagement.selectedAclHistoryUser=num;
                     cont.prepareMessageHistoryList(num, userManagement.selectedHistoryAcl);
-                    cont.prepareUserTrajectory(num, userManagement.selectedHistoryAcl);
+
+                    if(onMap){
+                        cont.removeLastTrajectory();
+                        cont.prepareUserTrajectory(num, userManagement.selectedHistoryAcl);
+                    }
 
                 }
 
