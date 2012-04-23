@@ -144,6 +144,8 @@ public:
 
     Q_INVOKABLE void clearMapObjects();
 
+    Q_INVOKABLE void prepareUserTrajectory(int i, int j);
+
 private:
     QObject *object;
     QVariant selectedMapObject;

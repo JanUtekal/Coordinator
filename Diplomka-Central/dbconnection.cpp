@@ -23,7 +23,7 @@ void DbConnection::setDb(QSqlDatabase db){
 QString DbConnection::generateNowAndUntil(int validity){
     QDateTime dt=QDateTime::currentDateTime();
     QString outputFormat="yyyy-MM-dd hh:mm:ss";
-    return "'"+dt.toString(outputFormat)+"'"+", "+"'"+dt.addSecs(validity*5).toString(outputFormat)+"'";
+    return "'"+dt.toString(outputFormat)+"'"+", "+"'"+dt.addSecs(validity*3600).toString(outputFormat)+"'";
 }
 
 int DbConnection::insertPoint(double lat, double lon, QString acl){
@@ -981,7 +981,7 @@ QString DbConnection::getNow(){
 void DbConnection::insertUserPosition(QString jid, double lat, double lon){
     QSqlQuery query(db);
 
-    QString q=QString("INSERT INTO userposition (terrainuser, useracl, coordinates, time) VALUES ((SELECT id FROM terrainuser WHERE jid='%1'), (SELECT acl FROM terrainuser WHERE jid='%1'), ST_GeographyFromText('SRID=4326;POINT(%2 %3)'), '%4')").arg(jid).arg(lon).arg(lat).arg(getNow());
+    QString q=QString("INSERT INTO userposition (terrainuser, useracl, coordinates, time) VALUES ((SELECT id FROM terrainuser WHERE jid='%1'), (SELECT aclid FROM terrainuseracl WHERE terrainuserid=(SELECT id FROM terrainuser WHERE jid='%1') AND validity=true), ST_GeographyFromText('SRID=4326;POINT(%2 %3)'), '%4')").arg(jid).arg(lon).arg(lat).arg(getNow());
 
     query.prepare(q);
 
@@ -1431,4 +1431,51 @@ void DbConnection::getObjectsFromDBForAcl(QString id){
 
 
 
+}
+
+QLandmark DbConnection::getTrajectoryForUserInAcl(QString userId, QString aclId){
+
+    QLandmark lm;
+
+    QSqlQuery query(db);
+
+    //point query
+    QString q=QString("SELECT ST_AsText(coordinates::geometry) FROM userposition WHERE terrainuser=%1 AND useracl=%2").arg(userId).arg(aclId);
+
+    query.prepare(q);
+
+
+    qDebug()<< query.exec()<<query.executedQuery();
+
+    QString coordinates;
+
+    while (query.next()) {
+
+        QString location= query.value(0).toString();
+qDebug()<<location;
+
+        if(location.contains("POINT")){
+
+            QString point = location.remove(0,6);
+            point.chop(1);
+            coordinates+=point;
+            coordinates+=",";
+
+        }
+
+    }
+
+    coordinates.chop(1);
+
+    QString name="user";
+    name+=userId;
+    lm.setName(name);
+    lm.setDescription(coordinates);
+    lm.setRadius(15);
+    lm.setPhoneNumber(name);
+
+qDebug()<<coordinates;
+
+
+   return lm;
 }

@@ -22,6 +22,7 @@ Rectangle {
 
     property color pointColor: Qt.rgba(1, 1, 1, 0.8)
     property color lineColor: "red"
+    property color trajectoryColor: "orange"
     property color polygonBorderColor:  "blue"
     property color polygonColor:  Qt.rgba(0, 1, 1, 0.1)
     property color highlightedButtonColor:  Qt.rgba(1, 1, 0, 0.8)
@@ -136,7 +137,7 @@ Rectangle {
                                   cont.createMapObjectReference(point,point.name, 0, "");
 
                             } else {
-                                if(type==10){
+                                if(type==10 || type==15){
 
                                     visible=false;
                                     border.width=0
@@ -250,7 +251,7 @@ Rectangle {
                         property int type: -1//landmark.radius
                         property string note:landmark.phoneNumber
                         id: line
-                        border {color: lineColor; width: 4}
+                        border {color: landmark.radius==10 ? lineColor : trajectoryColor; width: 4}
                         visible:false
 
 
@@ -287,13 +288,13 @@ Rectangle {
                             type= landmark.radius;
 
 
-                            if(type==10){
+                            if(type>=10 && type<20){
 
                                 cont.createMapObjectReference(line,line.name,1, landmark.description);//to be able to select the object we need to make a reference on it
                                 var num=cont.getLineCoordinatesNum(line.name);
 
 
-                                console.log("LINECOORDNUM", num)
+
 
                                 for(var i=0; i<num;i++){
                                     var coord = Qt.createQmlObject('import Qt 4.7; import QtMobility.location 1.2; Coordinate{}', map, "coord"+i);

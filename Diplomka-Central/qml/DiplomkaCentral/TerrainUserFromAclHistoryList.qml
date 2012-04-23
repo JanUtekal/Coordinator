@@ -73,6 +73,7 @@ Rectangle {
                     console.log("click")
                     userManagement.selectedAclHistoryUser=num;
                     cont.prepareMessageHistoryList(num, userManagement.selectedHistoryAcl);
+                    cont.prepareUserTrajectory(num, userManagement.selectedHistoryAcl);
 
                 }
 

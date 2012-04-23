@@ -1224,3 +1224,14 @@ void Controller::clearMapObjects(){
     landMan->removeLandmarks(landMan->landmarks());
     mapObjectMap->clear();
 }
+
+void Controller::prepareUserTrajectory(int i, int j){
+    QString id=((TerrainUser)terrainUserFromAclHistoryList.at(i)).getId();
+    QString aclId=((Acl)aclHistoryList.at(j)).getId();
+
+    QLandmark lm=dbConnection->getTrajectoryForUserInAcl(id,aclId);
+
+    if(lm.description()!=""){
+        addLineFromDB(lm);
+    }
+}
