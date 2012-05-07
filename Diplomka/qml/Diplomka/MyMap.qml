@@ -17,9 +17,10 @@ Rectangle {
     property color lineColor: "red"
     property color polygonBorderColor:  "blue"
     property color polygonColor:  Qt.rgba(0, 1, 1, 0.1)
+    property bool watchLocation: true
 
 
-    property int textSize:8
+    property int textSize:18
 
     // property variant array:[]
 
@@ -38,26 +39,102 @@ Rectangle {
         plugin: Plugin { name: "nokia" }
         mapType: Map.StreetMap
 
+        function setType(type){
+            mapType=type;
+
+        }
+
         center: Coordinate {
             latitude: pinchmap.defaultLatitude
             longitude: pinchmap.defaultLongitude
         }
 
-        MapCircle {
-            property double myLat: 0.0
-            property double myLon: 0.0
-            id: myPos
-            center: Coordinate{
-                latitude: myPos.myLat
-                longitude: myPos.myLon
+
+
+        MapGroup{
+            id: myPosition
+            MapImage{
+
+                property double myLat: 0.0
+                property double myLon: 0.0
+
+                 id: myPos
+                coordinate: Coordinate{
+                    latitude: myPos.myLat
+                    longitude: myPos.myLon
+                }
+
+                source: "images/pointerblue.png"
+                offset.x: -15
+                offset.y: -80
+                z:1
+
+
+
+
+
             }
 
-            radius: 300
-            color: "yellow"
-            visible:true
+
+
+
+            MapText{
+                id: background
+                coordinate: Coordinate{
+                    latitude: myPos.myLat
+                    longitude: myPos.myLon
+                }
+
+                //   text:"toto je komentar"
+                offset.y: 20
+                text:""
+                color: pointColor
+                font.pointSize: textSize
+                font.family: "Courier"
+                font.bold: true
+                z: 0
+
+                Component.onCompleted: {
+                    background.makeBackGround(2);//myname.text.length);
+                }
+                function makeBackGround(length) {
+
+
+                        text="";
+                        for(var i=0;i<length;i++){//
+
+                            text+="█";
+                        }
+
+
+
+
+                }
+
+
+
+            }
+
+
+            MapText{
+                id: myname
+                coordinate: Coordinate{
+                    latitude: myPos.myLat
+                    longitude: myPos.myLon
+                }
+                offset.y: 20
+                text:"Já"
+
+                font.pointSize: textSize
+                z:3
+                  font.family: "Courier"
+                  font.bold: true
+
+
+            }
+
 
         }
-
         /*   MapObjectView {
 
           id: allLandmarks
@@ -115,7 +192,7 @@ Rectangle {
 
                         source: point.type==0 ? "images/pointergreen.png" : point.type==1 ? "images/pointerblue.png" : "images/pointergrey.png"
                         offset.x: -15
-                        offset.y: -96
+                        offset.y: -80
                         z:1
 
                         Component.onCompleted: {
@@ -186,7 +263,10 @@ Rectangle {
                         coordinate: landmark.coordinate
                         text:""
                         font.pointSize: textSize
+                        offset.y: 20
                         z: 3
+                        font.family: "Courier"
+                        font.bold: true
                         /*                Component.onCompleted: {
                           if(point.type<10){
                               text=point.note.split("////")[0];
@@ -210,12 +290,14 @@ Rectangle {
                         color: pointColor
                         font.pointSize: textSize
                         z: 2
-
+                        offset.y: 20
+                        font.family: "Courier"
+                        font.bold: true
                         function makeBackGround(length) {
 
                             if(point.type<10){
                                 text="";
-                                for(var i=0;i<2*length/3;i++){//
+                                for(var i=0;i<length;i++){//
 
                                     text+="█";
                                 }
@@ -343,7 +425,9 @@ Rectangle {
                         text:""
                         font.pointSize: textSize
                         z: 3
-
+                        offset.y: 20
+                        font.family: "Courier"
+                        font.bold: true
 
                     }
 
@@ -355,11 +439,14 @@ Rectangle {
                         color: pointColor
                         font.pointSize: textSize
                         z: 2
+                        offset.y: 20
+                        font.family: "Courier"
+                        font.bold: true
                         function makeBackGround(length) {
 
                             if(line.type>=10 && line.type<20){
                                 text="";
-                                for(var i=0;i<2*length/3;i++){//
+                                for(var i=0;i<length;i++){//
 
                                     text+="█";
                                 }
@@ -457,8 +544,9 @@ Rectangle {
                         text:""
                         font.pointSize: textSize
                         z: 3
-
-
+                        offset.y: 20
+                        font.family: "Courier"
+                        font.bold: true
                     }
 
                     MapText{
@@ -469,12 +557,14 @@ Rectangle {
                         color: pointColor
                         font.pointSize: textSize
                         z: 2
-
+                        font.family: "Courier"
+                        font.bold: true
+                        offset.y: 20
                         function makeBackGround(length) {
 
                             if(polygon.type>=20){
                                 text="";
-                                for(var i=0;i<2*length/3;i++){//
+                                for(var i=0;i<length;i++){//
 
                                     text+="█";
                                 }
@@ -555,7 +645,7 @@ Rectangle {
         }
 
         onClicked: {
-            cont.getObjectUnderCursor(map.toCoordinate(Qt.point(mouse.x,mouse.y)).latitude, map.toCoordinate(Qt.point(mouse.x,mouse.y)).longitude)
+            cont.getObjectUnderCursor(map.toCoordinate(Qt.point(mouse.x,mouse.y)).latitude, map.toCoordinate(Qt.point(mouse.x,mouse.y)).longitude, map.zoomLevel)
         }
     }
     /*
@@ -698,13 +788,14 @@ Rectangle {
         visible:false
     }
 
-    Button{
+    ButtonPicture{
         id:settingsButton
-        width: parent.width/9
-        height: parent.height/9
+        width: parent.width/8
+        height: parent.height/8
         x: 20
         y: 20
-        label: "Settings"
+      //  label: "Nastavení"
+        imageSource: "images/settings.png"
         onButtonClick: {
             settings.visible=true;
             settingsButton.visible=false;
@@ -712,17 +803,19 @@ Rectangle {
         }
     }
 
-    Button{
+    ButtonPicture{
         id:messageButton
-        width: parent.width/9
-        height: parent.height/9
+        width: parent.width/8
+        height: parent.height/8
         x: parent.width-width-20
         y: 20
-        label: "Messages"
+       // label: "Zprávy"
+        imageSource: "images/message.png"
         onButtonClick: {
             messageScreen.visible=true;
             settingsButton.visible=false;
             messageButton.visible=false;
+            messageButton.highlighted=false;
         }
     }
 
@@ -755,6 +848,24 @@ Rectangle {
 
                 userPoint.type=2;
             }
+        }
+
+        onRefreshMyPosition:{
+            myPos.myLat=cont.getLatForMe();
+            myPos.myLon=cont.getLonForMe();
+          //  myPos.visible=false;
+          //  myPos.visible=true;
+      //      map.removeMapObject(myPos);
+       //     map.addMapObject(myPos);
+
+
+            myPosition.visible=false
+            myPosition.visible=true
+            if(watchLocation){
+                map.center.latitude=myPos.myLat;
+                map.center.longitude=myPos.myLon
+            }
+
         }
     }
 

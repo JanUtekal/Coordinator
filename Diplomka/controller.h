@@ -24,6 +24,7 @@ public:
     explicit Controller(QObject *parent = 0);
     void setCentralUser(QString centralUser); // get jid of current central user
     void setClient(XmppClient* client); // sets reference to xmppclient object
+    void setCurrentUser(QString currentUser);
     XmppClient* client;
     LocationWatcher watcher; // object getting users gps coordinates
     QVariantList vList;
@@ -50,7 +51,7 @@ public:
     Q_INVOKABLE void createMapObjectReference(QVariant paintedObject, QString name, int type, QString coordinates);
     Q_INVOKABLE QVariant getMapObjectReference(QString name);
 
-    Q_INVOKABLE void getObjectUnderCursor(double lat, double lon);
+    Q_INVOKABLE void getObjectUnderCursor(double lat, double lon,int zoom);
     Q_INVOKABLE void sendMessageToUser(QString message);
     Q_INVOKABLE QString getCurrentDateTime();
 
@@ -61,11 +62,12 @@ private:
     QString centralUser; // jid of current central user
     QLandmarkManager *landMan; // instance of landmark manager which is handling map objects represented as landmarks
     QLandmark pom;
-
+    QString currentUser;
     QMap<QString, MapObject>* mapObjectMap; // map of currently painted objects on map. Stores some additional information and provides a way to get to the actual points, lines and polys
 
     void fixMapBug(); //
     QPointF getSouthestPoint(QVector<QPointF> vector); //calculates the southest point of some map object for setting the note
+
     void prepareMapData();
 signals:
     void refresh(); //

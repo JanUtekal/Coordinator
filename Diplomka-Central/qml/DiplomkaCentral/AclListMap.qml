@@ -67,20 +67,14 @@ Rectangle {
             border.color: "black"
             z:2
 
-            Text{
-
-                text: "o"
-
-
+            Image{
+                id:img
+                height: 3*parent.height/7
+                fillMode: Image.PreserveAspectFit
+                source:"images/eye.png"
+                smooth: true
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.horizontalCenter: parent.horizontalCenter
-
-                font.family: font1
-                font.pixelSize: 15
-
-                color:"blue"
-
-
 
             }
 
@@ -190,19 +184,14 @@ Rectangle {
                 border.color: "black"
                 z:2
 
-                Text{
-
-                    text: "o"
-
-
+                Image{
+                    id:img
+                    height: 3*parent.height/7
+                    fillMode: Image.PreserveAspectFit
+                    source:"images/eye.png"
+                    smooth: true
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.horizontalCenter: parent.horizontalCenter
-
-                    font.family: font1
-                    font.pixelSize: 15
-                    color:"blue"
-
-
 
                 }
 
@@ -277,8 +266,12 @@ Rectangle {
             if(view.count!=cont.getAclNum()){
 
                 create(cont.getAclNum());
+                if(cont.getAclNum()>0){
+                    userManagement.selectedMapAcl=0
+                } else {
 
-                userManagement.selectedMapAcl=-1
+                    userManagement.selectedMapAcl=-1
+                }
             }
         }
 

@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'controller.h'
 **
-** Created: Sat 14. Apr 13:30:44 2012
+** Created: Mon 7. May 15:05:32 2012
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.4)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -73,10 +73,10 @@ static const uint qt_meta_data_Controller[] = {
     1170, 1018, 1011,   11, 0x02,
     1245, 1209,   11,   11, 0x02,
     1300,  975,  916,   11, 0x02,
-    1339, 1331,   11,   11, 0x02,
-    1375,  750,   11,   11, 0x02,
-    1402,   11,  804,   11, 0x02,
-    1423,  312,   11,   11, 0x02,
+    1344, 1331,   11,   11, 0x02,
+    1384,  750,   11,   11, 0x02,
+    1411,   11,  804,   11, 0x02,
+    1432,  312,   11,   11, 0x02,
 
        0        // eod
 };
@@ -115,8 +115,8 @@ static const char qt_meta_stringdata_Controller[] = {
     "getPolygonCoordinateLonAt(QString,int)\0"
     "paintedObject,name,type,coordinates\0"
     "createMapObjectReference(QVariant,QString,int,QString)\0"
-    "getMapObjectReference(QString)\0lat,lon\0"
-    "getObjectUnderCursor(double,double)\0"
+    "getMapObjectReference(QString)\0"
+    "lat,lon,zoom\0getObjectUnderCursor(double,double,int)\0"
     "sendMessageToUser(QString)\0"
     "getCurrentDateTime()\0reconnectMe(QString,QString)\0"
 };
@@ -203,7 +203,7 @@ int Controller::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
         case 36: createMapObjectReference((*reinterpret_cast< QVariant(*)>(_a[1])),(*reinterpret_cast< QString(*)>(_a[2])),(*reinterpret_cast< int(*)>(_a[3])),(*reinterpret_cast< QString(*)>(_a[4]))); break;
         case 37: { QVariant _r = getMapObjectReference((*reinterpret_cast< QString(*)>(_a[1])));
             if (_a[0]) *reinterpret_cast< QVariant*>(_a[0]) = _r; }  break;
-        case 38: getObjectUnderCursor((*reinterpret_cast< double(*)>(_a[1])),(*reinterpret_cast< double(*)>(_a[2]))); break;
+        case 38: getObjectUnderCursor((*reinterpret_cast< double(*)>(_a[1])),(*reinterpret_cast< double(*)>(_a[2])),(*reinterpret_cast< int(*)>(_a[3]))); break;
         case 39: sendMessageToUser((*reinterpret_cast< QString(*)>(_a[1]))); break;
         case 40: { QString _r = getCurrentDateTime();
             if (_a[0]) *reinterpret_cast< QString*>(_a[0]) = _r; }  break;

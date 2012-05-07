@@ -115,17 +115,15 @@ Rectangle {
                 border.color: "black"
                 z:2
 
-                Text{
-
-                    text: "x"
-
-
+                Image{
+                    id:img2
+                    height: 3*parent.height/7
+                    fillMode: Image.PreserveAspectFit
+                    source:"images/cross.png"
+                    smooth: true
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.horizontalCenter: parent.horizontalCenter
 
-                    font.family: font1
-                    font.pixelSize: 15
-                    color:"red"
                 }
 
 

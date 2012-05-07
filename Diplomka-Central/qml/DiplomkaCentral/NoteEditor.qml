@@ -17,7 +17,8 @@ Rectangle {
             height: 20
             width:paintedWidth
             font.pointSize: 15
-            text:"New Note"
+            y:10
+            text:"Poznámka"
         }
 
         Text{
@@ -25,7 +26,7 @@ Rectangle {
             height: 20
             width:paintedWidth
             font.pointSize: 10
-            text:"Name"
+            text:"Jméno"
         }
 
         TextInputField{
@@ -55,7 +56,7 @@ Rectangle {
             height: 20
             width:paintedWidth
             font.pointSize: 10
-            text:"Description"
+            text:"Popis"
         }
 
         TextEditField{
@@ -120,8 +121,8 @@ Rectangle {
                 id: backButtonNote
                 width: 80
                 height: 35
-
-                label: "Back"
+                label: "Zpět"
+                imageSource: "images/back.png"
 
                 onButtonClick: {
                     noteEditor.visible=false;

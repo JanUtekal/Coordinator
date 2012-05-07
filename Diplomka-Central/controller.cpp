@@ -2,7 +2,7 @@
 #define POINT 0
 #define LINE  1
 #define POLYGON 2
-#define VALIDATIONINTERVAL 150000
+#define VALIDATIONINTERVAL 1500000
 
 
 Controller::Controller(QObject *parent) :
@@ -171,10 +171,10 @@ void Controller::lineReady(int selectedAcl){
         }
 
 
-        lineVector.clear();
+
 
     }
-
+     lineVector.clear();
 
 }
 
@@ -239,10 +239,10 @@ void Controller::polygonReady(int selectedAcl){
         }
 
 
-        polygonVector.clear();
+
 
     }
-
+ polygonVector.clear();
 
 
 }

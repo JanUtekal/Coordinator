@@ -187,6 +187,11 @@ void Controller::getPolygonFromCentral(QVector<QPointF> coordList, QString mapOb
 //updates some users point in landmark database
 //jid identifies the user, coordinate represents lat and lon
 void Controller::updateUserPosition(QString jid, QGeoCoordinate coordinate){
+    if(jid==currentUser){
+        qDebug()<<"got my own coords";
+        return;
+    }
+
     QLandmarkNameFilter filter;
     filter.setName(jid);
     QList<QLandmark> lms=landMan->landmarks(filter);
@@ -396,14 +401,16 @@ QPointF Controller::getSouthestPoint(QVector<QPointF> vector){
 
 //used for clincing at notes for displaying its text
 //filters all landmarks and checks whether there is one at coordinates lat/lon
-void Controller::getObjectUnderCursor(double lat, double lon){
+void Controller::getObjectUnderCursor(double lat, double lon, int zoom){
     QLandmarkIntersectionFilter filter;
     QLandmarkProximityFilter proximityFilter;
     QGeoCoordinate center;
     center.setLatitude(lat);
     center.setLongitude(lon);
     proximityFilter.setCenter(center);
-    proximityFilter.setRadius(200);
+    float zoomRation=200/pow(2,(zoom-14));
+
+    proximityFilter.setRadius(zoomRation);
     filter.append(proximityFilter);
 
 
@@ -488,4 +495,9 @@ QString Controller::getCurrentDateTime(){
 //reconnects user with jid and password
 void Controller::reconnectMe(QString username, QString password){
     emit reconnect(username, password);
+    setCurrentUser(username);
+}
+
+void Controller::setCurrentUser(QString currentUser){
+    this->currentUser=currentUser;
 }

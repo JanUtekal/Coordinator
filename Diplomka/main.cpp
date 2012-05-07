@@ -14,7 +14,7 @@
 //#include "QXmppPubSubManager.h"
 #include "extension.h"
 
-#define USERNAME "terrainuser5@jabber.cz"
+#define USERNAME "terrainuser2@jabber.cz"
 #define CENTRALUSER "centraluser1@jabber.cz"
 #define PASSWORD "asasasd"
 
@@ -22,11 +22,13 @@
 
 int main(int argc, char *argv[])
 {
+
     QScopedPointer<QApplication> app(createApplication(argc, argv));
     QScopedPointer<QmlApplicationViewer> viewer(QmlApplicationViewer::create());
 
     Controller cont;
     cont.setCentralUser(CENTRALUSER);
+    cont.setCurrentUser(USERNAME);
     XmppClient client;
 
     Extension ex;

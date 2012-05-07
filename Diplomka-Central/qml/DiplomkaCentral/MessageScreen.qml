@@ -66,7 +66,8 @@ Rectangle {
                     anchors.horizontalCenter: parent.horizontalCenter
 
                     z: 2
-                    label: "Send"
+                    label: "Poslat"
+                    imageSource: "images/messagesend.png"
 
                     onButtonClick: {
 
@@ -89,7 +90,8 @@ Rectangle {
                     anchors.horizontalCenter: parent.horizontalCenter
 
                     z: 2
-                    label: "Back"
+                    label: "Zpět"
+                    imageSource: "images/back.png"
 
                     onButtonClick: {
                         messageScreen.visible=false;

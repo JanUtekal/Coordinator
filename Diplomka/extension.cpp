@@ -53,7 +53,7 @@ bool Extension::handleStanza (const QDomElement& stanza)
     if(geolocStanza){
         if(latitude!="" && longitude!=""){
             qDebug()<<"SENDING COORDS"<<latitude<<longitude;
-            emit sendCoords(jid, latitude, longitude, accuracy);
+            emit sendCoords(jid.toLower(), latitude, longitude, accuracy);
         }
     }
 

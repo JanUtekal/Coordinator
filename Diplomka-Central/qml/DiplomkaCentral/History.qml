@@ -17,8 +17,8 @@ Rectangle {
         x: parent.width-150
         y: parent.height-80
         z: 2
-        label: "Back"
-
+        label: "Zpět"
+        imageSource: "images/back.png"
         onButtonClick: {
             history.visible=false;
 
@@ -34,7 +34,9 @@ Rectangle {
         x: 30
         y: parent.height-80
         z: 2
-        label: "Show"
+        label: "Zobrazit"
+        imageSource: "images/show.png"
+
 
         onButtonClick: {
             history.visible=false;
@@ -184,14 +186,14 @@ Rectangle {
                 height: parent.heigh
                 width: 40
                 font.pointSize: 12
-                text: "From: "
+                text: "Od: "
             }
 
             TextInputField{
                 id: fromDate
                 width: 100
                 height: 20
-                input:fromPicker.day+"-"+fromPicker.month+"-"+fromPicker.year
+                input:fromPicker.day+". "+fromPicker.month+". "+fromPicker.year
                 onlyRead: true
 
                 onInputChanged: {
@@ -200,20 +202,23 @@ Rectangle {
 
             }
 
-            Button{
+            ButtonPicture{
                 id: fromButton
                 width: 80
                 height: 40
                 y:-8
 
-                label: ""
-
+                imageSource: "images/history.png"
                 onButtonClick: {
                     if(fromPicker.visible){
                         fromPicker.visible=false;
+                        fromButton.alwaysPressed(false);
+
                     } else {
                         fromPicker.visible=true;
-
+                        toPicker.visible=false;
+                        fromButton.alwaysPressed(true);
+                        toButton.alwaysPressed(false);
 
                     }
                 }
@@ -225,14 +230,14 @@ Rectangle {
                 height: parent.height
                 width: 20
                 font.pointSize: 12
-                text: "To: "
+                text: "Do: "
             }
 
             TextInputField{
                 id: toDate
                 width: 100
                 height: 20
-                input:toPicker.day+"-"+toPicker.month+"-"+toPicker.year
+                input:toPicker.day+". "+toPicker.month+". "+toPicker.year
                 onlyRead: true
 
                 onInputChanged: {
@@ -241,19 +246,23 @@ Rectangle {
 
             }
 
-            Button{
+            ButtonPicture{
                 id: toButton
                 width: 80
                 height: 40
                 y:-8
 
-                label: ""
-
+                imageSource: "images/history.png"
                 onButtonClick: {
                     if(toPicker.visible){
                         toPicker.visible=false;
+                        toButton.alwaysPressed(false);
                     } else {
                         toPicker.visible=true;
+                        fromPicker.visible=false;
+                        toButton.alwaysPressed(true);
+                        fromButton.alwaysPressed(false);
+
                     }
                 }
 
@@ -266,7 +275,7 @@ Rectangle {
                 y:-8
                 x: 40
 
-                label: "All Events"
+                label: "Všechny akce"
 
                 onButtonClick: {
                     cont.prepareAclHistoryList(2010,1,1,2099,1,1);
@@ -294,7 +303,7 @@ Rectangle {
 
                     Text{
 
-                        text:"Events between dates"
+                        text:"Vybrané akce"
                         font.pointSize: 12
                         anchors.horizontalCenter: parent.horizontalCenter
 
@@ -302,7 +311,7 @@ Rectangle {
 
                     AclListHistory{
                         width:parent.width
-                        height: parent.height
+                        height: parent.height-2
 
                         //color: userManagement.color
                     }
@@ -316,7 +325,7 @@ Rectangle {
 
                     Text{
 
-                        text:"Users for event"
+                        text:"Přidělené jednotky"
                         font.pointSize: 12
                         anchors.horizontalCenter: parent.horizontalCenter
 
@@ -324,7 +333,7 @@ Rectangle {
 
                     TerrainUserFromAclHistoryList{
                         width:parent.width
-                        height: parent.height
+                        height: parent.height-2
                         //color: userManagement.color
                     }
 
@@ -337,7 +346,7 @@ Rectangle {
 
                     Text{
 
-                        text:"Chat for user"
+                        text:"Výpis komunikace"
                         font.pointSize: 12
                         anchors.horizontalCenter: parent.horizontalCenter
 
@@ -346,7 +355,7 @@ Rectangle {
                     TextEditField{
                         id: messageWindow
                         width:parent.width+10
-                        height: parent.height
+                        height: parent.height-2
                         radius: 0
                         onlyRead: true
 

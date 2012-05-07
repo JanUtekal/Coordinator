@@ -90,6 +90,7 @@ Rectangle {
 
             id: allLandmarks
             model: landmarkModel
+            z:3
             delegate: Component {
 
 
@@ -112,8 +113,9 @@ Rectangle {
 
                         source: point.type==0 ? "images/pointergreen.png" : point.type==1 ? "images/pointerblue.png" : "images/pointergrey.png"
                         offset.x: -15
-                        offset.y: -96
-                        z:1
+                        offset.y: -80
+                        z:3
+                        smooth: true
 
                         Component.onCompleted: {
                             type=landmark.radius
@@ -177,11 +179,17 @@ Rectangle {
 
                     MapText{
                         id: mapT
-                        coordinate: landmark.coordinate
+                        coordinate: Coordinate{
+                            latitude: point.lat
+                            longitude: point.lon
+                        }
+
                         text:""
                         font.pointSize: textSize
                         offset.y: 10
-                        z: 1
+                        z: 4
+                        font.family: "Courier"
+                        font.bold: true
         /*                Component.onCompleted: {
                             if(point.type<10){
                                 text=point.note.split("////")[0];
@@ -199,18 +207,24 @@ Rectangle {
 
                     MapText{
                         id: background
-                        coordinate: landmark.coordinate
+                        coordinate: Coordinate{
+                            latitude: point.lat
+                            longitude: point.lon
+                        }
+
 
                         text:""
                         color: pointColor
                         font.pointSize: textSize
-                        z: 0
+                        z: 3
                         offset.y: 10
+                        font.family: "Courier"
+                        font.bold: true
                         function makeBackGround(length) {
 
                             if(point.type<10){
                                 text="";
-                                for(var i=0;i<2*length/3;i++){//
+                                for(var i=0;i<length;i++){//
 
                                     text+="█";
                                 }
@@ -237,6 +251,7 @@ Rectangle {
 
             id: allLandmarks2
             model: landmarkModel
+            z:2
             delegate: Component {
 
 
@@ -255,7 +270,7 @@ Rectangle {
                         id: line
                         border {color: landmark.radius==10 ? lineColor : trajectoryColor; width: 4}
                         visible:false
-
+                        z: 2
 
 
                         /*    MapMouseArea{
@@ -333,25 +348,27 @@ Rectangle {
                         coordinate: landmark.coordinate
                         text:""
                         font.pointSize: textSize
-                        z: 3
+                        z: 4
 
-
+                        font.family: "Courier"
+                        font.bold: true
                     }
 
                     MapText{
                         id: background
                         coordinate: landmark.coordinate
-                        //   text:"toto je komentar"
+
                         text:""
                         color: pointColor
                         font.pointSize: textSize
-                        z: 2
-
+                        z: 3
+                        font.family: "Courier"
+                        font.bold: true
                         function makeBackGround(length) {
 
                             if(line.type>=10 && line.type<20){
                                 text="";
-                                for(var i=0;i<2*length/3;i++){//
+                                for(var i=0;i<length;i++){//
 
                                     text+="█";
                                 }
@@ -375,6 +392,7 @@ Rectangle {
 
             id: allLandmarks3
             model: landmarkModel
+            z:1
             delegate: Component {
 
 
@@ -432,6 +450,7 @@ Rectangle {
                         border {color: polygonBorderColor; width: 4}
                         visible:false
                         color: polygonColor
+                        z: 1
 
 
                     }
@@ -441,9 +460,10 @@ Rectangle {
                         coordinate: landmark.coordinate
                         text:""
                         font.pointSize: textSize
-                        z: 3
+                        z: 4
 
-
+                        font.family: "Courier"
+                        font.bold: true
                     }
 
                     MapText{
@@ -453,13 +473,14 @@ Rectangle {
                         text:""
                         color: pointColor
                         font.pointSize: textSize
-                        z: 2
-
+                        z: 3
+                        font.family: "Courier"
+                        font.bold: true
                         function makeBackGround(length) {
 
                             if(polygon.type>=20){
                                 text="";
-                                for(var i=0;i<2*length/3;i++){//
+                                for(var i=0;i<length;i++){//
 
                                     text+="█";
                                 }
@@ -712,7 +733,8 @@ Rectangle {
             height: 50
 
             z: 2
-            label: "Add Point"
+            label: "Bod"
+            imageSource: "images/landmark.png"
 
             onButtonClick: {
                 pointButtonClicked=true;
@@ -731,8 +753,8 @@ Rectangle {
             height: 50
 
             z: 2
-            label: "Add Route"
-
+            label: "Trasa"
+            imageSource: "images/line.png"
             onButtonClick: {
                 lineButtonClicked=true;
                 pointButtonClicked=false;
@@ -752,8 +774,8 @@ Rectangle {
             height: 50
 
             z: 2
-            label: "Add Area"
-
+            label: "Oblast"
+            imageSource: "images/polygon.png"
             onButtonClick: {
                 polygonButtonClicked=true;
                 pointButtonClicked=false;
@@ -772,8 +794,8 @@ Rectangle {
             height: 50
 
             z: 2
-            label: "Add Note"
-
+            label: "Poznámka"
+            imageSource: "images/note.png"
             onButtonClick: {
 
                 if(objectEverSelected && cont.getSelectedMapObject() ){
@@ -805,8 +827,8 @@ Rectangle {
             width: 120
             height: 50
 
-            label: "User Management"
-
+            label: "Akce"
+            imageSource: "images/users.png"
             onButtonClick: {
                 userManagement.visible=true;
                 cont.prepareAclList();
@@ -823,8 +845,8 @@ Rectangle {
             height: 50
 
             z: 2
-            label: "Messages"
-
+            label: "Zprávy"
+            imageSource: "images/message.png"
             onButtonClick: {
                 messageScreen.visible=true;
                 messageButton.highlighted=false;
@@ -838,8 +860,8 @@ Rectangle {
             height: 50
 
             z: 2
-            label: "History"
-
+            label: "Historie"
+            imageSource: "images/history.png"
             onButtonClick: {
                 history.visible=true;
 

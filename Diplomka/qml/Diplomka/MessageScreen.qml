@@ -67,13 +67,14 @@ Rectangle {
 
 
 
-            Button{
-                id:quit
+            ButtonPicture{
+                id:send
                 width: parent.width
                 height: parent.height/4
 
 
-                label: "Send"
+              //  label: "Send"
+                imageSource: "images/messagesend.png"
                 onButtonClick: {
                     cont.sendMessageToUser(textField.input);
                     messageWindow.setText(cont.getCurrentDateTime()+" Me: " +textField.input+"\n"+ messageWindow.input);
@@ -81,12 +82,13 @@ Rectangle {
                 }
             }
 
-            Button{
+            ButtonPicture{
                 id:back
                 width: parent.width
                 height: parent.height/6
 
-                label: "Back"
+              //  label: "Back"
+                imageSource: "images/back.png"
                 onButtonClick: {
                     messageScreen.visible=false;
                     settingsButton.visible=true;
@@ -116,6 +118,9 @@ Rectangle {
 
 
             messageWindow.setText(line+"\n"+messageWindow.input);
+            if(!messageScreen.visible){
+                messageButton.highlighted=true;
+            }
 
         }
 

@@ -25,8 +25,8 @@ Rectangle {
         x: parent.width-150
         y: parent.height-80
         z: 2
-        label: "Back"
-
+        label: "Zpět"
+        imageSource: "images/back.png"
         onButtonClick: {
             userManagement.visible=false;
 
@@ -41,8 +41,8 @@ Rectangle {
         x: 30
         y: parent.height-80
         z: 2
-        label: "New Terrain User"
-
+        label: "Nová jednotka"
+        imageSource: "images/user.png"
         onButtonClick: {
             cont.prepareRegistration();
             newTerrainUser.visible=true;
@@ -59,7 +59,7 @@ Rectangle {
         x: 180
         y: parent.height-80
         z: 2
-        label: "New Event"
+        label: "Nová akce"
 
         onButtonClick: {
             newACL.visible=true;
@@ -89,7 +89,7 @@ Rectangle {
 
                 Text{
 
-                    text:"All users"
+                    text:"Všechny jednotky"
                     font.pointSize: 12
                     anchors.horizontalCenter: parent.horizontalCenter
 
@@ -118,7 +118,8 @@ Rectangle {
                     //   x: 180
                     // y: parent.height-80
                     z: 2
-                    label: ">>"
+                    label: ""
+                    imageSource: "images/arrowright.png"
 
                     onButtonClick: {
                         if(userManagement.selectedUser!=-1 && userManagement.selectedAcl!=-1){
@@ -139,7 +140,8 @@ Rectangle {
                     //  x: 180
 
                     z: 2
-                    label: "<<"
+                    label: ""
+                    imageSource: "images/arrowleft.png"
 
                     onButtonClick: {
                         console.log("fff",selectedAclUser)
@@ -165,7 +167,7 @@ Rectangle {
 
             Text{
 
-                text:"Users from event"
+                text:"Přiřazené jednotky"
                 font.pointSize: 12
                 anchors.horizontalCenter: parent.horizontalCenter
 
@@ -188,7 +190,7 @@ Rectangle {
 
             Text{
 
-                text:"Events"
+                text:"Akce"
                 font.pointSize: 12
                 anchors.horizontalCenter: parent.horizontalCenter
 

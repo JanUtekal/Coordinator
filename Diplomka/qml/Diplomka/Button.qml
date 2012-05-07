@@ -1,12 +1,14 @@
 import QtQuick 1.0
 
-//represents generic button used within application
 Rectangle{
     id: button
     signal buttonClick()
     property string font1: "Arial"
     property string label: "button"
- /*   Image{
+    property bool highlighted: false
+
+    property string imageSource: ""
+    /*   Image{
         width: parent.width
         height: parent.height
         source:  buttonMouseArea.pressed ? "images/toolbutton.png" : "images/toolbutton_pressed.png"
@@ -14,21 +16,28 @@ Rectangle{
     }
 */
     Gradient  {
-         id:lightgrey
-         GradientStop { position: 0; color: Qt.rgba(0, 0, 0, 0.6) }
-         GradientStop { position: 1; color: Qt.rgba(0, 0, 0, 0.5) }
+        id:lightgrey
+        GradientStop { position: 0; color: Qt.rgba(0, 0, 0, 0.6) }
+        GradientStop { position: 1; color: Qt.rgba(0, 0, 0, 0.5) }
     }
 
     Gradient  {
-         id:grey
-         GradientStop { position: 0; color: Qt.rgba(0, 0, 0, 0.9) }
-         GradientStop { position: 1; color: Qt.rgba(0, 0, 0, 0.8) }
+        id:grey
+        GradientStop { position: 0; color: Qt.rgba(0.2, 0.2, 0.2, 0.9) }
+        GradientStop { position: 1; color: Qt.rgba(0, 0, 0, 0.8) }
     }
 
-  //  border.color:"black"
-   // border.width:1
-    gradient: buttonMouseArea.pressed ? grey : lightgrey
+    Gradient  {
+        id:yellow
+        GradientStop { position: 0; color: Qt.rgba(1, 1, 0, 0.7) }
+        GradientStop { position: 1; color: Qt.rgba(1, 1, 0, 0.6) }
+    }
+
+    //  border.color:"black"
+    // border.width:1
+    gradient: highlighted ? yellow : buttonMouseArea.pressed ? grey : lightgrey
     radius:8
+    smooth:true
 
     function alwaysPressed(pressed){
         if(pressed){
@@ -38,22 +47,42 @@ Rectangle{
         }
     }
 
-    Text{
-        text: label
-        color: "white"
-        z:1
+    Row{
+        //spacing:10
         anchors.fill: parent
-        horizontalAlignment: Text.AlignHCenter
-        verticalAlignment: Text.AlignVCenter
-        //anchors.centerIn: parent
-        font.family: font1
-        wrapMode: Text.WordWrap
-        font.pointSize: 6
-        font.bold: true
-    }
+        anchors.centerIn: parent
+        Text{
+            id:txt
+            text: label
+            color: highlighted ? "black" : "white"
+            z:1
+            height: parent.height
+            width: img.paintedWidth==0 ? parent.width - img.paintedWidth : parent.width - img.paintedWidth - 10
+            //   anchors.fill: parent
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
+            //anchors.centerIn: parent
+            font.family: font1
+            wrapMode: Text.WordWrap
+            font.pointSize: textSize
+            font.bold: true
 
+
+
+        }
+
+        Image{
+            id:img
+            height: 3*parent.height/4
+            fillMode: Image.PreserveAspectFit
+            source:imageSource
+            smooth: true
+            anchors.verticalCenter: parent.verticalCenter
+
+        }
+    }
     onButtonClick:  {
-      //  console.log("bod");
+        //  console.log("bod");
 
     }
 

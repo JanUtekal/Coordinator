@@ -65,19 +65,16 @@ Rectangle {
                 border.color: "black"
                 z:2
 
-                Text{
-
-                    text: "o"
-
-
+                Image{
+                    id:img
+                    height: 3*parent.height/5
+                    fillMode: Image.PreserveAspectFit
+                    source:"images/check.png"
+                    smooth: true
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.horizontalCenter: parent.horizontalCenter
 
-                    font.family: font1
-                    font.pixelSize: 15
-                    color:"green"
                 }
-
 
 
                 MouseArea{
@@ -134,17 +131,15 @@ Rectangle {
                 border.color: "black"
                 z:2
 
-                Text{
-
-                    text: "x"
-
-
+                Image{
+                    id:img2
+                    height: 3*parent.height/5
+                    fillMode: Image.PreserveAspectFit
+                    source:"images/cross.png"
+                    smooth: true
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.horizontalCenter: parent.horizontalCenter
 
-                    font.family: font1
-                    font.pixelSize: 15
-                    color:"red"
                 }
 
 

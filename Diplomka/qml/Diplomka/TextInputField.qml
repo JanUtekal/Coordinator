@@ -17,6 +17,10 @@ Rectangle{
         inputText.text=textt;
     }
 
+    function setPasswordType(){
+        inputText.echoMode=TextInput.Password;
+    }
+
     TextInput {
         id: inputText
         width:parent.width-15
